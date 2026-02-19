@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva: API REST con Express y MySQL</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fdfbf7; color: #1f2937; }
+        .code-font { font-family: 'Fira Code', monospace; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        /* Chart Container Styling - MANDATORY */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            max-height: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Animation utilities */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Folder Tree Styling */
+        .tree-line { border-left: 2px solid #e5e7eb; margin-left: 0.5rem; padding-left: 1rem; }
+    </style>
+</head>
+<body class="flex flex-col h-screen overflow-hidden">
+
+    <!-- Placeholder Comments -->
+    <!-- Chosen Palette: Warm Neutrals (Cream/Off-white background #fdfbf7, Slate text) with Academic Blue and Success Green accents. Minimalistic and professional. -->
+    
+    <!-- Application Structure Plan: 
+         The app is designed as a "Developer's Interactive Workbook". 
+         1. Sidebar Navigation: persistent access to the 5 distinct phases of the tutorial (Intro, Setup, DB, Code, Testing, Bonus).
+         2. Main Viewport: Dynamic content area that changes based on selection.
+         3. Setup Phase: Visual file tree explorer to understand structure.
+         4. Database Phase: Visual Schema representation (HTML tables) and SQL script viewer.
+         5. Code Phase (The Core): An interactive "MVC Explorer". Users click on architectural components (Route, Controller, Model) to see the corresponding code snippet explanation side-by-side.
+         6. Testing Phase: A "Simulated API Client" (mocking Thunder Client) allowing users to click "Send" and see the JSON response, reinforcing the request-response cycle.
+         7. Bonus Phase: A Radar Chart comparing SQL vs ORM to visually synthesize the theoretical comparison.
+         Reasoning: This structure breaks down a linear text tutorial into active learning modules, preventing cognitive overload and connecting concepts (MVC) directly to code implementation.
+    -->
+
+    <!-- Visualization & Content Choices:
+         1. Intro: Text summary -> Goal: Context -> Method: Clean Typography.
+         2. Setup: Directory Structure -> Goal: Organize -> Method: HTML/CSS Nested Lists (Tree View) -> Interaction: Collapsible folders.
+         3. Database: Table Relationships -> Goal: Relationships -> Method: Styled HTML Tables connected visually -> No SVG.
+         4. Code Architecture: Flow of Data -> Goal: Inform/Connect -> Method: Interactive Grid where clicking a box updates the code view (JS) -> Justification: Connects abstract MVC concept to concrete file contents.
+         5. Testing: API Request/Response -> Goal: Simulate -> Method: HTML Form + JS Response Injection -> Justification: Mimics the actual tool (Thunder Client) recommended in the report.
+         6. ORM vs SQL: Comparison -> Goal: Compare -> Method: Chart.js Radar Chart -> Interaction: Hover for values -> Justification: Visually represents the trade-offs (Speed vs Control) mentioned in the text.
+         7. Confirmation: NO SVG, NO Mermaid. All icons are Unicode or CSS shapes. Charts via Chart.js.
+    -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm z-10">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">API REST University <span class="text-blue-600">Masterclass</span></h1>
+            <p class="text-sm text-gray-500">Guía interactiva paso a paso: Node.js, Express & MySQL</p>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="text-xs font-semibold px-3 py-1 bg-blue-100 text-blue-800 rounded-full">Nivel: Intermedio</span>
+            <div id="progress-indicator" class="text-sm font-medium text-gray-600">Fase 1 de 5</div>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-slate-50 border-r border-gray-200 flex-shrink-0 overflow-y-auto hidden md:block">
+            <nav class="p-4 space-y-2">
+                <button onclick="navigate('intro')" class="nav-item w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors hover:bg-white hover:shadow-sm focus:outline-none text-slate-700 bg-white shadow-sm ring-1 ring-gray-200" data-target="intro">
+                    👋 Introducción
+                </button>
+                <button onclick="navigate('setup')" class="nav-item w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-600 hover:bg-white hover:text-blue-600 hover:shadow-sm transition-colors focus:outline-none" data-target="setup">
+                    🛠️ Fase 1: Setup
+                </button>
+                <button onclick="navigate('database')" class="nav-item w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-600 hover:bg-white hover:text-blue-600 hover:shadow-sm transition-colors focus:outline-none" data-target="database">
+                    🔒 Fase 2: Base de Datos
+                </button>
+                <button onclick="navigate('code')" class="nav-item w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-600 hover:bg-white hover:text-blue-600 hover:shadow-sm transition-colors focus:outline-none" data-target="code">
+                    💻 Fase 3: Código (MVC)
+                </button>
+                <button onclick="navigate('testing')" class="nav-item w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-600 hover:bg-white hover:text-blue-600 hover:shadow-sm transition-colors focus:outline-none" data-target="testing">
+                    ⚡ Fase 4: Pruebas
+                </button>
+                <button onclick="navigate('bonus')" class="nav-item w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-600 hover:bg-white hover:text-blue-600 hover:shadow-sm transition-colors focus:outline-none" data-target="bonus">
+                    🎁 Bonus: ORM vs SQL
+                </button>
+            </nav>
+            <div class="p-4 mt-auto">
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <h4 class="text-xs font-bold text-blue-800 uppercase mb-2">Objetivos</h4>
+                    <ul class="text-xs text-blue-700 space-y-1 list-disc pl-4">
+                        <li>Arquitectura MVC</li>
+                        <li>Seguridad (.env)</li>
+                        <li>SQL en Node.js</li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile Nav Toggle (Visible only on small screens) -->
+        <div class="md:hidden absolute bottom-4 right-4 z-50">
+            <button onclick="document.querySelector('aside').classList.toggle('hidden'); document.querySelector('aside').classList.toggle('absolute'); document.querySelector('aside').classList.toggle('z-40'); document.querySelector('aside').classList.toggle('h-full');" class="bg-blue-600 text-white p-3 rounded-full shadow-lg">
+                ☰
+            </button>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto p-6 md:p-10 bg-[#fdfbf7] relative">
+            
+            <!-- SECTION: INTRO -->
+            <section id="intro" class="section-view fade-in max-w-4xl mx-auto">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Bienvenido a la Arquitectura Backend</h2>
+                    <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                        Esta aplicación interactiva te guiará a través de la creación de una API REST profesional para una universidad.
+                        Dejarás atrás los scripts simples para construir una estructura escalable, segura y modular utilizando 
+                        <span class="font-bold text-green-600">Node.js</span>, <span class="font-bold text-gray-700">Express</span> y <span class="font-bold text-blue-600">MySQL</span>.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div class="text-3xl mb-3">📐</div>
+                        <h3 class="font-bold text-gray-800 mb-2">Patrón MVC</h3>
+                        <p class="text-sm text-gray-500">Aprende a separar la lógica (Controlador), los datos (Modelo) y las rutas de acceso.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div class="text-3xl mb-3">🛡️</div>
+                        <h3 class="font-bold text-gray-800 mb-2">Seguridad</h3>
+                        <p class="text-sm text-gray-500">Implementa variables de entorno y previene inyecciones SQL básicas.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div class="text-3xl mb-3">🔌</div>
+                        <h3 class="font-bold text-gray-800 mb-2">Conexión Real</h3>
+                        <p class="text-sm text-gray-500">Usa el driver `mysql2` para realizar consultas profesionales a la base de datos.</p>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
+                    <h4 class="font-bold text-blue-900 mb-2">¿Cómo usar esta guía?</h4>
+                    <p class="text-blue-800 text-sm">
+                        Navega por las fases usando el menú lateral. Cada sección contiene código interactivo, diagramas explicativos y simulaciones. 
+                        No necesitas instalar nada para explorar, pero se recomienda seguir el tutorial en tu editor de código (VS Code) en paralelo.
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION: SETUP -->
+            <section id="setup" class="section-view hidden fade-in max-w-5xl mx-auto">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Fase 1: Setup del Entorno</h2>
+                    <p class="text-gray-600">La base de todo proyecto profesional es una configuración limpia y ordenada.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Column 1: Terminal Steps -->
+                    <div class="space-y-6">
+                        <div class="bg-gray-900 rounded-lg p-4 shadow-lg font-mono text-sm text-gray-300">
+                            <div class="flex items-center space-x-2 mb-4 border-b border-gray-700 pb-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                <span class="text-xs text-gray-500 ml-2">Terminal</span>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-gray-500"># 1. Iniciar proyecto</p>
+                                    <p><span class="text-green-400">➜</span> npm init -y</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500"># 2. Instalar dependencias clave</p>
+                                    <p><span class="text-green-400">➜</span> npm install express mysql2 dotenv</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500"># 3. Herramienta de desarrollo</p>
+                                    <p><span class="text-green-400">➜</span> npm install -D nodemon</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="font-bold text-gray-800 mb-4">Configuración Vital: package.json</h3>
+                            <p class="text-sm text-gray-600 mb-4">
+                                Para usar <code class="bg-gray-100 px-1 rounded text-red-500">import/export</code> modernos, debes agregar una línea clave.
+                            </p>
+                            <div class="bg-gray-50 p-4 rounded border border-gray-200 code-font text-sm">
+                                <span class="text-gray-500">{</span><br>
+                                &nbsp;&nbsp;"name": "api-universidad",<br>
+                                &nbsp;&nbsp;"version": "1.0.0",<br>
+                                &nbsp;&nbsp;<span class="bg-yellow-100 text-yellow-800 font-bold px-1">"type": "module",</span> <span class="text-green-600">// <-- ¡Agrega esto!</span><br>
+                                &nbsp;&nbsp;...<br>
+                                <span class="text-gray-500">}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Folder Structure Visualization -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                        <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Arquitectura de Carpetas</h3>
+                        <p class="text-sm text-gray-500 mb-4">Una estructura organizada facilita el mantenimiento. Explora la jerarquía:</p>
+                        
+                        <div class="code-font text-sm text-gray-700 select-none">
+                            <div class="flex items-center py-1"><span class="mr-2">📁</span> <span class="font-bold">mi-proyecto/</span></div>
+                            <div class="tree-line">
+                                <div class="flex items-center py-1 cursor-pointer hover:bg-gray-50 rounded" onclick="toggleFolder('src')">
+                                    <span class="mr-2">📂</span> <span class="font-bold text-blue-600">src/</span> <span class="text-xs text-gray-400 ml-2">(Código Fuente)</span>
+                                </div>
+                                <div id="folder-src" class="tree-line">
+                                    <div class="py-1 hover:text-blue-500">📄 <span class="font-bold">app.js</span> <span class="text-xs text-gray-400">- Punto de entrada</span></div>
+                                    <div class="py-1 hover:text-blue-500">📂 <span>config/</span> <span class="text-xs text-gray-400">- Conexión BD</span></div>
+                                    <div class="py-1 hover:text-blue-500">📂 <span>controllers/</span> <span class="text-xs text-gray-400">- Lógica</span></div>
+                                    <div class="py-1 hover:text-blue-500">📂 <span>models/</span> <span class="text-xs text-gray-400">- SQL Queries</span></div>
+                                    <div class="py-1 hover:text-blue-500">📂 <span>routes/</span> <span class="text-xs text-gray-400">- Endpoints</span></div>
+                                </div>
+                                <div class="flex items-center py-1 mt-2 text-gray-500">
+                                    <span class="mr-2">📄</span> .env <span class="text-xs bg-red-100 text-red-600 px-1 rounded ml-2">SECRETO</span>
+                                </div>
+                                <div class="flex items-center py-1 text-gray-500">
+                                    <span class="mr-2">📄</span> .gitignore
+                                </div>
+                                <div class="flex items-center py-1 text-gray-500">
+                                    <span class="mr-2">📄</span> package.json
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: DATABASE -->
+            <section id="database" class="section-view hidden fade-in max-w-5xl mx-auto">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Fase 2: Base de Datos</h2>
+                    <p class="text-gray-600">Diseño relacional y seguridad de credenciales.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Visual Schema -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+                            <h3 class="font-bold text-gray-800 mb-4 text-center">Esquema Relacional</h3>
+                            
+                            <!-- Table: Carreras -->
+                            <div class="border-2 border-slate-300 rounded-lg overflow-hidden mb-8 relative bg-slate-50">
+                                <div class="bg-slate-200 px-3 py-2 font-bold text-center text-sm">carreras (Padre)</div>
+                                <div class="p-3 text-xs space-y-1">
+                                    <div class="flex justify-between font-mono"><span>PK</span> <span>id</span></div>
+                                    <div class="flex justify-between"><span></span> <span>nombre</span></div>
+                                    <div class="flex justify-between"><span></span> <span>duracion</span></div>
+                                </div>
+                                <!-- Connector Line Logic Visualization -->
+                                <div class="absolute left-1/2 -bottom-8 w-0.5 h-8 bg-slate-400"></div>
+                            </div>
+
+                            <!-- Table: Alumnos -->
+                            <div class="border-2 border-blue-300 rounded-lg overflow-hidden relative bg-blue-50">
+                                <div class="bg-blue-100 px-3 py-2 font-bold text-center text-sm text-blue-800">alumnos (Hija)</div>
+                                <div class="p-3 text-xs space-y-1">
+                                    <div class="flex justify-between font-mono"><span>PK</span> <span>id</span></div>
+                                    <div class="flex justify-between"><span></span> <span>nombre</span></div>
+                                    <div class="flex justify-between"><span></span> <span>email</span></div>
+                                    <div class="flex justify-between font-mono font-bold text-blue-600"><span>FK</span> <span>carrera_id</span></div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center mt-4 text-gray-500">Relación 1:N (Una carrera, muchos alumnos)</p>
+                        </div>
+                    </div>
+
+                    <!-- SQL & Env -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="flex border-b">
+                                <button class="px-4 py-2 text-sm font-medium bg-gray-50 text-blue-600 border-b-2 border-blue-600">Script SQL</button>
+                                <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">.env (Seguridad)</button>
+                            </div>
+                            <div class="p-4 bg-gray-50 overflow-x-auto">
+<pre class="code-font text-xs text-gray-700">
+<span class="text-blue-600 font-bold">CREATE DATABASE</span> universidad_db;
+<span class="text-blue-600 font-bold">USE</span> universidad_db;
+
+<span class="text-gray-500">-- Tabla Padre</span>
+<span class="text-blue-600 font-bold">CREATE TABLE</span> carreras (
+    id <span class="text-purple-600">INT AUTO_INCREMENT PRIMARY KEY</span>,
+    nombre <span class="text-purple-600">VARCHAR(100) NOT NULL</span>,
+    duracion_semestres <span class="text-purple-600">INT NOT NULL</span>
+);
+
+<span class="text-gray-500">-- Tabla Hija con Llave Foránea</span>
+<span class="text-blue-600 font-bold">CREATE TABLE</span> alumnos (
+    id <span class="text-purple-600">INT AUTO_INCREMENT PRIMARY KEY</span>,
+    nombre <span class="text-purple-600">VARCHAR(100) NOT NULL</span>,
+    email <span class="text-purple-600">VARCHAR(100) UNIQUE NOT NULL</span>,
+    carrera_id <span class="text-purple-600">INT</span>,
+    <span class="text-blue-600 font-bold">FOREIGN KEY</span> (carrera_id) <span class="text-blue-600 font-bold">REFERENCES</span> carreras(id)
+);
+</pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                            <h4 class="font-bold text-yellow-800 text-sm">⚠️ Regla de Oro de Seguridad</h4>
+                            <p class="text-sm text-yellow-700 mt-1">
+                                Crea un archivo <code>.gitignore</code> y agrega <code>.env</code> y <code>node_modules/</code>.
+                                ¡Nunca subas tus contraseñas a GitHub!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: CODE (MVC EXPLORER) -->
+            <section id="code" class="section-view hidden fade-in h-full flex flex-col">
+                <div class="mb-4">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Fase 3: Arquitectura MVC Interactiva</h2>
+                    <p class="text-gray-600 text-sm">Haz clic en los componentes del diagrama para explorar el código real y entender el flujo de datos.</p>
+                </div>
+
+                <div class="flex flex-col lg:flex-row gap-6 flex-1 min-h-0">
+                    <!-- Left: Interactive Diagram -->
+                    <div class="lg:w-1/3 flex flex-col space-y-4 overflow-y-auto pr-2">
+                        
+                        <!-- Step 1: App -->
+                        <div onclick="showCode('app')" class="cursor-pointer group p-4 rounded-lg border-2 border-gray-200 hover:border-purple-500 bg-white hover:shadow-md transition-all">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-purple-700">1. Entry Point (app.js)</span>
+                                <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">Servidor</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Inicia Express y carga las rutas principales.</p>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="flex justify-center"><span class="text-gray-400 text-xl">⬇️</span></div>
+
+                        <!-- Step 2: Routes -->
+                        <div onclick="showCode('routes')" class="cursor-pointer group p-4 rounded-lg border-2 border-gray-200 hover:border-blue-500 bg-white hover:shadow-md transition-all">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-blue-700">2. Routes</span>
+                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Mapa</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Define los endpoints (URLs) y asigna controladores.</p>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="flex justify-center"><span class="text-gray-400 text-xl">⬇️</span></div>
+
+                        <!-- Step 3: Controller -->
+                        <div onclick="showCode('controller')" class="cursor-pointer group p-4 rounded-lg border-2 border-gray-200 hover:border-green-500 bg-white hover:shadow-md transition-all">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-green-700">3. Controller</span>
+                                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Lógica</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Recibe la petición, valida y llama al modelo.</p>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="flex justify-center"><span class="text-gray-400 text-xl">⬇️</span></div>
+
+                        <!-- Step 4: Model -->
+                        <div onclick="showCode('model')" class="cursor-pointer group p-4 rounded-lg border-2 border-gray-200 hover:border-orange-500 bg-white hover:shadow-md transition-all">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-orange-700">4. Model</span>
+                                <span class="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded">Datos</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Ejecuta SQL puro: <code>SELECT</code>, <code>INSERT</code>.</p>
+                        </div>
+
+                         <!-- Arrow -->
+                         <div class="flex justify-center"><span class="text-gray-400 text-xl">⬇️</span></div>
+
+                         <!-- Step 5: Config -->
+                         <div onclick="showCode('config')" class="cursor-pointer group p-4 rounded-lg border-2 border-gray-200 hover:border-gray-500 bg-white hover:shadow-md transition-all">
+                             <div class="flex items-center justify-between">
+                                 <span class="font-bold text-gray-700">5. Config (db.js)</span>
+                                 <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">Infra</span>
+                             </div>
+                             <p class="text-xs text-gray-500 mt-2">Gestiona la conexión pool con MySQL.</p>
+                         </div>
+                    </div>
+
+                    <!-- Right: Code Viewer -->
+                    <div class="lg:w-2/3 bg-[#1e1e1e] rounded-xl shadow-xl overflow-hidden flex flex-col min-h-[500px]">
+                        <div class="bg-[#2d2d2d] px-4 py-2 flex items-center justify-between">
+                            <div class="flex space-x-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <span id="code-filename" class="text-gray-400 text-sm font-mono">selecciona_archivo.js</span>
+                        </div>
+                        <div class="p-6 overflow-y-auto flex-1 relative">
+                            <pre id="code-content" class="code-font text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
+// 👋 Haz clic en un bloque de la izquierda para ver su código.
+// Entiende cómo viajan los datos desde la petición hasta la base de datos.
+                            </pre>
+                            <!-- Tooltip/Explanation Overlay -->
+                            <div id="code-explanation" class="absolute bottom-4 right-4 bg-blue-600/90 text-white p-4 rounded-lg shadow-lg max-w-sm backdrop-blur-sm text-sm hidden">
+                                <h5 class="font-bold mb-1">🔍 Análisis</h5>
+                                <p id="explanation-text">...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: TESTING -->
+            <section id="testing" class="section-view hidden fade-in max-w-4xl mx-auto">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Fase 4: Pruebas (Thunder Client)</h2>
+                    <p class="text-gray-600">Simulación del cliente HTTP. Prueba los endpoints que acabas de construir.</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+                    <!-- Fake Thunder Client UI -->
+                    <div class="bg-gray-100 border-b border-gray-200 p-2 flex items-center space-x-4">
+                        <span class="font-bold text-gray-600 px-2">⚡ Thunder Client</span>
+                    </div>
+
+                    <div class="p-6">
+                        <!-- Request Bar -->
+                        <div class="flex space-x-2 mb-6">
+                            <select id="req-method" class="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-24">
+                                <option value="POST">POST</option>
+                                <option value="GET">GET</option>
+                            </select>
+                            <input type="text" value="http://localhost:3000/api/alumnos" class="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" disabled>
+                            <button onclick="simulateRequest()" class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-transform active:scale-95">Send</button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Body Input -->
+                            <div id="body-panel" class="border rounded-lg p-2">
+                                <div class="text-xs font-bold text-gray-500 mb-2 border-b pb-1">JSON Body</div>
+                                <textarea id="req-body" class="w-full h-40 font-mono text-sm text-gray-700 focus:outline-none resize-none p-2" spellcheck="false">{
+  "nombre": "Juan Pérez",
+  "email": "juan@uni.edu",
+  "carrera_id": 1
+}</textarea>
+                            </div>
+
+                            <!-- Response Output -->
+                            <div class="border rounded-lg p-2 bg-slate-900 text-green-400">
+                                <div class="flex justify-between text-xs font-bold text-gray-500 mb-2 border-b border-gray-700 pb-1">
+                                    <span>Response</span>
+                                    <span id="status-code" class="text-green-500 hidden">Status: 201 Created</span>
+                                </div>
+                                <pre id="res-output" class="w-full h-40 font-mono text-xs overflow-auto p-2">
+// Esperando petición...
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-green-50 p-4 rounded-lg border border-green-200">
+                    <h4 class="font-bold text-green-800 text-sm mb-1">💡 Tip Pedagógico</h4>
+                    <p class="text-sm text-green-700">
+                        Nota cómo el <code>POST</code> envía datos para crear, mientras que el <code>GET</code> recuperaría el array con la información de la carrera unida (JOIN).
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION: BONUS -->
+            <section id="bonus" class="section-view hidden fade-in max-w-4xl mx-auto">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Bonus: ORM vs SQL Puro</h2>
+                    <p class="text-gray-600">¿Deberías usar un ORM como Sequelize o seguir con SQL nativo? Analicemos los trade-offs.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    
+                    <!-- Chart Container -->
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="text-center font-bold text-gray-700 mb-4">Comparativa Técnica</h3>
+                        <div class="chart-container">
+                            <canvas id="ormChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Explanation -->
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-lg border-l-4 border-blue-500 bg-white shadow-sm">
+                            <h4 class="font-bold text-gray-800">🔵 SQL Puro (mysql2)</h4>
+                            <p class="text-sm text-gray-600 mt-1">
+                                <strong>Ventaja:</strong> Máximo control y rendimiento. Sabes exactamente qué está pasando.<br>
+                                <strong>Desventaja:</strong> Escribir strings de SQL puede ser tedioso y propenso a errores manuales.
+                            </p>
+                        </div>
+                        
+                        <div class="p-4 rounded-lg border-l-4 border-purple-500 bg-white shadow-sm">
+                            <h4 class="font-bold text-gray-800">🟣 ORM (Sequelize)</h4>
+                            <p class="text-sm text-gray-600 mt-1">
+                                <strong>Ventaja:</strong> Productividad. Trabajas con objetos JS (`Alumno.create()`), no SQL.<br>
+                                <strong>Desventaja:</strong> "Caja negra". Puede generar consultas lentas si no tienes cuidado.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // --- DATA STORE ---
+        // Contains the code snippets and explanations for the MVC Explorer
+        const codeData = {
+            app: {
+                filename: 'src/app.js',
+                content: `import express from 'express';
+import dotenv from 'dotenv';
+import alumnoRoutes from './routes/alumnoRoutes.js';
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware para entender JSON (Vital para POST)
+app.use(express.json());
+
+// Rutas
+app.use('/api/alumnos', alumnoRoutes);
+
+app.listen(PORT, () => {
+    console.log(\`Servidor corriendo en http://localhost:\${PORT}\`);
+});`,
+                explanation: "Este es el cerebro. Configura Express, carga las variables de entorno y conecta las rutas. Nota el `app.use(express.json())`: sin eso, el servidor no entiende los datos que envías."
+            },
+            routes: {
+                filename: 'src/routes/alumnoRoutes.js',
+                content: `import { Router } from 'express';
+import { getAlumnos, createAlumno } from '../controllers/alumnoController.js';
+
+const router = Router();
+
+// Definimos los endpoints
+router.get('/', getAlumnos);      // GET /api/alumnos
+router.post('/', createAlumno);   // POST /api/alumnos
+
+export default router;`,
+                explanation: "El enrutador actúa como un recepcionista. Dice: 'Si vienes a GET /, ve con getAlumnos'. Desacopla la URL de la función que la ejecuta."
+            },
+            controller: {
+                filename: 'src/controllers/alumnoController.js',
+                content: `import * as AlumnoModel from '../models/alumnoModel.js';
+
+export const createAlumno = async (req, res) => {
+    const { nombre, email, carrera_id } = req.body;
+
+    // Validación
+    if (!nombre || !email) {
+        return res.status(400).json({ message: 'Faltan datos' });
+    }
+
+    try {
+        const nuevo = await AlumnoModel.create(nombre, email, carrera_id);
+        res.status(201).json(nuevo);
+    } catch (error) {
+        res.status(500).json({ message: 'Error interno' });
+    }
+};`,
+                explanation: "Aquí vive la lógica de negocio. Valida que los datos existan antes de molestar a la base de datos y decide qué código HTTP responder (201, 400, 500)."
+            },
+            model: {
+                filename: 'src/models/alumnoModel.js',
+                content: `import db from '../config/db.js';
+
+export const create = async (nombre, email, carrera_id) => {
+    // ? = Prevención de inyección SQL
+    const [result] = await db.query(
+        'INSERT INTO alumnos (nombre, email, carrera_id) VALUES (?, ?, ?)',
+        [nombre, email, carrera_id]
+    );
+    return { id: result.insertId, nombre, email, carrera_id };
+};`,
+                explanation: "El modelo es el único que habla SQL. Usa 'placeholders' (?) para insertar datos de forma segura. No sabe nada de req o res."
+            },
+            config: {
+                filename: 'src/config/db.js',
+                content: `import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10
+});
+
+export default pool;`,
+                explanation: "Configura el Pool de conexiones. Es más eficiente que abrir y cerrar una conexión por cada usuario."
+            }
+        };
+
+        // --- NAVIGATION LOGIC ---
+        function navigate(targetId) {
+            // Hide all sections
+            document.querySelectorAll('.section-view').forEach(el => el.classList.add('hidden'));
+            // Show target
+            document.getElementById(targetId).classList.remove('hidden');
+            
+            // Update buttons
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                if(btn.dataset.target === targetId) {
+                    btn.classList.add('bg-white', 'text-blue-600', 'shadow-sm', 'ring-1', 'ring-gray-200');
+                    btn.classList.remove('text-slate-600');
+                } else {
+                    btn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm', 'ring-1', 'ring-gray-200');
+                    btn.classList.add('text-slate-600');
+                }
+            });
+
+            // Update Header progress
+            const steps = {intro: "Intro", setup: "Fase 1", database: "Fase 2", code: "Fase 3", testing: "Fase 4", bonus: "Bonus"};
+            document.getElementById('progress-indicator').innerText = steps[targetId];
+
+            // Render chart if bonus
+            if(targetId === 'bonus') renderChart();
+        }
+
+        // --- PHASE 1: FOLDER TOGGLE ---
+        function toggleFolder(id) {
+            const folder = document.getElementById('folder-' + id);
+            if (folder.classList.contains('hidden')) {
+                folder.classList.remove('hidden');
+            } else {
+                folder.classList.add('hidden');
+            }
+        }
+
+        // --- PHASE 3: CODE EXPLORER ---
+        function showCode(key) {
+            const data = codeData[key];
+            const codeEl = document.getElementById('code-content');
+            const fileEl = document.getElementById('code-filename');
+            const expBox = document.getElementById('code-explanation');
+            const expText = document.getElementById('explanation-text');
+
+            // Fade effect
+            codeEl.style.opacity = 0;
+            setTimeout(() => {
+                codeEl.innerText = data.content;
+                fileEl.innerText = data.filename;
+                codeEl.style.opacity = 1;
+            }, 200);
+
+            // Show explanation
+            expText.innerText = data.explanation;
+            expBox.classList.remove('hidden');
+            expBox.classList.add('fade-in');
+        }
+
+        // --- PHASE 4: SIMULATOR ---
+        function simulateRequest() {
+            const method = document.getElementById('req-method').value;
+            const output = document.getElementById('res-output');
+            const status = document.getElementById('status-code');
+            
+            output.innerText = "Conectando a BD...";
+            status.classList.add('hidden');
+
+            setTimeout(() => {
+                if (method === 'POST') {
+                    output.innerText = JSON.stringify({
+                        id: 15,
+                        nombre: "Juan Pérez",
+                        email: "juan@uni.edu",
+                        carrera_id: 1
+                    }, null, 2);
+                    status.innerText = "Status: 201 Created";
+                    status.className = "text-green-500 font-bold block";
+                } else {
+                    // GET Logic
+                    output.innerText = JSON.stringify([
+                        { id: 1, nombre: "Ana", email: "ana@email.com", carrera: "Ingeniería" },
+                        { id: 15, nombre: "Juan Pérez", email: "juan@uni.edu", carrera: "Ingeniería" }
+                    ], null, 2);
+                    status.innerText = "Status: 200 OK";
+                    status.className = "text-blue-500 font-bold block";
+                }
+            }, 800);
+        }
+
+        // --- BONUS: CHART ---
+        let chartInstance = null;
+        function renderChart() {
+            if(chartInstance) return; // Prevent re-render
+
+            const ctx = document.getElementById('ormChart').getContext('2d');
+            
+            chartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Velocidad Desarrollo', 'Rendimiento (Raw)', 'Control', 'Seguridad Auto', 'Curva Aprendizaje (Facilidad)'],
+                    datasets: [{
+                        label: 'SQL Puro (Lo que hicimos hoy)',
+                        data: [60, 95, 100, 50, 40], // High performance/control, harder learning
+                        fill: true,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                    }, {
+                        label: 'ORM (Sequelize)',
+                        data: [90, 75, 60, 95, 80], // High speed/safety, lower raw perf
+                        fill: true,
+                        backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                        borderColor: 'rgb(168, 85, 247)',
+                        pointBackgroundColor: 'rgb(168, 85, 247)',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: { line: { borderWidth: 3 } },
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e5e7eb' },
+                            grid: { color: '#e5e7eb' },
+                            pointLabels: { font: { size: 12, family: 'Inter' } },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Initial setup
+        navigate('intro');
+    </script>
+</body>
+</html>

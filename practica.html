@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA-Mentor: Práctica Cloudinary</title>
+<script src="https://www.google.com/search?q=https://cdn.tailwindcss.com"></script>
+<script src="https://www.google.com/search?q=https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DInter:wght%40300%3B400%3B600%3B700%26display%3Dswap" rel="stylesheet">
+<style>
+body { font-family: 'Inter', sans-serif; }
+.chart-container {
+position: relative;
+width: 100%;
+max-width: 500px;
+margin-left: auto;
+margin-right: auto;
+height: 350px;
+max-height: 400px;
+}
+.flow-line { flex-grow: 1; height: 2px; background-color: #6366f1; }
+.arrow-right { width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid #6366f1; }
+
+    /* Spinner para IA */
+    .loader {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #6366f1;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+
+
+</head>
+<body class="bg-stone-50 text-slate-800">
+
+<!-- Chosen Palette: Warm Neutrals (Stone-50) with Indigo Primary (Indigo-600) and Slate/Rose Accents -->
+<!-- Application Structure Plan: 
+     La SPA se organiza como un "Centro de Comando del Estudiante":
+     1. Header & Hero: Contexto académico inmediato.
+     2. Laboratorio de IA (✨ NUEVO): Integración con Gemini para mentoría de código y generación de documentos. 
+        Elegido para dar feedback inmediato al alumno antes de que entregue.
+     3. Guía Visual: Diagrama de flujo CSS para arquitectura.
+     4. Checklist & Rubric Simulator: Herramientas de autogestión y autoevaluación.
+     5. Footer: Créditos y contexto del curso.
+-->
+<!-- Visualization & Content Choices:
+     - IA Mentor (Gemini): Interfaz de chat/formulario para análisis de código. Objetivo: Enseñar/Corregir.
+     - Rubric Radar (Chart.js): Visualización de balance de habilidades. Objetivo: Comparar.
+     - Flowchart (CSS/HTML): Representación lógica del backend. Objetivo: Organizar.
+     - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+-->
+
+<!-- Navigation -->
+<nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center gap-3">
+                <span class="bg-indigo-600 text-white font-bold rounded-lg w-8 h-8 flex items-center justify-center">IA</span>
+                <h1 class="font-bold text-xl tracking-tight text-slate-900 italic">IA-ntor <span class="text-indigo-600">Académico</span></h1>
+            </div>
+            <div class="flex items-center space-x-4 text-sm font-medium">
+                <span class="text-slate-500 hidden sm:inline">Práctica: Cloudinary</span>
+                <span class="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-xs font-bold">FECHA LÍMITE: MAÑANA</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-indigo-700 to-indigo-900 rounded-3xl shadow-xl p-8 mb-10 text-white relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl">
+            <h2 class="text-3xl font-bold mb-4">Potencia tu código con Inteligencia Artificial</h2>
+            <p class="text-indigo-100 text-lg mb-6 leading-relaxed">
+                Hemos integrado a <strong>Gemini</strong> para que sea tu mentor personal. Úsalo para validar si tu lógica de promesas es correcta o para redactar tu documentación.
+            </p>
+            <div class="flex gap-4">
+                <a href="#ai-lab" class="bg-white text-indigo-700 px-6 py-2 rounded-full font-bold hover:bg-indigo-50 transition-all shadow-md">Ir al Laboratorio ✨</a>
+            </div>
+        </div>
+        <!-- Decorative circle (No SVG) -->
+        <div class="absolute -right-20 -top-20 w-80 h-80 bg-indigo-500 opacity-20 rounded-full"></div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        <!-- Main Content Area -->
+        <div class="lg:col-span-8 space-y-12">
+
+            <!-- 1. AI LAB (Gemini Integration) -->
+            <section id="ai-lab" class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+                <div class="p-6 bg-slate-900 text-white flex justify-between items-center">
+                    <div>
+                        <h3 class="text-xl font-bold">✨ Laboratorio de Mentoría IA</h3>
+                        <p class="text-slate-400 text-xs">Desarrollado con Google Gemini 2.5 Flash</p>
+                    </div>
+                    <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-[10px] font-bold border border-green-500/30 uppercase tracking-widest">En Línea</span>
+                </div>
+
+                <div class="p-8">
+                    <div class="flex gap-2 mb-6 border-b border-stone-100 pb-2">
+                        <button onclick="switchAITab('mentor')" id="tab-mentor" class="px-4 py-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 transition-all">Mentor de Código</button>
+                        <button onclick="switchAITab('docs')" id="tab-docs" class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-indigo-600 transition-all">Generador de README</button>
+                    </div>
+
+                    <!-- Tab: Mentor de Código -->
+                    <div id="ai-mentor-view" class="space-y-4">
+                        <p class="text-sm text-slate-600 italic">Pega tu fragmento de JavaScript aquí para que la IA verifique si estás cumpliendo la regla de <strong>PROHIBIDO async/await</strong>.</p>
+                        <textarea id="ai-code-input" class="w-full h-40 p-4 font-mono text-xs bg-slate-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="// Ejemplo: fetch(...).then(...)"></textarea>
+                        <button onclick="askMentor()" id="btn-mentor" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-lg transform active:scale-95 transition-all">
+                            ✨ Analizar Código con IA
+                        </button>
+                    </div>
+
+                    <!-- Tab: Docs -->
+                    <div id="ai-docs-view" class="hidden space-y-4">
+                        <p class="text-sm text-slate-600 italic">¿Te falta el README para GitHub? Cuéntanos qué características extra añadiste (ej: filtros CSS, validación de peso) y la IA redactará el texto.</p>
+                        <input id="ai-docs-input" type="text" class="w-full p-4 text-sm bg-slate-50 border border-stone-200 rounded-xl outline-none" placeholder="Ej: Añadí una barra de progreso real y filtros de escala de grises.">
+                        <button onclick="generateReadme()" id="btn-docs" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold hover:bg-slate-900 shadow-lg transform active:scale-95 transition-all">
+                            ✨ Redactar README.md Profesional
+                        </button>
+                    </div>
+
+                    <!-- Response Area -->
+                    <div id="ai-response-container" class="hidden mt-8 p-6 bg-indigo-50 rounded-2xl border border-indigo-100 relative">
+                        <div id="ai-loading" class="hidden absolute inset-0 bg-indigo-50/80 flex items-center justify-center rounded-2xl z-10">
+                            <div class="flex flex-col items-center">
+                                <div class="loader mb-2"></div>
+                                <span class="text-xs text-indigo-600 font-bold animate-pulse">Gemini está pensando...</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-xl">🤖</span>
+                            <h4 class="font-bold text-indigo-900 text-sm">Respuesta de tu Mentor IA:</h4>
+                        </div>
+                        <div id="ai-output" class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Arquitectura (From Source) -->
+            <section class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+                <div class="p-6 border-b border-stone-100">
+                    <h3 class="text-xl font-bold text-slate-800 italic">Guía Visual: El Flujo Asíncrono</h3>
+                </div>
+                <div class="p-6">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4 py-8 px-4 bg-stone-50 rounded-xl">
+                        <!-- Step 1 -->
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-14 h-14 bg-white rounded-xl border border-stone-200 flex items-center justify-center shadow-sm">💻</div>
+                            <span class="mt-2 text-[10px] font-black uppercase text-slate-400">Cliente</span>
+                            <span class="text-xs font-bold">Fetch POST</span>
+                        </div>
+                        <div class="hidden md:flex flex-grow items-center"><div class="flow-line opacity-30"></div><div class="arrow-right opacity-30"></div></div>
+                        <!-- Step 2 -->
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-14 h-14 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg">☁️</div>
+                            <span class="mt-2 text-[10px] font-black uppercase text-indigo-400">Cloudinary</span>
+                            <span class="text-xs font-bold text-indigo-700">Storage</span>
+                        </div>
+                        <div class="hidden md:flex flex-grow items-center"><div class="flow-line opacity-30"></div><div class="arrow-right opacity-30"></div></div>
+                        <!-- Step 3 -->
+                        <div class="flex flex-col items-center text-center">
+                            <div class="w-14 h-14 bg-white rounded-xl border border-stone-200 flex items-center justify-center shadow-sm">🖼️</div>
+                            <span class="mt-2 text-[10px] font-black uppercase text-slate-400">DOM</span>
+                            <span class="text-xs font-bold">Render URL</span>
+                        </div>
+                    </div>
+                    <p class="mt-6 text-sm text-slate-500 leading-relaxed">
+                        Recuerda: El cliente envía los datos en un objeto <code>FormData</code>. Si Cloudinary responde con éxito, recibiremos un objeto con la propiedad <code>secure_url</code>.
+                    </p>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="lg:col-span-4 space-y-8">
+            
+            <!-- Rubric Simulator -->
+            <div class="bg-white rounded-2xl shadow-xl border border-stone-200 overflow-hidden sticky top-24">
+                <div class="bg-indigo-600 p-6 text-white text-center">
+                    <h4 class="font-bold">Calculadora de Nota</h4>
+                    <p class="text-indigo-200 text-xs">Simula tu éxito académico</p>
+                </div>
+                <div class="p-6">
+                    <div class="chart-container">
+                        <canvas id="rubricChart"></canvas>
+                    </div>
+                    
+                    <div class="mt-6 space-y-4">
+                        <div class="flex flex-col">
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1 uppercase tracking-tighter">
+                                <span>Funcionalidad</span>
+                                <span id="score-func">0/5</span>
+                            </div>
+                            <input type="range" min="0" max="5" step="2.5" value="0" oninput="updateRubric('func', this.value)" class="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none">
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1 uppercase tracking-tighter">
+                                <span>Código (.then)</span>
+                                <span id="score-code">0/5</span>
+                            </div>
+                            <input type="range" min="0" max="5" step="2.5" value="0" oninput="updateRubric('code', this.value)" class="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none">
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1 uppercase tracking-tighter">
+                                <span>UX / UI</span>
+                                <span id="score-ux">0/5</span>
+                            </div>
+                            <input type="range" min="0" max="5" step="2.5" value="0" oninput="updateRubric('ux', this.value)" class="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none">
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1 uppercase tracking-tighter">
+                                <span>Despliegue</span>
+                                <span id="score-dep">0/5</span>
+                            </div>
+                            <input type="range" min="0" max="5" step="2.5" value="0" oninput="updateRubric('dep', this.value)" class="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none">
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-4 border-t border-stone-100 flex justify-between items-baseline">
+                        <span class="text-sm font-bold text-slate-400 uppercase">Total Estimado:</span>
+                        <span id="final-grade" class="text-4xl font-black text-indigo-600">00<span class="text-xl text-slate-300">/20</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fast Links -->
+            <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                <h5 class="text-indigo-900 font-bold text-sm mb-4">Recursos de Interés</h5>
+                <ul class="space-y-3">
+                    <li class="flex items-center gap-2 text-xs text-indigo-700 font-medium cursor-pointer hover:underline">
+                        <span>📘</span> Documentación Fetch API
+                    </li>
+                    <li class="flex items-center gap-2 text-xs text-indigo-700 font-medium cursor-pointer hover:underline">
+                        <span>☁️</span> Consola de Cloudinary
+                    </li>
+                    <li class="flex items-center gap-2 text-xs text-indigo-700 font-medium cursor-pointer hover:underline">
+                        <span>🐙</span> Tutorial GitHub Pages
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<footer class="mt-20 border-t border-stone-200 py-10 bg-white">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Plataforma Académica de Apoyo</p>
+        <p class="text-slate-300 text-[10px] mt-2 italic">Desarrollado para la Cátedra de Arquitectura Backend. IA Integrada mediante Google Gemini.</p>
+    </div>
+</footer>
+
+<script>
+    // --- GEMINI API LOGIC ---
+    const apiKey = ""; // API Key se inyecta en el entorno de ejecución
+    
+    async function callGemini(prompt, systemMsg) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        
+        const payload = {
+            contents: [{ parts: [{ text: prompt }] }],
+            systemInstruction: { parts: [{ text: systemMsg }] }
+        };
+
+        const fetchWithRetry = async (retries = 5, delay = 1000) => {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                if (retries > 0) {
+                    await new Promise(res => setTimeout(res, delay));
+                    return fetchWithRetry(retries - 1, delay * 2);
+                }
+                throw error;
+            }
+        };
+
+        try {
+            const result = await fetchWithRetry();
+            return result.candidates?.[0]?.content?.parts?.[0]?.text;
+        } catch (err) {
+            return "Lo siento, hubo un error conectando con mi cerebro de IA. Por favor, intenta de nuevo en unos segundos.";
+        }
+    }
+
+    // --- UI ACTIONS ---
+    function switchAITab(tab) {
+        const mentorView = document.getElementById('ai-mentor-view');
+        const docsView = document.getElementById('ai-docs-view');
+        const tabMentor = document.getElementById('tab-mentor');
+        const tabDocs = document.getElementById('tab-docs');
+
+        if (tab === 'mentor') {
+            mentorView.classList.remove('hidden');
+            docsView.classList.add('hidden');
+            tabMentor.className = "px-4 py-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 transition-all";
+            tabDocs.className = "px-4 py-2 text-sm font-medium text-slate-500 hover:text-indigo-600 transition-all";
+        } else {
+            mentorView.classList.add('hidden');
+            docsView.classList.remove('hidden');
+            tabMentor.className = "px-4 py-2 text-sm font-medium text-slate-500 hover:text-indigo-600 transition-all";
+            tabDocs.className = "px-4 py-2 text-sm font-bold border-b-2 border-slate-800 text-slate-800 transition-all";
+        }
+    }
+
+    async function askMentor() {
+        const code = document.getElementById('ai-code-input').value;
+        if (!code.trim()) return alert("Pega tu código primero");
+
+        toggleAILoading(true);
+        const systemMsg = "Actúa como un profesor de programación estricto pero amable. El alumno tiene prohibido usar async/await en esta práctica, debe usar obligatoriamente cadenas de promesas con .then() y .catch(). Analiza el código que te pase. Si usa async/await, explícale por qué está mal para esta práctica y muéstrale cómo convertirlo a .then(). Si ya usa .then(), felicítalo y dale un pequeño consejo de mejora de sintaxis.";
+        
+        const response = await callGemini(code, systemMsg);
+        displayAIResponse(response);
+        toggleAILoading(false);
+    }
+
+    async function generateReadme() {
+        const info = document.getElementById('ai-docs-input').value;
+        toggleAILoading(true);
+        const systemMsg = "Genera un archivo README.md profesional para un repositorio de GitHub. El proyecto consiste en subir imágenes a Cloudinary usando JS Vanilla. El alumno te dirá qué características extra añadió. El README debe incluir: Título, Descripción, Tecnologías (JS, Cloudinary, Tailwind), Instrucciones de instalación y Autor. Devuelve el contenido en formato Markdown legible.";
+        
+        const response = await callGemini(info, systemMsg);
+        displayAIResponse(response);
+        toggleAILoading(false);
+    }
+
+    function toggleAILoading(show) {
+        document.getElementById('ai-response-container').classList.remove('hidden');
+        document.getElementById('ai-loading').classList.toggle('hidden', !show);
+    }
+
+    function displayAIResponse(text) {
+        document.getElementById('ai-output').innerText = text;
+    }
+
+    // --- RUBRIC LOGIC ---
+    const scores = { func: 0, code: 0, ux: 0, dep: 0 };
+    const ctx = document.getElementById('rubricChart').getContext('2d');
+    const rubricChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Funcionalidad', 'Promesas', 'UX/UI', 'Despliegue'],
+            datasets: [{
+                label: 'Puntaje',
+                data: [0, 0, 0, 0],
+                backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                borderColor: 'rgb(99, 102, 241)',
+                pointBackgroundColor: 'rgb(99, 102, 241)',
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                r: { beginAtZero: true, max: 5, ticks: { display: false }, grid: { color: '#f1f5f9' } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    function updateRubric(key, val) {
+        const numVal = parseFloat(val);
+        // Map 2.5 to 3 for exact rubric matching (3 pts = "In Progress")
+        const points = numVal === 2.5 ? 3 : numVal;
+        scores[key] = points;
+        
+        document.getElementById(`score-${key}`).innerText = `${points}/5`;
+        
+        const total = Object.values(scores).reduce((a, b) => a + b, 0);
+        document.getElementById('final-grade').innerHTML = `${String(total).padStart(2, '0')}<span class="text-xl text-slate-300">/20</span>`;
+        
+        rubricChart.data.datasets[0].data = [scores.func, scores.code, scores.ux, scores.dep];
+        rubricChart.update();
+    }
+</script>
+
+
+</body>
+</html>
