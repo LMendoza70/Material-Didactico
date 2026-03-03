@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva: Autenticación JWT en Express</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Prism.js para resaltado de sintaxis -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        .chart-container { position: relative; width: 100%; max-width: 250px; margin-left: auto; margin-right: auto; height: 250px; max-height: 250px; }
+        @media (min-width: 768px) { .chart-container { height: 250px; } }
+        .glass-panel { background: rgba(255, 255, 255, 0.98); border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .code-block-wrapper { background-color: #1d1f21; border-radius: 0.5rem; overflow: hidden; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .tab-active { border-bottom-color: #2563eb; color: #1e3a8a; font-weight: 600; }
+        .tab-inactive { border-bottom-color: transparent; color: #64748b; }
+        .tab-inactive:hover { color: #334155; border-bottom-color: #cbd5e1; }
+        .diagram-box { border: 2px solid #cbd5e1; border-radius: 0.5rem; padding: 1rem; text-align: center; background: white; font-weight: 500; font-size: 0.875rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .diagram-arrow { color: #94a3b8; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; padding: 0 0.5rem; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* Ajustes para Prism */
+        pre[class*="language-"] { margin: 0 !important; padding: 1.25rem !important; background: transparent !important; }
+        code[class*="language-"] { font-size: 0.875rem !important; line-height: 1.5 !important; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans h-screen flex flex-col md:flex-row overflow-hidden custom-scrollbar">
+
+    <!-- Chosen Palette: Warm Neutrals with Indigo/Blue Accents (#f8fafc background, #1e3a8a primary text, #2563eb interactive elements, #10b981 success state) -->
+    <!-- Application Structure Plan: The SPA uses a sidebar-navigation dashboard architecture. The source report is highly sequential (10 steps). To optimize consumption, the application breaks the monolithic text into an interactive step-by-step tutorial. The left sidebar tracks progress and allows non-linear navigation. The main viewing area displays the active module. Each step is further organized into functional tabs (Concepto, Código, Prueba) to reduce cognitive load and separate pedagogical theory from actionable code. An Overview section uses visual diagrams and a progress chart to summarize the goal before the user begins coding. -->
+    <!-- Visualization & Content Choices: 
+         1. Overall Progress -> Goal: Inform -> Viz: Doughnut Chart (Chart.js) -> Interaction: Updates as steps are marked complete -> Justification: Provides immediate visual feedback and gamifies the learning process. NO SVG used.
+         2. JWT Architecture Flow -> Goal: Organize/Relationships -> Viz: Flexbox Diagram (HTML/CSS) -> Interaction: Hover effects on nodes -> Justification: Explains the abstract concept of token exchange before diving into code, using pure DOM elements. NO SVG/Mermaid used.
+         3. Step Content -> Goal: Organize/Inform -> Viz: Tabbed Interface -> Interaction: Click tabs to swap content -> Justification: Prevents endless scrolling; allows students to focus solely on theory, code, or testing at any given moment.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <nav class="md:w-72 bg-white border-r border-slate-200 flex flex-col h-auto md:h-full shrink-0 z-20 shadow-sm">
+        <div class="p-6 border-b border-slate-200 bg-slate-50">
+            <h1 class="text-xl font-bold text-indigo-900 leading-tight">Integración JWT</h1>
+            <p class="text-xs text-slate-500 mt-2 font-medium">MTI. Luis Alberto Mendoza S.J.</p>
+            <p class="text-xs text-slate-400 mt-1">App Web Orientadas a Servicios</p>
+        </div>
+        
+        <div class="p-4 md:hidden flex justify-between items-center bg-white border-b border-slate-200">
+            <span class="font-semibold text-slate-700" id="mobileMenuLabel">Menú de Módulos</span>
+            <button id="mobileMenuBtn" class="p-2 bg-slate-100 rounded text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                &#9776;
+            </button>
+        </div>
+
+        <div id="sidebarContent" class="hidden md:flex flex-col flex-1 overflow-y-auto custom-scrollbar p-4 space-y-1">
+            <button id="nav-overview" class="nav-btn w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-blue-50 text-blue-700">
+                &#127968; Visión General
+            </button>
+            <div class="my-2 border-t border-slate-100"></div>
+            <div id="stepsListContainer" class="space-y-1"></div>
+        </div>
+        <div class="p-4 border-t border-slate-200 bg-slate-50 hidden md:block">
+            <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-2">
+                <span>Progreso del Curso</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-2">
+                <div id="progressBar" class="bg-green-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 h-full overflow-y-auto custom-scrollbar bg-slate-50 relative" id="mainScrollArea">
+        <div class="max-w-4xl mx-auto p-6 md:p-10 lg:p-12 pb-32">
+            
+            <div id="view-overview" class="view-section fade-in">
+                <div class="mb-8">
+                    <span class="inline-block px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-bold tracking-wide mb-4">MÓDULO DE SEGURIDAD</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Autenticación Segura con JSON Web Tokens</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed">
+                        Esta sección proporciona una visión general del módulo de aprendizaje, mostrando tu progreso actual y explicando el flujo conceptual de la autenticación JWT. Aquí podrás visualizar cómo interactúan el cliente y el servidor antes de sumergirte en la implementación en código en tu API REST (Express + MySQL).
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+                    <div class="glass-panel rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">&#128202; Tu Progreso</h3>
+                        <div class="chart-container">
+                            <canvas id="progressChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-slate-500 mt-4">Completa los pasos en el menú para avanzar.</p>
+                    </div>
+
+                    <div class="glass-panel rounded-xl p-6 flex flex-col justify-center">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">&#128736; Mejoras Aplicadas en esta Versión</h3>
+                        <ul class="space-y-3 text-sm text-slate-600">
+                            <li class="flex items-start"><span class="text-green-500 mr-2">&#10004;</span> <strong>Validación Básica:</strong> Evita procesamiento de datos malformados antes de tocar la BD.</li>
+                            <li class="flex items-start"><span class="text-green-500 mr-2">&#10004;</span> <strong>Estados HTTP Precisos:</strong> Uso de 409 Conflict para duplicados y 400 Bad Request.</li>
+                            <li class="flex items-start"><span class="text-green-500 mr-2">&#10004;</span> <strong>Seguridad de Capas:</strong> Preparación para proteger cabeceras de peticiones.</li>
+                            <li class="flex items-start"><span class="text-green-500 mr-2">&#10004;</span> <strong>Consistencia Estricta:</strong> Nombres de campos alineados entre JSON y lógica de negocio.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl p-6 mb-10">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6 text-center">&#128260; Arquitectura Conceptual JWT</h3>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-2 mb-8 overflow-x-auto py-4">
+                        <div class="diagram-box w-40 border-blue-300 bg-blue-50 text-blue-800">
+                            <div class="text-2xl mb-1">&#128187;</div>
+                            Cliente POST /login
+                        </div>
+                        <div class="diagram-arrow">&#10142;</div>
+                        <div class="diagram-box w-40 border-indigo-300 bg-indigo-50 text-indigo-800">
+                            <div class="text-2xl mb-1">&#128274;</div>
+                            Auth Controller (Valida Hash)
+                        </div>
+                        <div class="diagram-arrow">&#10142;</div>
+                        <div class="diagram-box w-40 border-purple-300 bg-purple-50 text-purple-800">
+                            <div class="text-2xl mb-1">&#128221;</div>
+                            Genera JWT firmado
+                        </div>
+                        <div class="diagram-arrow">&#10142;</div>
+                        <div class="diagram-box w-40 border-green-300 bg-green-50 text-green-800">
+                            <div class="text-2xl mb-1">&#127915;</div>
+                            Retorna Token al Cliente
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-2 overflow-x-auto py-4">
+                        <div class="diagram-box w-40 border-blue-300 bg-blue-50 text-blue-800">
+                            <div class="text-2xl mb-1">&#128228;</div>
+                            Petición + Header Bearer
+                        </div>
+                        <div class="diagram-arrow">&#10142;</div>
+                        <div class="diagram-box w-40 border-orange-300 bg-orange-50 text-orange-800">
+                            <div class="text-2xl mb-1">&#9881;</div>
+                            Auth Middleware (Verifica Firma)
+                        </div>
+                        <div class="diagram-arrow">&#10142;</div>
+                        <div class="diagram-box w-40 border-indigo-300 bg-indigo-50 text-indigo-800">
+                            <div class="text-2xl mb-1">&#128194;</div>
+                            Controlador de Recurso
+                        </div>
+                        <div class="diagram-arrow">&#10142;</div>
+                        <div class="diagram-box w-40 border-green-300 bg-green-50 text-green-800">
+                            <div class="text-2xl mb-1">&#10004;</div>
+                            Acceso Concedido (200 OK)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end">
+                    <button onclick="app.goToStep(0)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors flex items-center">
+                        Comenzar Tutorial &#10142;
+                    </button>
+                </div>
+            </div>
+
+            <div id="view-step" class="view-section hidden fade-in">
+                <div class="mb-6">
+                    <p class="text-sm font-semibold text-blue-600 tracking-wide uppercase mb-1" id="stepIndicator">Paso X de Y</p>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900" id="stepTitle">Título del Paso</h2>
+                </div>
+
+                <p class="text-slate-600 mb-6 bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg text-sm">
+                    Esta sección desglosa el paso actual en conceptos teóricos, implementación práctica de código y validaciones. Interactúa con las pestañas inferiores para explorar el porqué de cada acción, copiar el código necesario a tu proyecto y verificar que tu avance sea el correcto.
+                </p>
+
+                <div class="glass-panel rounded-xl overflow-hidden mb-8">
+                    <div class="flex border-b border-slate-200 bg-slate-50 overflow-x-auto custom-scrollbar">
+                        <button class="step-tab-btn tab-active px-6 py-4 text-sm focus:outline-none whitespace-nowrap" data-target="tab-theory">
+                            &#128214; Sustento Pedagógico
+                        </button>
+                        <button class="step-tab-btn tab-inactive px-6 py-4 text-sm focus:outline-none border-b-2 whitespace-nowrap transition-colors" data-target="tab-code">
+                            &#128187; Código
+                        </button>
+                        <button class="step-tab-btn tab-inactive px-6 py-4 text-sm focus:outline-none border-b-2 whitespace-nowrap transition-colors" data-target="tab-test">
+                            &#10004; Pruebas y Notas
+                        </button>
+                    </div>
+
+                    <div class="p-6 md:p-8 bg-white min-h-[300px]">
+                        <div id="tab-theory" class="tab-content text-slate-700 leading-relaxed">
+                        </div>
+
+                        <div id="tab-code" class="tab-content hidden relative">
+                            <button id="copyBtn" class="absolute top-2 right-2 z-10 bg-slate-700 hover:bg-slate-600 text-white text-xs py-1 px-3 rounded shadow transition-colors">Copiar</button>
+                            <div class="code-block-wrapper">
+                                <pre><code id="codeBlock" class="language-javascript"></code></pre>
+                            </div>
+                        </div>
+
+                        <div id="tab-test" class="tab-content hidden text-slate-700 leading-relaxed">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-slate-200 pt-6">
+                    <button id="prevBtn" class="w-full sm:w-auto px-5 py-2 rounded border border-slate-300 text-slate-600 hover:bg-slate-100 transition-colors font-medium">
+                        &#10094; Anterior
+                    </button>
+                    <button id="completeBtn" class="w-full sm:w-auto px-6 py-2 rounded bg-green-500 hover:bg-green-600 text-white shadow transition-colors font-bold flex items-center justify-center">
+                        <span id="completeIcon" class="mr-2">&#9711;</span> Marcar como Completado
+                    </button>
+                    <button id="nextBtn" class="w-full sm:w-auto px-5 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white shadow transition-colors font-medium">
+                        Siguiente &#10095;
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Prism.js Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+
+    <script>
+        const tutorialData = [
+            {
+                title: "Dependencias de Seguridad",
+                lang: "bash",
+                theory: "Instalamos las herramientas críticas para el cifrado y la generación de tokens. Bcryptjs implementa hashing en JavaScript puro, lo cual evita problemas de compilación en ciertos entornos como Vercel o Windows al no requerir dependencias de C++. JSONWebToken es el estándar industrial que usaremos para emitir y validar los tokens de acceso sin necesidad de mantener sesiones en el servidor.",
+                code: "npm install bcryptjs jsonwebtoken",
+                test: "Verifica que ambas dependencias se hayan agregado a la sección 'dependencies' de tu archivo package.json. No uses flag de desarrollo porque son necesarias en el entorno de producción."
+            },
+            {
+                title: "Configuración del Secreto (.env)",
+                lang: "bash",
+                theory: "JWT requiere una clave criptográfica (secreto) para firmar los tokens emitidos y posteriormente verificar que no hayan sido alterados. Esta clave debe ser larga, compleja y almacenarse únicamente en las variables de entorno, jamás en el repositorio de código. Una clave débil o expuesta permite a un atacante falsificar tokens y obtener acceso total.",
+                code: "JWT_SECRET=8f4e6d2a1b9c3d5e7f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e",
+                test: "Agrega esta línea a tu archivo .env local. Asegúrate de tener también un archivo .env.example que contenga 'JWT_SECRET=' vacío para que otros desarrolladores sepan que deben definir esta variable."
+            },
+            {
+                title: "Base de Datos (Tabla Usuarios)",
+                lang: "sql",
+                theory: "Necesitamos una estructura en nuestra base de datos MySQL para persistir las credenciales de acceso. En lugar de almacenar la contraseña real, almacenaremos un 'hash' generado por Bcrypt. Hemos incluido un campo 'rol' (admin/profesor) para implementar autorización basada en roles más adelante.",
+                code: "USE gestion_estudiantes;\n\nCREATE TABLE IF NOT EXISTS usuarios (\n    id_usuario INT AUTO_INCREMENT PRIMARY KEY,\n    email VARCHAR(120) NOT NULL UNIQUE,\n    password_hash VARCHAR(255) NOT NULL,\n    nombre_completo VARCHAR(150) NOT NULL,\n    rol ENUM('admin', 'profesor') DEFAULT 'profesor',\n    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP\n);",
+                test: "Ejecuta este script SQL en tu cliente MySQL (Workbench, phpMyAdmin). Nota importante: No insertes usuarios de prueba manualmente con contraseñas legibles; el login requerirá estrictamente que el valor almacenado sea un hash válido de Bcrypt."
+            },
+            {
+                title: "Modelo de Usuario (usuario.model.js)",
+                lang: "javascript",
+                theory: "Siguiendo el patrón MVC, encapsulamos las consultas a la base de datos dentro de un modelo. Aquí definimos dos funciones: una para insertar un nuevo usuario (utilizada en el registro) y otra para buscar un usuario por su correo electrónico (utilizada tanto en el login para verificar credenciales, como en el registro para evitar duplicados).",
+                code: "import db from '../config/db.js';\n\nexport const createUsuario = async (email, passwordHash, nombre_completo) => {\n    const [result] = await db.query(\n        'INSERT INTO usuarios (email, password_hash, nombre_completo) VALUES (?, ?, ?)',\n        [email, passwordHash, nombre_completo]\n    );\n    return result.insertId;\n};\n\nexport const findUsuarioByEmail = async (email) => {\n    const [rows] = await db.query(\n        'SELECT id_usuario, email, password_hash, nombre_completo, rol FROM usuarios WHERE email = ?',\n        [email]\n    );\n    return rows[0];\n};",
+                test: "Crea el archivo src/models/usuario.model.js y pega el código. Asegúrate de que la ruta de importación de '../config/db.js' coincida con la estructura actual de tu proyecto base."
+            },
+            {
+                title: "Controlador Auth (auth.controller.js)",
+                lang: "javascript",
+                theory: "El controlador es el núcleo de la autenticación. La función 'register' aplica validación básica, verifica duplicidades (retornando 409 Conflict), genera el hash mediante Bcrypt y guarda el usuario. La función 'login' busca al usuario, compara criptográficamente la contraseña provista contra el hash, y si coincide, firma un JWT incluyendo datos no sensibles en el 'payload'.",
+                code: "import bcrypt from 'bcryptjs';\nimport jwt from 'jsonwebtoken';\nimport * as usuarioModel from '../models/usuario.model.js';\n\nexport const register = async (req, res) => {\n    try {\n        const { email, password, nombre_completo } = req.body;\n        if (!email || !password || !nombre_completo) return res.status(400).json({ message: 'Todos los campos son obligatorios' });\n\n        const existe = await usuarioModel.findUsuarioByEmail(email);\n        if (existe) return res.status(409).json({ message: 'El email ya está registrado' });\n\n        const salt = await bcrypt.genSalt(10);\n        const passwordHash = await bcrypt.hash(password, salt);\n\n        const nuevoId = await usuarioModel.createUsuario(email, passwordHash, nombre_completo);\n        res.status(201).json({ message: 'Usuario creado con éxito', id: nuevoId });\n    } catch (error) {\n        res.status(500).json({ error: 'Error interno en el servidor' });\n    }\n};\n\nexport const login = async (req, res) => {\n    try {\n        const { email, password } = req.body;\n        const usuario = await usuarioModel.findUsuarioByEmail(email);\n        if (!usuario) return res.status(401).json({ message: 'Credenciales inválidas' });\n\n        const esValida = await bcrypt.compare(password, usuario.password_hash);\n        if (!esValida) return res.status(401).json({ message: 'Credenciales inválidas' });\n\n        const token = jwt.sign(\n            { id: usuario.id_usuario, email: usuario.email, rol: usuario.rol },\n            process.env.JWT_SECRET,\n            { expiresIn: '8h' }\n        );\n\n        res.json({ token, usuario: { id: usuario.id_usuario, nombre: usuario.nombre_completo, rol: usuario.rol } });\n    } catch (error) {\n        res.status(500).json({ error: 'Error en el proceso de login' });\n    }\n};",
+                test: "Crea el archivo src/controllers/auth.controller.js. Observa cómo manejamos las respuestas HTTP: nunca revelamos si falló el correo o la contraseña de forma individual para prevenir ataques de enumeración de usuarios."
+            },
+            {
+                title: "Middleware de Seguridad",
+                lang: "javascript",
+                theory: "Un middleware en Express es una función interceptora. Este código extrae la cabecera 'Authorization', verifica que tenga el formato 'Bearer <token>', y utiliza la librería JWT para validar la firma usando nuestro secreto. Si es válido, inyecta la información decodificada del usuario en el objeto de la petición (req.usuario) para que los controladores subsiguientes sepan quién ejecuta la acción.",
+                code: "import jwt from 'jsonwebtoken';\n\nexport const verificarToken = (req, res, next) => {\n    const authHeader = req.headers['authorization'];\n    \n    if (!authHeader || !authHeader.startsWith('Bearer ')) {\n        return res.status(401).json({ message: 'Acceso denegado. Token requerido.' });\n    }\n\n    const token = authHeader.split(' ')[1];\n\n    try {\n        const verificado = jwt.verify(token, process.env.JWT_SECRET);\n        req.usuario = verificado;\n        next();\n    } catch (error) {\n        res.status(403).json({ message: 'Token no válido o expirado' });\n    }\n};",
+                test: "Crea src/middlewares/auth.middleware.js. Fíjate en el uso de códigos HTTP correctos: 401 si no hay identidad provista, y 403 si la identidad fue provista (token) pero es inválida, expirada o fue alterada."
+            },
+            {
+                title: "Rutas Públicas de Auth",
+                lang: "javascript",
+                theory: "Definimos los puntos de entrada (endpoints) para que los clientes puedan interactuar con nuestro controlador de autenticación. Estas rutas deben ser públicas, es decir, no estarán protegidas por el middleware que acabamos de crear, de lo contrario los usuarios nunca podrían iniciar sesión. Usamos el verbo POST porque se transfieren credenciales sensibles en el cuerpo de la petición.",
+                code: "import { Router } from 'express';\nimport * as authCtrl from '../controllers/auth.controller.js';\n\nconst router = Router();\n\nrouter.post('/register', authCtrl.register);\nrouter.post('/login', authCtrl.login);\n\nexport default router;",
+                test: "Crea src/routes/auth.routes.js. Ambas rutas son POST por seguridad; los verbos GET envían parámetros en la URL, lo cual dejaría contraseñas expuestas en los historiales de navegación y logs del servidor."
+            },
+            {
+                title: "Proteger Rutas Existentes",
+                lang: "javascript",
+                theory: "Aplicamos el principio de menor privilegio: las operaciones de lectura (GET) se mantienen públicas para permitir la consulta general, pero cualquier operación de mutación que altere la base de datos (POST, PUT, DELETE) requiere ahora pasar por nuestro filtro 'verificarToken'.",
+                code: "import { Router } from 'express';\nimport { verificarToken } from '../middlewares/auth.middleware.js';\nimport * as ctrl from '../controllers/alumnos.controller.js';\n\nconst router = Router();\n\n// Rutas Públicas (Lectura)\nrouter.get('/', ctrl.getAllAlumnos);\nrouter.get('/:id', ctrl.getAlumnoById);\n\n// Rutas Protegidas (Escritura/Borrado)\nrouter.post('/', verificarToken, ctrl.createAlumno);\nrouter.put('/:id', verificarToken, ctrl.updateAlumno);\nrouter.delete('/:id', verificarToken, ctrl.deleteAlumno);\n\nexport default router;",
+                test: "Abre tus archivos de rutas actuales (ej. src/routes/alumnos.routes.js y src/routes/grupos.routes.js) e inserta el middleware como segundo argumento en los endpoints sensibles. Revisa detenidamente las importaciones."
+            },
+            {
+                title: "Conexión Final en app.js",
+                lang: "javascript",
+                theory: "El archivo principal de la aplicación funciona como el conmutador central. Aquí registramos el nuevo conjunto de rutas bajo el prefijo '/api/auth'. Es fundamental configurar CORS y el parseo de JSON antes de montar las rutas para que la comunicación con aplicaciones frontend modernas funcione correctamente.",
+                code: "import express from 'express';\nimport cors from 'cors';\nimport authRoutes from './routes/auth.routes.js';\nimport alumnosRoutes from './routes/alumnos.routes.js';\nimport gruposRoutes from './routes/grupos.routes.js';\n\nconst app = express();\n\napp.use(cors());\napp.use(express.json());\n\n// Montar Rutas\napp.use('/api/auth', authRoutes);\napp.use('/api/alumnos', alumnosRoutes);\napp.use('/api/grupos', gruposRoutes);\n\nexport default app;",
+                test: "Actualiza src/app.js. Verifica que el orden sea estricto: primero configuraciones globales (cors, json), luego el montaje de rutas. Si montas las rutas antes de express.json(), req.body estará vacío."
+            },
+            {
+                title: "Pruebas y Despliegue",
+                lang: "javascript",
+                theory: "La verificación final garantiza que todas las piezas funcionen juntas. Localmente usaremos herramientas de testing de APIs, y para producción configuraremos las variables de entorno en la nube. Un punto clave es entender cómo el frontend deberá enviar el token en la cabecera 'Authorization'.",
+                code: "/* \n1. Prueba Local (Postman/Thunder Client):\n   - POST /api/auth/register (Enviar JSON)\n   - POST /api/auth/login (Copiar el 'token' de respuesta)\n   - POST /api/alumnos (Bearer Token -> pegar token)\n\n2. Despliegue (Vercel):\n   - Settings > Environment Variables > JWT_SECRET\n   - Redeploy para aplicar cambios.\n*/",
+                test: "Ejecuta 'npm run dev'. Intenta crear un alumno sin enviar token para verificar que recibes un error 401. Luego, intenta con un token provisto y confirma que la creación es exitosa."
+            }
+        ];
+
+        const appState = {
+            currentStep: -1,
+            completedSteps: new Set(),
+            chartInstance: null
+        };
+
+        const dom = {
+            sidebarContent: document.getElementById('sidebarContent'),
+            stepsListContainer: document.getElementById('stepsListContainer'),
+            navOverview: document.getElementById('nav-overview'),
+            mainScrollArea: document.getElementById('mainScrollArea'),
+            viewOverview: document.getElementById('view-overview'),
+            viewStep: document.getElementById('view-step'),
+            progressText: document.getElementById('progressText'),
+            progressBar: document.getElementById('progressBar'),
+            stepIndicator: document.getElementById('stepIndicator'),
+            stepTitle: document.getElementById('stepTitle'),
+            tabTheory: document.getElementById('tab-theory'),
+            tabCode: document.getElementById('tab-code'),
+            tabTest: document.getElementById('tab-test'),
+            codeBlock: document.getElementById('codeBlock'),
+            tabBtns: document.querySelectorAll('.step-tab-btn'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn'),
+            completeBtn: document.getElementById('completeBtn'),
+            completeIcon: document.getElementById('completeIcon'),
+            copyBtn: document.getElementById('copyBtn'),
+            mobileMenuBtn: document.getElementById('mobileMenuBtn')
+        };
+
+        const app = {
+            init() {
+                this.renderSidebar();
+                this.initChart();
+                this.bindEvents();
+                this.showOverview();
+            },
+
+            renderSidebar() {
+                dom.stepsListContainer.innerHTML = '';
+                tutorialData.forEach((step, index) => {
+                    const btn = document.createElement('button');
+                    const isCompleted = appState.completedSteps.has(index);
+                    btn.className = `step-nav-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group ${isCompleted ? 'text-slate-600' : 'text-slate-600 hover:bg-slate-100'}`;
+                    btn.onclick = () => this.goToStep(index);
+                    
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'truncate pr-2';
+                    textSpan.textContent = `${index + 1}. ${step.title}`;
+                    
+                    const iconSpan = document.createElement('span');
+                    iconSpan.className = `shrink-0 text-xs ${isCompleted ? 'text-green-500 font-bold' : 'text-slate-300 group-hover:text-slate-400'}`;
+                    iconSpan.innerHTML = isCompleted ? '&#10004;' : '&#9711;';
+
+                    btn.appendChild(textSpan);
+                    btn.appendChild(iconSpan);
+                    dom.stepsListContainer.appendChild(btn);
+                });
+            },
+
+            updateSidebarHighlight() {
+                dom.navOverview.className = `nav-btn w-full text-left px-4 py-3 rounded-lg text-sm transition-colors ${appState.currentStep === -1 ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-100'}`;
+                
+                const stepBtns = dom.stepsListContainer.querySelectorAll('.step-nav-btn');
+                stepBtns.forEach((btn, index) => {
+                    const isCompleted = appState.completedSteps.has(index);
+                    if (index === appState.currentStep) {
+                        btn.className = `step-nav-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between bg-blue-50 text-blue-700 font-medium`;
+                    } else {
+                        btn.className = `step-nav-btn w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors flex items-center justify-between group text-slate-600 hover:bg-slate-100`;
+                    }
+                    const iconSpan = btn.querySelector('span:last-child');
+                    iconSpan.className = `shrink-0 text-xs ${isCompleted ? 'text-green-500 font-bold' : 'text-slate-300 group-hover:text-slate-400'}`;
+                });
+            },
+
+            initChart() {
+                const ctx = document.getElementById('progressChart').getContext('2d');
+                appState.chartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completado', 'Pendiente'],
+                        datasets: [{
+                            data: [0, tutorialData.length],
+                            backgroundColor: ['#10b981', '#e2e8f0'],
+                            borderWidth: 0,
+                            cutout: '75%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15, font: { family: 'system-ui' } } },
+                            tooltip: { callbacks: { label: (context) => ` ${context.label}: ${context.raw} pasos` } }
+                        },
+                        animation: { animateScale: true, animateRotate: true }
+                    }
+                });
+            },
+
+            updateProgress() {
+                const completed = appState.completedSteps.size;
+                const total = tutorialData.length;
+                const pct = Math.round((completed / total) * 100);
+                
+                dom.progressText.textContent = `${pct}%`;
+                dom.progressBar.style.width = `${pct}%`;
+                
+                if (appState.chartInstance) {
+                    appState.chartInstance.data.datasets[0].data = [completed, total - completed];
+                    appState.chartInstance.update();
+                }
+                this.renderSidebar();
+                this.updateSidebarHighlight();
+            },
+
+            showOverview() {
+                appState.currentStep = -1;
+                dom.viewOverview.classList.remove('hidden');
+                dom.viewStep.classList.add('hidden');
+                this.updateSidebarHighlight();
+                dom.mainScrollArea.scrollTop = 0;
+                this.closeMobileMenu();
+            },
+
+            goToStep(index) {
+                if (index < 0 || index >= tutorialData.length) return;
+                
+                appState.currentStep = index;
+                const data = tutorialData[index];
+                
+                dom.viewOverview.classList.add('hidden');
+                dom.viewStep.classList.remove('hidden');
+                
+                dom.stepIndicator.textContent = `PASO ${index + 1} DE ${tutorialData.length}`;
+                dom.stepTitle.textContent = data.title;
+                dom.tabTheory.innerHTML = `<p>${data.theory}</p>`;
+                
+                // Actualizar código y clase de lenguaje para Prism
+                dom.codeBlock.textContent = data.code;
+                dom.codeBlock.className = `language-${data.lang || 'javascript'}`;
+                
+                dom.tabTest.innerHTML = `<p class="p-4 bg-slate-50 border border-slate-200 rounded text-slate-700">${data.test}</p>`;
+                
+                this.switchTab('tab-theory');
+                this.updateStepButtons();
+                this.updateSidebarHighlight();
+                dom.mainScrollArea.scrollTop = 0;
+                this.closeMobileMenu();
+
+                // Re-resaltar el código si la librería está cargada
+                if (window.Prism) {
+                    Prism.highlightElement(dom.codeBlock);
+                }
+            },
+
+            updateStepButtons() {
+                dom.prevBtn.style.visibility = appState.currentStep === 0 ? 'hidden' : 'visible';
+                dom.nextBtn.textContent = appState.currentStep === tutorialData.length - 1 ? 'Resumen' : 'Siguiente ❯';
+                
+                const isCompleted = appState.completedSteps.has(appState.currentStep);
+                if (isCompleted) {
+                    dom.completeBtn.className = "w-full sm:w-auto px-6 py-2 rounded bg-slate-100 text-slate-500 shadow-inner font-bold border border-slate-200 flex items-center justify-center cursor-default";
+                    dom.completeIcon.innerHTML = "&#10004;";
+                    dom.completeBtn.innerHTML = dom.completeIcon.outerHTML + " Completado";
+                } else {
+                    dom.completeBtn.className = "w-full sm:w-auto px-6 py-2 rounded bg-green-500 hover:bg-green-600 text-white shadow transition-colors font-bold flex items-center justify-center";
+                    dom.completeIcon.innerHTML = "&#9711;";
+                    dom.completeBtn.innerHTML = dom.completeIcon.outerHTML + " Marcar como Completado";
+                }
+            },
+
+            switchTab(targetId) {
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                document.getElementById(targetId).classList.remove('hidden');
+                
+                dom.tabBtns.forEach(btn => {
+                    if (btn.dataset.target === targetId) {
+                        btn.classList.replace('tab-inactive', 'tab-active');
+                    } else {
+                        btn.classList.replace('tab-active', 'tab-inactive');
+                    }
+                });
+
+                // Si cambiamos a código, aseguramos el resaltado
+                if (targetId === 'tab-code' && window.Prism) {
+                    Prism.highlightElement(dom.codeBlock);
+                }
+            },
+
+            handleComplete() {
+                if (appState.currentStep === -1 || appState.completedSteps.has(appState.currentStep)) return;
+                
+                appState.completedSteps.add(appState.currentStep);
+                this.updateProgress();
+                this.updateStepButtons();
+                
+                const currentBtn = dom.completeBtn;
+                const originalText = currentBtn.innerHTML;
+                currentBtn.innerHTML = "&#10004; ¡Excelente!";
+                currentBtn.classList.replace('bg-green-500', 'bg-emerald-400');
+                
+                setTimeout(() => {
+                    this.updateStepButtons();
+                    if (appState.currentStep < tutorialData.length - 1) {
+                        this.goToStep(appState.currentStep + 1);
+                    } else {
+                        this.showOverview();
+                    }
+                }, 800);
+            },
+
+            copyCode() {
+                const code = dom.codeBlock.textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    const originalText = dom.copyBtn.textContent;
+                    dom.copyBtn.textContent = '¡Copiado!';
+                    dom.copyBtn.classList.replace('bg-slate-700', 'bg-green-600');
+                    setTimeout(() => {
+                        dom.copyBtn.textContent = originalText;
+                        dom.copyBtn.classList.replace('bg-green-600', 'bg-slate-700');
+                    }, 2000);
+                }).catch(err => {
+                    try {
+                        const textArea = document.createElement("textarea");
+                        textArea.value = code;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand("copy");
+                        textArea.remove();
+                        dom.copyBtn.textContent = '¡Copiado!';
+                        setTimeout(() => dom.copyBtn.textContent = 'Copiar', 2000);
+                    } catch (e) {
+                        alert('Fallo al copiar.');
+                    }
+                });
+            },
+
+            toggleMobileMenu() {
+                const isHidden = dom.sidebarContent.classList.contains('hidden');
+                if (isHidden) {
+                    dom.sidebarContent.classList.remove('hidden');
+                    dom.sidebarContent.classList.add('flex');
+                } else {
+                    dom.sidebarContent.classList.add('hidden');
+                    dom.sidebarContent.classList.remove('flex');
+                }
+            },
+
+            closeMobileMenu() {
+                if (window.innerWidth < 768) {
+                    dom.sidebarContent.classList.add('hidden');
+                    dom.sidebarContent.classList.remove('flex');
+                }
+            },
+
+            bindEvents() {
+                dom.navOverview.onclick = () => this.showOverview();
+                dom.prevBtn.onclick = () => this.goToStep(appState.currentStep - 1);
+                dom.nextBtn.onclick = () => {
+                    if (appState.currentStep === tutorialData.length - 1) {
+                        this.showOverview();
+                    } else {
+                        this.goToStep(appState.currentStep + 1);
+                    }
+                };
+                dom.completeBtn.onclick = () => this.handleComplete();
+                dom.copyBtn.onclick = () => this.copyCode();
+                dom.mobileMenuBtn.onclick = () => this.toggleMobileMenu();
+                
+                dom.tabBtns.forEach(btn => {
+                    btn.onclick = (e) => this.switchTab(e.currentTarget.dataset.target);
+                });
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>
