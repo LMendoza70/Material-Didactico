@@ -7,6 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- Librerías para resaltado de sintaxis (Highlight.js) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
     <!-- Chosen Palette: Warm Neutrals with Indigo Accents -->
     <!-- Application Structure Plan: Dashboard interactivo de aprendizaje orientado a tareas. Se divide en una barra lateral de navegación de pasos y un área principal de contenido dinámico. Esta estructura permite al usuario explorar el flujo de autenticación de forma secuencial o no lineal, interactuando con las explicaciones y viendo el código correspondiente al instante, lo cual es ideal para un tutorial técnico. -->
     <!-- Visualization & Content Choices: Report Info -> Flujo de Aprendizaje. Goal -> Informar progreso y organizar pasos. Viz/Presentation Method -> Gráfico de Anillo (Chart.js) para progreso, Diagrama de bloques (HTML/CSS) para arquitectura, y renderizado dinámico de texto/código para el contenido. Interaction -> Clic en pasos actualiza el contenido y el gráfico. Justification -> Facilita la retención de conceptos técnicos combinando lectura con visualización estructural. Library/Method -> Chart.js, HTML/CSS flexbox (Confirmando NO SVG/Mermaid). -->
@@ -40,6 +44,8 @@
         .code-block {
             font-family: 'Courier New', Courier, monospace;
             white-space: pre;
+            background: transparent !important; /* Sobreescribe el fondo de highlight.js para usar el de tailwind */
+            padding: 0 !important;
         }
         .nav-item.active {
             background-color: #e0e7ff;
@@ -106,7 +112,7 @@
                     </div>
                     <span id="code-filename" class="text-stone-400 text-xs font-mono">archivo.js</span>
                 </div>
-                <div class="p-4 overflow-x-auto custom-scrollbar bg-[#1e1e1e]">
+                <div class="p-4 overflow-x-auto custom-scrollbar bg-[#282c34]">
                     <pre><code id="code-content" class="code-block text-sm text-stone-300"></code></pre>
                 </div>
             </div>
@@ -126,6 +132,7 @@
                 title: 'El Flujo de Autenticación JWT',
                 intro: 'En esta sección interactiva aprenderás a conectar tu frontend con una API protegida por JWT. El usuario envía sus credenciales, el servidor responde con un token encriptado, y nosotros guardamos ese token en el navegador para usarlo como nuestra "llave de acceso".',
                 filename: 'flujo-teorico.txt',
+                language: 'plaintext',
                 code: 'Flujo de trabajo:\n\n1. Usuario ingresa email y password.\n2. Frontend realiza petición POST a la API.\n3. API valida y devuelve un JSON Web Token (JWT).\n4. Frontend almacena el JWT en localStorage.\n5. Frontend adjunta el JWT en el Header "Authorization" para futuras peticiones.\n6. Logout = Eliminar el JWT del localStorage.',
                 showDiagram: true
             },
@@ -135,6 +142,7 @@
                 title: 'Arquitectura del Proyecto',
                 intro: 'Para mantener el código organizado y escalable, separamos las responsabilidades en vistas (HTML), estilos (CSS) y lógica (JS). Esta estructura permite un mantenimiento sencillo utilizando únicamente tecnologías nativas del navegador (Vanilla JS).',
                 filename: 'Estructura de Carpetas',
+                language: 'plaintext',
                 code: '/mi-proyecto-auth\n│\n├── index.html          # Página pública (Formulario de Login)\n├── dashboard.html      # Página privada (Solo accesible con token)\n│\n├── /css\n│   └── style.css       # Estilos globales y minimalistas\n│\n└── /js\n    ├── auth.js         # Lógica de inicio de sesión (Fetch al backend)\n    └── dashboard.js    # Protección de ruta, persistencia y logout',
                 showDiagram: false
             },
@@ -144,7 +152,8 @@
                 title: 'Interfaz de Usuario',
                 intro: 'Creamos interfaces limpias y modernas. Utilizamos variables CSS para mantener consistencia en la paleta de colores. El formulario de login captura los eventos submit para procesarlos asíncronamente con JavaScript.',
                 filename: 'index.html (Fragmento)',
-                code: '<main class="container">\n    <div class="card">\n        <h1>Bienvenido</h1>\n        <form id="loginForm">\n            <div class="input-group">\n                <label for="email">Correo Electrónico</label>\n                <input type="email" id="email" required>\n            </div>\n            <div class="input-group">\n                <label for="password">Contraseña</label>\n                <input type="password" id="password" required>\n            </div>\n            <button type="submit" id="submitBtn">Ingresar</button>\n            <div id="errorMessage" class="error-message"></div>\n        </form>\n    </div>\n</main>',
+                language: 'html',
+                code: '<!-- Contenedor principal centrado -->\n<main class="container">\n    <div class="card">\n        <h1>Bienvenido</h1>\n        \n        <!-- Capturamos el evento \'submit\' con JavaScript usando este ID -->\n        <form id="loginForm">\n            <div class="input-group">\n                <label for="email">Correo Electrónico</label>\n                <input type="email" id="email" required>\n            </div>\n            <div class="input-group">\n                <label for="password">Contraseña</label>\n                <input type="password" id="password" required>\n            </div>\n            \n            <button type="submit" id="submitBtn">Ingresar</button>\n            \n            <!-- Aquí inyectaremos los mensajes de error dinámicamente -->\n            <div id="errorMessage" class="error-message"></div>\n        </form>\n    </div>\n</main>',
                 showDiagram: false
             },
             {
@@ -153,7 +162,8 @@
                 title: 'Lógica de Autenticación',
                 intro: 'Interceptamos el formulario con Vanilla JS, prevenimos la recarga y enviamos un POST usando fetch API. Usamos async/await para código más limpio. Si es exitoso, almacenamos el token en localStorage.',
                 filename: 'js/auth.js',
-                code: 'const handleLogin = async (event) => {\n    event.preventDefault();\n    const email = document.getElementById(\'email\').value;\n    const password = document.getElementById(\'password\').value;\n\n    try {\n        const response = await fetch(\'http://localhost:3000/api/login\', {\n            method: \'POST\',\n            headers: { \'Content-Type\': \'application/json\' },\n            body: JSON.stringify({ email, password })\n        });\n\n        if (!response.ok) throw new Error(\'Credenciales incorrectas\');\n        const data = await response.json();\n\n        if (data.token) {\n            localStorage.setItem(\'jwt_token\', data.token);\n            window.location.href = \'dashboard.html\';\n        }\n    } catch (error) {\n        document.getElementById(\'errorMessage\').textContent = error.message;\n    }\n};\n\ndocument.getElementById(\'loginForm\').addEventListener(\'submit\', handleLogin);',
+                language: 'javascript',
+                code: '// URL de la API de autenticación (Ejemplo)\nconst API_LOGIN_URL = \'http://localhost:3000/api/login\';\n\nconst handleLogin = async (event) => {\n    // 1. Prevenir el comportamiento por defecto (recargar la página)\n    event.preventDefault();\n    \n    // 2. Extraer los valores de los inputs\n    const email = document.getElementById(\'email\').value;\n    const password = document.getElementById(\'password\').value;\n\n    try {\n        // 3. Realizar la petición POST al backend enviando credenciales\n        const response = await fetch(API_LOGIN_URL, {\n            method: \'POST\',\n            headers: { \'Content-Type\': \'application/json\' },\n            body: JSON.stringify({ email, password })\n        });\n\n        // 4. Verificar respuesta exitosa\n        if (!response.ok) throw new Error(\'Credenciales incorrectas\');\n        \n        const data = await response.json();\n\n        // 5. Si la API devuelve un token, lo guardamos\n        if (data.token) {\n            // localStorage permite guardar pares clave-valor que persisten\n            localStorage.setItem(\'jwt_token\', data.token);\n            \n            // 6. Redirigir al usuario a la zona privada\n            window.location.href = \'dashboard.html\';\n        }\n    } catch (error) {\n        // 7. Manejo de errores visuales\n        document.getElementById(\'errorMessage\').textContent = error.message;\n    }\n};\n\n// Escuchamos el evento \'submit\' del formulario\ndocument.getElementById(\'loginForm\').addEventListener(\'submit\', handleLogin);',
                 showDiagram: false
             },
             {
@@ -162,7 +172,8 @@
                 title: 'Protección de Rutas',
                 intro: 'Si no hay token, no hay acceso. Al cargar el dashboard, verificamos la existencia del token. Si existe, lo adjuntamos en el header Authorization usando la sintaxis "Bearer <token>" para consumir datos privados.',
                 filename: 'js/dashboard.js (Parte 1)',
-                code: 'const checkSession = async () => {\n    const token = localStorage.getItem(\'jwt_token\');\n    if (!token) {\n        window.location.href = \'index.html\';\n        return;\n    }\n\n    try {\n        const response = await fetch(\'http://localhost:3000/api/user/profile\', {\n            headers: {\n                \'Authorization\': `Bearer ${token}`,\n                \'Content-Type\': \'application/json\'\n            }\n        });\n\n        if (!response.ok) throw new Error(\'Token inválido\');\n        const userData = await response.json();\n        // Renderizar datos en UI...\n    } catch (error) {\n        localStorage.removeItem(\'jwt_token\');\n        window.location.href = \'index.html\';\n    }\n};\ncheckSession();',
+                language: 'javascript',
+                code: '// URL para obtener datos protegidos del usuario\nconst API_USER_DATA_URL = \'http://localhost:3000/api/user/profile\';\n\nconst checkSession = async () => {\n    // 1. Intentar recuperar el token del localStorage\n    const token = localStorage.getItem(\'jwt_token\');\n    \n    // 2. Protección: Si no hay token, redirigir al Login inmediatamente\n    if (!token) {\n        window.location.href = \'index.html\';\n        return;\n    }\n\n    try {\n        // 3. Petición para obtener datos privados\n        const response = await fetch(API_USER_DATA_URL, {\n            headers: {\n                // MAGIA DE SEGURIDAD: Adjuntar el Gafete (Token)\n                \'Authorization\': `Bearer ${token}`,\n                \'Content-Type\': \'application/json\'\n            }\n        });\n\n        // 4. Si el token expiró o es alterado, el backend lo rechaza\n        if (!response.ok) throw new Error(\'Token inválido o expirado\');\n        \n        const userData = await response.json();\n        // Aquí seguiría la lógica para inyectar userData en la UI...\n\n    } catch (error) {\n        // Si ocurre un error de validación, destruimos rastros y expulsamos\n        localStorage.removeItem(\'jwt_token\');\n        window.location.href = \'index.html\';\n    }\n};\n\n// Ejecutamos la validación en cuanto carga este script\ncheckSession();',
                 showDiagram: false
             },
             {
@@ -171,7 +182,8 @@
                 title: 'Logout y Limpieza',
                 intro: 'Cerrar sesión en JWT (lado del cliente) es extremadamente simple: basta con eliminar el token del almacenamiento del navegador y redirigir al usuario.',
                 filename: 'js/dashboard.js (Parte 2)',
-                code: 'const handleLogout = () => {\n    // Destruir el gafete de acceso\n    localStorage.removeItem(\'jwt_token\');\n    \n    // Redirigir al inicio\n    window.location.href = \'index.html\';\n};\n\nconst logoutBtn = document.getElementById(\'logoutBtn\');\nif (logoutBtn) {\n    logoutBtn.addEventListener(\'click\', handleLogout);\n}',
+                language: 'javascript',
+                code: '/**\n * Función para manejar el cierre de sesión.\n */\nconst handleLogout = () => {\n    // 1. Destruir el gafete de acceso eliminándolo del localStorage\n    localStorage.removeItem(\'jwt_token\');\n    \n    // 2. Redirigir al usuario de vuelta a la pantalla de inicio de sesión\n    window.location.href = \'index.html\';\n};\n\n// 3. Asignar el evento click al botón de cierre de sesión en la UI\nconst logoutBtn = document.getElementById(\'logoutBtn\');\nif (logoutBtn) {\n    logoutBtn.addEventListener(\'click\', handleLogout);\n}',
                 showDiagram: false
             }
         ];
@@ -229,7 +241,13 @@
             contentTitle.textContent = step.title;
             contentIntro.textContent = step.intro;
             codeFilename.textContent = step.filename;
+            
+            // Asignar contenido, clase de lenguaje y aplicar resaltado de sintaxis
             codeContent.textContent = step.code;
+            codeContent.className = `code-block text-sm language-${step.language}`;
+            // Evitar warnings de Highlight.js eliminando el atributo data-highlighted si existe
+            delete codeContent.dataset.highlighted; 
+            hljs.highlightElement(codeContent);
 
             if (step.showDiagram) {
                 visualDiagramContainer.classList.remove('hidden');
