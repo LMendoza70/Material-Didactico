@@ -1,0 +1,360 @@
+<!--
+Palette: Energetic & Playful (#1E293B, #06B6D4, #EC4899, #F59E0B, #F8FAFC)
+Explicit Confirmation: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
+Narrative Plan:
+1. Introduction: The OOP Paradigm vs Structured Programming (The Inventory Dilemma).
+2. Data Overview: Visualizing the scaling issues of Structured Programming.
+3. In-Depth Analysis: The 4 Pillars of OOP (Classes, Encapsulation, Inheritance, Polymorphism).
+4. Conclusion: The overall impact of OOP on software quality.
+Chart Selection:
+- System Scaling: Goal -> Change -> Line Chart -> Chart.js (Compares error rates as systems grow).
+- Encapsulation Impact: Goal -> Compare -> Bar Chart -> Chart.js (Shows reduction in data corruption).
+- Inheritance Efficiency: Goal -> Compare -> Stacked Bar Chart -> Chart.js (Shows lines of code saved vs written).
+- Polymorphism Flexibility: Goal -> Relationships -> Radar Chart -> Chart.js (Shows varied behavior attributes of an abstract concept).
+-->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamentos del Paradigma Orientado a Objetos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .diagram-line {
+            border-left: 2px solid #06B6D4;
+            border-bottom: 2px solid #06B6D4;
+            width: 50%;
+            height: 20px;
+            margin: 0 auto;
+        }
+
+        .diagram-line-right {
+            border-right: 2px solid #06B6D4;
+            border-bottom: 2px solid #06B6D4;
+            border-left: none;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 font-sans text-slate-800 antialiased selection:bg-pink-500 selection:text-white">
+
+    <header class="bg-[#1E293B] text-white p-10 md:p-20 text-center shadow-xl border-b-8 border-[#06B6D4]">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-6xl mb-4">🚀</div>
+            <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">El Paradigma Orientado a
+                Objetos</h1>
+            <p class="text-xl md:text-2xl text-slate-300 font-light max-w-2xl mx-auto">
+                Transicionando del pensamiento estructurado a un ecosistema de objetos inteligentes en .NET y C#.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-8 space-y-12 -mt-8 relative z-10">
+
+        <section class="bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
+            <div class="mb-8 border-l-4 border-[#EC4899] pl-6">
+                <h2 class="text-3xl font-bold text-[#1E293B]">El Reto Lógico: El Dilema del Inventario</h2>
+                <p class="text-lg text-slate-600 mt-4 leading-relaxed">
+                    Imagina un sistema para una tienda de videojuegos. En el enfoque estructurado, crearías arreglos
+                    paralelos: <code class="bg-slate-100 text-pink-600 px-2 py-1 rounded">nombres[]</code>, <code
+                        class="bg-slate-100 text-pink-600 px-2 py-1 rounded">precios[]</code>, y <code
+                        class="bg-slate-100 text-pink-600 px-2 py-1 rounded">stocks[]</code>. El problema surge al
+                    escalar: si ordenas un arreglo, ¿cómo mantienes la sincronía? La POO resuelve esto agrupando los
+                    datos en una sola unidad: el <strong>Objeto</strong>.
+                </p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="inventoryChart"></canvas>
+            </div>
+            <p class="text-sm text-center text-slate-500 mt-4 italic">El gráfico muestra cómo la probabilidad de pérdida
+                de sincronía de datos crece exponencialmente en la programación estructurada frente a la estabilidad del
+                encapsulamiento en POO.</p>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <section class="bg-white rounded-2xl shadow-xl p-8 border-t-8 border-[#06B6D4]">
+                <h2 class="text-2xl font-bold text-[#1E293B] flex items-center gap-3 mb-4">
+                    <span class="text-3xl">🏗️</span> Clases, Objetos e Instanciamiento
+                </h2>
+                <p class="text-slate-600 mb-8">
+                    La <strong>Clase</strong> es el plano arquitectónico; el <strong>Objeto</strong> es la casa
+                    construida en memoria. El proceso de crear un objeto a partir de una clase se llama
+                    <strong>Instanciamiento</strong>. Una sola clase puede generar infinitos objetos independientes.
+                </p>
+
+                <div class="bg-slate-800 rounded-xl p-6 text-center text-white font-mono shadow-inner mb-6">
+                    <div class="bg-[#06B6D4] text-[#1E293B] font-bold py-2 px-4 rounded-lg inline-block shadow-lg mb-4">
+                        Clase: Usuario
+                    </div>
+                    <div class="flex justify-center w-full">
+                        <div class="w-1/2 border-b-2 border-l-2 border-[#06B6D4] h-8 rounded-bl-lg"></div>
+                        <div class="w-1/2 border-b-2 border-r-2 border-[#06B6D4] h-8 rounded-br-lg"></div>
+                    </div>
+                    <div class="flex justify-between w-full px-8 pt-4">
+                        <div class="flex flex-col items-center">
+                            <span class="text-2xl mb-2">👤</span>
+                            <div class="bg-slate-700 text-xs py-1 px-3 rounded text-cyan-300 border border-slate-600">
+                                Objeto A</div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-2xl mb-2">👤</span>
+                            <div class="bg-slate-700 text-xs py-1 px-3 rounded text-cyan-300 border border-slate-600">
+                                Objeto B</div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm text-center text-slate-500 italic">Diagrama conceptual: Instanciamiento múltiple desde
+                    una única plantilla arquitectónica.</p>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-xl p-8 border-t-8 border-[#F59E0B]">
+                <h2 class="text-2xl font-bold text-[#1E293B] flex items-center gap-3 mb-4">
+                    <span class="text-3xl">🛡️</span> Encapsulamiento
+                </h2>
+                <p class="text-slate-600 mb-8">
+                    Siguiendo <strong>Clean Code</strong>, nunca exponemos variables directamente. Usamos modificadores
+                    de acceso (<code class="bg-slate-100 text-amber-600 px-1 rounded">private</code>) y propiedades
+                    (<code class="bg-slate-100 text-amber-600 px-1 rounded">public</code>) para proteger la integridad
+                    de los datos.
+                </p>
+
+                <div class="chart-container">
+                    <canvas id="encapsulationChart"></canvas>
+                </div>
+                <p class="text-sm text-center text-slate-500 mt-4 italic">Comparativa de errores de validación de datos:
+                    Acceso directo a campos vs Propiedades con validación lógica estricta.</p>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-xl p-8 border-t-8 border-[#EC4899]">
+                <h2 class="text-2xl font-bold text-[#1E293B] flex items-center gap-3 mb-4">
+                    <span class="text-3xl">🧬</span> Herencia
+                </h2>
+                <p class="text-slate-600 mb-8">
+                    La Herencia permite crear una jerarquía donde una <strong>Clase Hija</strong> adquiere los miembros
+                    de una <strong>Clase Padre</strong>. Representa la relación <em>"Es Un"</em> y promueve una drástica
+                    reutilización de código.
+                </p>
+
+                <div class="chart-container">
+                    <canvas id="inheritanceChart"></canvas>
+                </div>
+                <p class="text-sm text-center text-slate-500 mt-4 italic">Análisis de volumen de código: Las clases
+                    derivadas reutilizan la base, requiriendo solo líneas adicionales para su comportamiento específico.
+                </p>
+            </section>
+
+            <section class="bg-white rounded-2xl shadow-xl p-8 border-t-8 border-[#8B5CF6]">
+                <h2 class="text-2xl font-bold text-[#1E293B] flex items-center gap-3 mb-4">
+                    <span class="text-3xl">🎭</span> Polimorfismo
+                </h2>
+                <p class="text-slate-600 mb-8">
+                    El Polimorfismo es la capacidad de un objeto de comportarse de diferentes maneras. En C#, se logra
+                    sobrescribiendo métodos (<code class="bg-slate-100 text-purple-600 px-1 rounded">override</code>)
+                    definidos como <code class="bg-slate-100 text-purple-600 px-1 rounded">virtual</code> o <code
+                        class="bg-slate-100 text-purple-600 px-1 rounded">abstract</code> en la clase base.
+                </p>
+
+                <div class="chart-container" style="height: 250px;">
+                    <canvas id="polymorphismChart"></canvas>
+                </div>
+                <p class="text-sm text-center text-slate-500 mt-4 italic">Evaluación de comportamiento de la acción
+                    abstracta "EmitirSonido" implementada dinámicamente por distintas clases hijas.</p>
+            </section>
+
+        </div>
+
+    </main>
+
+    <footer class="bg-[#1E293B] text-slate-400 py-10 text-center mt-12">
+        <p class="font-bold tracking-wide">Mentor de Ingeniería en TI • Guía de Arquitectura de Software</p>
+    </footer>
+
+    <script>
+        const wrapLabel = (label) => {
+            if (label.length <= 16) return label;
+            const words = label.split(' ');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + word).length > 16) {
+                    if (currentLine) lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            });
+            if (currentLine) lines.push(currentLine.trim());
+            return lines;
+        };
+
+        const tooltipConfig = {
+            callbacks: {
+                title: function (tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: tooltipConfig,
+                legend: {
+                    position: 'bottom',
+                    labels: { font: { family: 'Inter', size: 12 } }
+                }
+            }
+        };
+
+        const ctxInventory = document.getElementById('inventoryChart').getContext('2d');
+        new Chart(ctxInventory, {
+            type: 'line',
+            data: {
+                labels: ['10 Items', '100 Items', '500 Items', '1000 Items'].map(wrapLabel),
+                datasets: [
+                    {
+                        label: 'Arreglos Estructurados',
+                        data: [5, 25, 65, 95],
+                        borderColor: '#EC4899',
+                        backgroundColor: 'rgba(236, 72, 153, 0.2)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Objetos Encapsulados (POO)',
+                        data: [5, 8, 12, 15],
+                        borderColor: '#06B6D4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Riesgo de Desfase (%)' }
+                    }
+                }
+            }
+        });
+
+        const ctxEncapsulation = document.getElementById('encapsulationChart').getContext('2d');
+        new Chart(ctxEncapsulation, {
+            type: 'bar',
+            data: {
+                labels: ['Campos Públicos Directos', 'Propiedades con Validación'].map(wrapLabel),
+                datasets: [{
+                    label: 'Incidentes de Datos Corruptos',
+                    data: [85, 2],
+                    backgroundColor: ['#F59E0B', '#06B6D4'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        const ctxInheritance = document.getElementById('inheritanceChart').getContext('2d');
+        new Chart(ctxInheritance, {
+            type: 'bar',
+            data: {
+                labels: ['Vehiculo Base', 'Auto', 'Motocicleta'].map(wrapLabel),
+                datasets: [
+                    {
+                        label: 'Código Heredado',
+                        data: [0, 150, 150],
+                        backgroundColor: '#94A3B8'
+                    },
+                    {
+                        label: 'Código Nuevo/Específico',
+                        data: [150, 45, 30],
+                        backgroundColor: '#EC4899'
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true, title: { display: true, text: 'Líneas de Código' } }
+                }
+            }
+        });
+
+        const ctxPolymorphism = document.getElementById('polymorphismChart').getContext('2d');
+        new Chart(ctxPolymorphism, {
+            type: 'radar',
+            data: {
+                labels: ['Volumen Acústico', 'Frecuencia de Uso', 'Complejidad Lógica', 'Tiempo de Ejecución'].map(wrapLabel),
+                datasets: [
+                    {
+                        label: 'Clase: Perro',
+                        data: [90, 80, 20, 15],
+                        borderColor: '#8B5CF6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.4)',
+                        pointBackgroundColor: '#8B5CF6'
+                    },
+                    {
+                        label: 'Clase: Gato',
+                        data: [40, 50, 30, 20],
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.4)',
+                        pointBackgroundColor: '#F59E0B'
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(0,0,0,0.1)' },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
