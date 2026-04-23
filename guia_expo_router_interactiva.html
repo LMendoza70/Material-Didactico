@@ -1,0 +1,1310 @@
+<div style="padding: 0;">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  
+  .app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: var(--color-background-primary);
+  }
+  
+  .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  
+  .header h1 {
+    font-size: 36px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .header p {
+    font-size: 18px;
+    opacity: 0.95;
+  }
+  
+  .nav-tabs {
+    display: flex;
+    background: var(--color-background-secondary);
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  
+  .nav-tab {
+    padding: 1rem 1.5rem;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  
+  .nav-tab:hover {
+    color: var(--color-text-primary);
+    background: var(--color-background-primary);
+  }
+  
+  .nav-tab.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+    background: var(--color-background-primary);
+  }
+  
+  .content {
+    padding: 2rem;
+    min-height: 600px;
+  }
+  
+  .section {
+    display: none;
+    animation: fadeIn 0.3s;
+  }
+  
+  .section.active {
+    display: block;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .section-title {
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+  }
+  
+  .section-subtitle {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 2rem 0 1rem;
+    color: var(--color-text-primary);
+  }
+  
+  .description {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    margin-bottom: 2rem;
+  }
+  
+  .code-block {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+  }
+  
+  .code-block pre {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+  }
+  
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    transition: all 0.2s;
+  }
+  
+  .card:hover {
+    border-color: var(--color-border-secondary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  
+  .card-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: var(--color-text-primary);
+  }
+  
+  .card-content {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+  
+  .demo-preview {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+  
+  .phone-mockup {
+    width: 280px;
+    height: 560px;
+    margin: 0 auto;
+    background: var(--color-background-primary);
+    border: 8px solid #333;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    position: relative;
+  }
+  
+  .phone-notch {
+    width: 120px;
+    height: 24px;
+    background: #333;
+    margin: 0 auto;
+    border-radius: 0 0 16px 16px;
+  }
+  
+  .phone-screen {
+    height: calc(100% - 24px);
+    overflow-y: auto;
+    background: var(--color-background-tertiary);
+  }
+  
+  .phone-header {
+    background: #667eea;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 500;
+  }
+  
+  .phone-content {
+    padding: 1rem;
+  }
+  
+  .demo-button {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 0.75rem 1.5rem;
+    margin: 0.5rem;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .demo-button:hover {
+    background: var(--color-background-secondary);
+    transform: scale(0.98);
+  }
+  
+  .demo-button:active {
+    transform: scale(0.96);
+  }
+  
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-background-primary);
+    border-top: 0.5px solid var(--color-border-tertiary);
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem;
+  }
+  
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 11px;
+  }
+  
+  .tab-item.active {
+    color: #667eea;
+  }
+  
+  .tab-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  
+  .drawer-mockup {
+    position: relative;
+    width: 280px;
+    height: 500px;
+    margin: 0 auto;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+  }
+  
+  .drawer-sidebar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 200px;
+    background: var(--color-background-secondary);
+    border-right: 0.5px solid var(--color-border-tertiary);
+    padding: 1rem;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  
+  .drawer-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .drawer-item {
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .drawer-item:hover {
+    background: var(--color-background-primary);
+  }
+  
+  .highlight-box {
+    background: var(--color-background-info);
+    border-left: 3px solid var(--color-border-info);
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: var(--border-radius-md);
+  }
+  
+  .highlight-box p {
+    color: var(--color-text-info);
+    margin: 0;
+    line-height: 1.6;
+  }
+  
+  .steps {
+    counter-reset: step;
+  }
+  
+  .step {
+    position: relative;
+    padding-left: 3rem;
+    margin: 1.5rem 0;
+  }
+  
+  .step::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+  }
+  
+  .step h4 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-primary);
+  }
+  
+  .badge {
+    display: inline-block;
+    background: var(--color-background-info);
+    color: var(--color-text-info);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0 4px;
+  }
+  
+  .command {
+    background: #1a1a1a;
+    color: #00ff00;
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius-md);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    margin: 1rem 0;
+  }
+  
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .feature-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+  }
+  
+  .feature-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  
+  th {
+    background: var(--color-background-secondary);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 500;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  
+  tr:hover {
+    background: var(--color-background-secondary);
+  }
+</style>
+
+<div class="app-container">
+  <div class="header">
+    <h1>🚀 Guía Expo Router para React Native</h1>
+    <p>Aprende enrutamiento profesional con TypeScript</p>
+  </div>
+  
+  <nav class="nav-tabs">
+    <button class="nav-tab active" data-tab="intro">Introducción</button>
+    <button class="nav-tab" data-tab="setup">Configuración</button>
+    <button class="nav-tab" data-tab="link">Link Básico</button>
+    <button class="nav-tab" data-tab="stack">Stack</button>
+    <button class="nav-tab" data-tab="tabs">Tabs</button>
+    <button class="nav-tab" data-tab="drawer">Drawer</button>
+    <button class="nav-tab" data-tab="params">Parámetros</button>
+    <button class="nav-tab" data-tab="tips">Tips</button>
+  </nav>
+  
+  <div class="content">
+    <section class="section active" data-content="intro">
+      <h2 class="section-title">Introducción a Expo Router</h2>
+      <p class="description">
+        Expo Router es un sistema de enrutamiento basado en archivos para React Native, 
+        inspirado en Next.js. Proporciona navegación nativa y configuración automática de rutas 
+        basada en la estructura de carpetas del proyecto.
+      </p>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📁</div>
+          <h3 style="font-size: 18px; font-weight: 500; margin-bottom: 0.5rem;">Basado en archivos</h3>
+          <p style="font-size: 14px; color: var(--color-text-secondary);">
+            Las rutas se crean automáticamente según la estructura de carpetas
+          </p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 style="font-size: 18px; font-weight: 500; margin-bottom: 0.5rem;">TypeScript nativo</h3>
+          <p style="font-size: 14px; color: var(--color-text-secondary);">
+            Soporte completo para TypeScript con tipos seguros
+          </p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3 style="font-size: 18px; font-weight: 500; margin-bottom: 0.5rem;">Deep linking</h3>
+          <p style="font-size: 14px; color: var(--color-text-secondary);">
+            URLs universales para web, iOS y Android
+          </p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3 style="font-size: 18px; font-weight: 500; margin-bottom: 0.5rem;">Navegación nativa</h3>
+          <p style="font-size: 14px; color: var(--color-text-secondary);">
+            Usa las APIs nativas de navegación de cada plataforma
+          </p>
+        </div>
+      </div>
+      
+      <h3 class="section-subtitle">¿Por qué usar Expo Router?</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h4 class="card-title">✨ Simplicidad</h4>
+          <p class="card-content">
+            No necesitas configurar navegadores manualmente. Solo crea archivos y carpetas.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">🔒 Type-safe</h4>
+          <p class="card-content">
+            TypeScript conoce todas tus rutas y parámetros automáticamente.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">📱 Universal</h4>
+          <p class="card-content">
+            El mismo código funciona en iOS, Android y Web sin cambios.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">⚙️ Flexible</h4>
+          <p class="card-content">
+            Soporta Stack, Tabs, Drawer y navegación anidada compleja.
+          </p>
+        </div>
+      </div>
+    </section>
+    
+    <section class="section" data-content="setup">
+      <h2 class="section-title">Configuración inicial</h2>
+      <p class="description">
+        Comenzamos desde una plantilla blank-typescript de Expo. Sigue estos pasos para configurar Expo Router.
+      </p>
+      
+      <div class="steps">
+        <div class="step">
+          <h4>Instalar dependencias</h4>
+          <p class="description">Instala todos los paquetes necesarios para Expo Router:</p>
+          <div class="command">
+            npx expo install expo-router react-native-safe-area-context react-native-screens expo-linking expo-constants expo-status-bar
+          </div>
+        </div>
+        
+        <div class="step">
+          <h4>Configurar app.json</h4>
+          <p class="description">Agrega la configuración del scheme en tu archivo app.json:</p>
+          <div class="code-block">
+            <pre>{
+  "expo": {
+    "scheme": "myapp",
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}</pre>
+          </div>
+        </div>
+        
+        <div class="step">
+          <h4>Crear estructura de archivos</h4>
+          <p class="description">Crea la carpeta <span class="badge">app/</span> en la raíz del proyecto:</p>
+          <div class="code-block">
+            <pre>mi-proyecto/
+├── app/
+│   ├── _layout.tsx
+│   ├── index.tsx
+│   ├── (tabs)/
+│   ├── (stack)/
+│   └── (drawer)/
+├── components/
+├── app.json
+└── package.json</pre>
+          </div>
+        </div>
+        
+        <div class="step">
+          <h4>Crear layout principal</h4>
+          <p class="description">El archivo <span class="badge">app/_layout.tsx</span> es el punto de entrada:</p>
+          <div class="code-block">
+            <pre>import { Stack } from 'expo-router';
+
+export default function RootLayout() {
+  return (
+    &lt;Stack&gt;
+      &lt;Stack.Screen name="index" 
+        options={{ headerTitle: 'Inicio' }} /&gt;
+    &lt;/Stack&gt;
+  );
+}</pre>
+          </div>
+        </div>
+      </div>
+      
+      <div class="highlight-box">
+        <p><strong>💡 Nota importante:</strong> Los nombres de carpetas entre paréntesis como <code>(tabs)</code> o <code>(stack)</code> son "grupos de rutas" que no aparecen en la URL. Esto permite organizar tu código sin afectar las rutas.</p>
+      </div>
+    </section>
+    
+    <section class="section" data-content="link">
+      <h2 class="section-title">Navegación básica con Link</h2>
+      <p class="description">
+        El componente <span class="badge">Link</span> es la forma más simple de navegar entre pantallas.
+        Es declarativo y optimizado para React Native.
+      </p>
+      
+      <h3 class="section-subtitle">Ejemplo básico</h3>
+      <div class="code-block">
+        <pre>import { Link } from 'expo-router';
+import { View, Text, Button } from 'react-native';
+
+export default function Home() {
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;Pantalla Principal&lt;/Text&gt;
+      
+      &lt;Link href="/about" asChild&gt;
+        &lt;Button title="Ir a Acerca de" /&gt;
+      &lt;/Link&gt;
+    &lt;/View&gt;
+  );
+}</pre>
+      </div>
+      
+      <h3 class="section-subtitle">Demostración interactiva</h3>
+      <div class="demo-preview">
+        <div class="phone-mockup">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-header">Pantalla Principal</div>
+            <div class="phone-content">
+              <p style="margin-bottom: 1rem; color: var(--color-text-secondary);">Toca los botones para ver la navegación:</p>
+              <button class="demo-button" onclick="alert('Navegando a /about')">Ir a Acerca de</button>
+              <button class="demo-button" onclick="alert('Navegando a /profile')">Ver Perfil</button>
+              <button class="demo-button" onclick="alert('Navegando a /settings')">Configuración</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <h3 class="section-subtitle">Propiedades importantes</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Propiedad</th>
+              <th>Descripción</th>
+              <th>Ejemplo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>href</code></td>
+              <td>Ruta de destino</td>
+              <td><code>href="/about"</code></td>
+            </tr>
+            <tr>
+              <td><code>asChild</code></td>
+              <td>Usa el componente hijo como elemento clickeable</td>
+              <td><code>asChild</code></td>
+            </tr>
+            <tr>
+              <td><code>replace</code></td>
+              <td>Reemplaza la pantalla actual (no se puede volver atrás)</td>
+              <td><code>replace</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="highlight-box">
+        <p><strong>💡 Consejo:</strong> Usa <code>asChild</code> cuando quieras aplicar el Link a un componente personalizado o un Button. Sin <code>asChild</code>, Link renderiza un elemento táctil básico.</p>
+      </div>
+    </section>
+    
+    <section class="section" data-content="stack">
+      <h2 class="section-title">Navegación Stack</h2>
+      <p class="description">
+        La navegación Stack apila pantallas una sobre otra, permitiendo al usuario navegar hacia adelante
+        y atrás con animaciones nativas.
+      </p>
+      
+      <h3 class="section-subtitle">Configuración</h3>
+      <div class="code-block">
+        <pre>// app/(stack)/_layout.tsx
+import { Stack } from 'expo-router';
+
+export default function StackLayout() {
+  return (
+    &lt;Stack&gt;
+      &lt;Stack.Screen 
+        name="details" 
+        options={{ 
+          headerTitle: 'Detalles',
+          headerBackTitle: 'Atrás'
+        }} 
+      /&gt;
+      &lt;Stack.Screen 
+        name="[id]" 
+        options={{ 
+          presentation: 'modal'
+        }}
+      /&gt;
+    &lt;/Stack&gt;
+  );
+}</pre>
+      </div>
+      
+      <h3 class="section-subtitle">Navegación imperativa con useRouter</h3>
+      <div class="code-block">
+        <pre>import { useRouter } from 'expo-router';
+
+export default function Details() {
+  const router = useRouter();
+  
+  const navigateToProduct = (id: number) => {
+    router.push({
+      pathname: "/(stack)/[id]",
+      params: { id: id.toString() }
+    });
+  };
+
+  return (
+    &lt;View&gt;
+      &lt;Button 
+        title="Ver Producto 1" 
+        onPress={() => navigateToProduct(1)} 
+      /&gt;
+    &lt;/View&gt;
+  );
+}</pre>
+      </div>
+      
+      <h3 class="section-subtitle">Métodos de useRouter</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h4 class="card-title">router.push()</h4>
+          <p class="card-content">
+            Navega a una nueva pantalla. Agrega la pantalla al historial.
+          </p>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre>router.push('/details')</pre>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">router.replace()</h4>
+          <p class="card-content">
+            Reemplaza la pantalla actual. No se puede volver atrás.
+          </p>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre>router.replace('/home')</pre>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">router.back()</h4>
+          <p class="card-content">
+            Vuelve a la pantalla anterior en el stack.
+          </p>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre>router.back()</pre>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">router.canGoBack()</h4>
+          <p class="card-content">
+            Verifica si hay una pantalla anterior disponible.
+          </p>
+          <div class="code-block" style="margin-top: 1rem;">
+            <pre>router.canGoBack()</pre>
+          </div>
+        </div>
+      </div>
+      
+      <h3 class="section-subtitle">Opciones de presentación</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Opción</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>presentation: 'card'</code></td>
+              <td>Presentación normal (por defecto)</td>
+            </tr>
+            <tr>
+              <td><code>presentation: 'modal'</code></td>
+              <td>Se presenta como modal desde abajo</td>
+            </tr>
+            <tr>
+              <td><code>presentation: 'transparentModal'</code></td>
+              <td>Modal transparente sobre la pantalla anterior</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    
+    <section class="section" data-content="tabs">
+      <h2 class="section-title">Navegación por Tabs</h2>
+      <p class="description">
+        Las tabs permiten cambiar rápidamente entre diferentes secciones de tu app.
+        Son perfectas para las pantallas principales.
+      </p>
+      
+      <h3 class="section-subtitle">Configuración con íconos</h3>
+      <div class="code-block">
+        <pre>// app/(tabs)/_layout.tsx
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
+export default function TabLayout() {
+  return (
+    &lt;Tabs screenOptions={{
+      tabBarActiveTintColor: '#3498db',
+      tabBarInactiveTintColor: 'gray',
+    }}&gt;
+      &lt;Tabs.Screen
+        name="home"
+        options={{
+          tabBarLabel: 'Inicio',
+          tabBarIcon: ({ color, size }) => (
+            &lt;Ionicons name="home" size={size} color={color} /&gt;
+          ),
+        }}
+      /&gt;
+      &lt;Tabs.Screen
+        name="profile"
+        options={{
+          tabBarLabel: 'Perfil',
+          tabBarIcon: ({ color, size }) => (
+            &lt;Ionicons name="person" size={size} color={color} /&gt;
+          ),
+        }}
+      /&gt;
+    &lt;/Tabs&gt;
+  );
+}</pre>
+      </div>
+      
+      <h3 class="section-subtitle">Demostración interactiva</h3>
+      <div class="demo-preview">
+        <div class="phone-mockup">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-header">Navegación por Tabs</div>
+            <div class="phone-content" id="tab-content">
+              <h3 style="margin-bottom: 1rem;">Tab de Inicio</h3>
+              <p style="color: var(--color-text-secondary);">
+                Esta es la primera pestaña. Toca las pestañas en la parte inferior para cambiar de sección.
+              </p>
+            </div>
+            <div class="tab-bar">
+              <div class="tab-item active" onclick="changeTab(0, this)">
+                <div class="tab-icon">🏠</div>
+                <span>Inicio</span>
+              </div>
+              <div class="tab-item" onclick="changeTab(1, this)">
+                <div class="tab-icon">👤</div>
+                <span>Perfil</span>
+              </div>
+              <div class="tab-item" onclick="changeTab(2, this)">
+                <div class="tab-icon">⚙️</div>
+                <span>Config</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <h3 class="section-subtitle">Opciones de personalización</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Opción</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>tabBarLabel</code></td>
+              <td>Texto mostrado en la tab</td>
+            </tr>
+            <tr>
+              <td><code>tabBarIcon</code></td>
+              <td>Función que retorna el ícono de la tab</td>
+            </tr>
+            <tr>
+              <td><code>tabBarActiveTintColor</code></td>
+              <td>Color cuando la tab está activa</td>
+            </tr>
+            <tr>
+              <td><code>tabBarInactiveTintColor</code></td>
+              <td>Color cuando la tab está inactiva</td>
+            </tr>
+            <tr>
+              <td><code>tabBarBadge</code></td>
+              <td>Badge numérico en la tab</td>
+            </tr>
+            <tr>
+              <td><code>tabBarShowLabel</code></td>
+              <td>Mostrar u ocultar el label</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    
+    <section class="section" data-content="drawer">
+      <h2 class="section-title">Navegación Drawer</h2>
+      <p class="description">
+        El Drawer crea un menú lateral deslizable, ideal para navegación secundaria o configuraciones.
+      </p>
+      
+      <h3 class="section-subtitle">Instalación adicional</h3>
+      <div class="command">
+        npx expo install @react-navigation/drawer react-native-gesture-handler react-native-reanimated
+      </div>
+      
+      <div class="highlight-box" style="margin: 1rem 0;">
+        <p><strong>⚠️ Importante:</strong> Después de instalar, debes configurar el plugin de reanimated en <code>babel.config.js</code></p>
+      </div>
+      
+      <h3 class="section-subtitle">Configuración de Babel</h3>
+      <div class="code-block">
+        <pre>// babel.config.js
+module.exports = function(api) {
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'],
+    plugins: [
+      'expo-router/babel',
+      'react-native-reanimated/plugin', // ← Agregar esta línea
+    ],
+  };
+};</pre>
+      </div>
+      
+      <h3 class="section-subtitle">Configuración del Drawer</h3>
+      <div class="code-block">
+        <pre>// app/(drawer)/_layout.tsx
+import { Drawer } from 'expo-router/drawer';
+import { Ionicons } from '@expo/vector-icons';
+
+export default function DrawerLayout() {
+  return (
+    &lt;Drawer screenOptions={{
+      drawerActiveTintColor: '#3498db',
+    }}&gt;
+      &lt;Drawer.Screen
+        name="settings"
+        options={{
+          drawerLabel: 'Configuración',
+          drawerIcon: ({ color, size }) => (
+            &lt;Ionicons name="settings" size={size} color={color} /&gt;
+          ),
+        }}
+      /&gt;
+      &lt;Drawer.Screen
+        name="help"
+        options={{
+          drawerLabel: 'Ayuda',
+          drawerIcon: ({ color, size }) => (
+            &lt;Ionicons name="help-circle" size={size} color={color} /&gt;
+          ),
+        }}
+      /&gt;
+    &lt;/Drawer&gt;
+  );
+}</pre>
+      </div>
+      
+      <h3 class="section-subtitle">Demostración interactiva</h3>
+      <div class="demo-preview">
+        <div class="drawer-mockup">
+          <div class="drawer-sidebar" id="drawer">
+            <h4 style="margin-bottom: 1rem; font-size: 16px;">Menú</h4>
+            <div class="drawer-item">⚙️ Configuración</div>
+            <div class="drawer-item">❓ Ayuda</div>
+            <div class="drawer-item">👤 Perfil</div>
+            <div class="drawer-item">🔔 Notificaciones</div>
+            <div class="drawer-item">🚪 Cerrar sesión</div>
+          </div>
+          <div style="padding: 1rem;">
+            <button class="demo-button" onclick="toggleDrawer()">
+              ☰ Abrir Drawer
+            </button>
+            <p style="margin-top: 1rem; color: var(--color-text-secondary); font-size: 14px;">
+              En tu app, el usuario puede deslizar desde el borde izquierdo para abrir el drawer.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="section" data-content="params">
+      <h2 class="section-title">Paso de parámetros entre pantallas</h2>
+      <p class="description">
+        Expo Router permite pasar datos entre pantallas usando parámetros de URL.
+        Puedes crear rutas dinámicas y acceder a los parámetros de forma type-safe.
+      </p>
+      
+      <h3 class="section-subtitle">1. Rutas dinámicas</h3>
+      <p class="description">
+        Crea archivos con corchetes para definir rutas dinámicas:
+      </p>
+      <div class="code-block">
+        <pre>app/
+├── (stack)/
+│   ├── [id].tsx          → /stack/123, /stack/abc
+│   ├── user/
+│   │   └── [userId].tsx  → /stack/user/456
+│   └── _layout.tsx</pre>
+      </div>
+      
+      <h3 class="section-subtitle">2. Pasar parámetros con Link</h3>
+      <div class="code-block">
+        <pre>import { Link } from 'expo-router';
+
+// Forma 1: Incluir parámetros en el href
+&lt;Link href={`/product/${productId}`}&gt;
+  Ver Producto
+&lt;/Link&gt;
+
+// Forma 2: Objeto con pathname y params
+&lt;Link href={{
+  pathname: "/product/[id]",
+  params: { id: productId, color: 'blue' }
+}}&gt;
+  Ver Producto
+&lt;/Link&gt;</pre>
+      </div>
+      
+      <h3 class="section-subtitle">3. Pasar parámetros con useRouter</h3>
+      <div class="code-block">
+        <pre>import { useRouter } from 'expo-router';
+
+export default function Products() {
+  const router = useRouter();
+  
+  const viewProduct = (id: number) => {
+    router.push({
+      pathname: "/product/[id]",
+      params: { 
+        id: id.toString(),
+        category: 'electronics',
+        featured: 'true'
+      }
+    });
+  };
+  
+  return (
+    &lt;Button 
+      title="Ver Producto" 
+      onPress={() => viewProduct(123)} 
+    /&gt;
+  );
+}</pre>
+      </div>
+      
+      <h3 class="section-subtitle">4. Recibir parámetros con useLocalSearchParams</h3>
+      <div class="code-block">
+        <pre>// app/product/[id].tsx
+import { useLocalSearchParams } from 'expo-router';
+
+interface ProductParams {
+  id: string;
+  category?: string;
+  featured?: string;
+}
+
+export default function ProductScreen() {
+  const params = useLocalSearchParams&lt;ProductParams&gt;();
+  
+  // Acceder a los parámetros
+  console.log(params.id);        // "123"
+  console.log(params.category);  // "electronics"
+  console.log(params.featured);  // "true"
+  
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;Producto ID: {params.id}&lt;/Text&gt;
+      &lt;Text&gt;Categoría: {params.category}&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}</pre>
+      </div>
+      
+      <h3 class="section-subtitle">Ejemplo completo</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h4 class="card-title">Lista de productos</h4>
+          <div class="code-block">
+            <pre>const products = [
+  { id: 1, name: 'Laptop' },
+  { id: 2, name: 'Phone' }
+];
+
+{products.map(p => (
+  &lt;Link 
+    key={p.id}
+    href={{
+      pathname: "/product/[id]",
+      params: { 
+        id: p.id.toString(),
+        name: p.name 
+      }
+    }}
+  &gt;
+    {p.name}
+  &lt;/Link&gt;
+))}</pre>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">Pantalla de detalle</h4>
+          <div class="code-block">
+            <pre>interface Params {
+  id: string;
+  name: string;
+}
+
+export default function Detail() {
+  const { id, name } = 
+    useLocalSearchParams&lt;Params&gt;();
+  
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;ID: {id}&lt;/Text&gt;
+      &lt;Text&gt;Nombre: {name}&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}</pre>
+          </div>
+        </div>
+      </div>
+      
+      <div class="highlight-box">
+        <p><strong>💡 Consejo TypeScript:</strong> Siempre define una interfaz para tus parámetros. Esto te da autocompletado y detección de errores en tiempo de desarrollo.</p>
+      </div>
+    </section>
+    
+    <section class="section" data-content="tips">
+      <h2 class="section-title">Tips y mejores prácticas</h2>
+      
+      <div class="grid-2" style="margin-top: 2rem;">
+        <div class="card">
+          <h4 class="card-title">🎯 Organización de archivos</h4>
+          <p class="card-content">
+            Usa grupos de rutas con paréntesis <code>(tabs)</code>, <code>(stack)</code> para organizar
+            tu código sin afectar las URLs. Esto hace tu proyecto más mantenible.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">🔒 Type Safety</h4>
+          <p class="card-content">
+            Siempre tipea tus parámetros con interfaces TypeScript. Usa <code>useLocalSearchParams&lt;T&gt;()</code>
+            para obtener autocompletado y validación.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">⚡ Navegación imperativa</h4>
+          <p class="card-content">
+            Usa <code>Link</code> para navegación simple y <code>useRouter</code> cuando necesites
+            lógica condicional o navegar desde funciones.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">🎨 Consistencia</h4>
+          <p class="card-content">
+            Mantén un estilo consistente de navegación en toda tu app. No mezcles demasiados
+            patrones diferentes.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">📱 Deep Linking</h4>
+          <p class="card-content">
+            Todas tus rutas funcionan automáticamente como deep links. Configura el <code>scheme</code>
+            en app.json para URLs personalizadas.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">🔄 Redirecciones</h4>
+          <p class="card-content">
+            Usa <code>&lt;Redirect href="/ruta" /&gt;</code> para redirecciones automáticas,
+            útil para rutas protegidas o índices.
+          </p>
+        </div>
+      </div>
+      
+      <h3 class="section-subtitle">Patrones comunes</h3>
+      
+      <div class="card" style="margin: 1.5rem 0;">
+        <h4 class="card-title">Autenticación y rutas protegidas</h4>
+        <div class="code-block">
+          <pre>// app/_layout.tsx
+import { Stack, Redirect } from 'expo-router';
+import { useAuth } from '../context/auth';
+
+export default function RootLayout() {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return &lt;Redirect href="/login" /&gt;;
+  }
+  
+  return (
+    &lt;Stack&gt;
+      &lt;Stack.Screen name="(app)" options={{ headerShown: false }} /&gt;
+    &lt;/Stack&gt;
+  );
+}</pre>
+        </div>
+      </div>
+      
+      <div class="card" style="margin: 1.5rem 0;">
+        <h4 class="card-title">Navegación condicional</h4>
+        <div class="code-block">
+          <pre>const router = useRouter();
+
+const handleSubmit = async () => {
+  const success = await saveData();
+  
+  if (success) {
+    router.push('/success');
+  } else {
+    router.push('/error');
+  }
+};</pre>
+        </div>
+      </div>
+      
+      <div class="card" style="margin: 1.5rem 0;">
+        <h4 class="card-title">Verificar si se puede volver atrás</h4>
+        <div class="code-block">
+          <pre>const router = useRouter();
+
+const handleBack = () => {
+  if (router.canGoBack()) {
+    router.back();
+  } else {
+    router.push('/'); // Ir al inicio si no hay historial
+  }
+};</pre>
+        </div>
+      </div>
+      
+      <h3 class="section-subtitle">Recursos adicionales</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h4 class="card-title">📚 Documentación oficial</h4>
+          <p class="card-content">
+            Visita <a href="https://docs.expo.dev/router/introduction/" style="color: #667eea;">docs.expo.dev/router</a> 
+            para la documentación completa y actualizada.
+          </p>
+        </div>
+        
+        <div class="card">
+          <h4 class="card-title">💬 Comunidad</h4>
+          <p class="card-content">
+            Únete al Discord de Expo y al foro de discusiones para obtener ayuda
+            de la comunidad.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  // Navegación entre tabs
+  const tabs = document.querySelectorAll('.nav-tab');
+  const sections = document.querySelectorAll('.section');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetTab = tab.dataset.tab;
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('active'));
+      
+      tab.classList.add('active');
+      document.querySelector(`[data-content="${targetTab}"]`).classList.add('active');
+    });
+  });
+  
+  // Demo de tabs en el phone mockup
+  function changeTab(index, element) {
+    const content = document.getElementById('tab-content');
+    const tabItems = document.querySelectorAll('.tab-item');
+    
+    tabItems.forEach(item => item.classList.remove('active'));
+    element.classList.add('active');
+    
+    const contents = [
+      '<h3 style="margin-bottom: 1rem;">Tab de Inicio</h3><p style="color: var(--color-text-secondary);">Esta es la primera pestaña. Aquí mostrarías el contenido principal de tu aplicación.</p>',
+      '<h3 style="margin-bottom: 1rem;">Tab de Perfil</h3><p style="color: var(--color-text-secondary);">Información del usuario, configuraciones de cuenta y preferencias personales.</p>',
+      '<h3 style="margin-bottom: 1rem;">Tab de Configuración</h3><p style="color: var(--color-text-secondary);">Ajustes de la aplicación, notificaciones y opciones avanzadas.</p>'
+    ];
+    
+    content.innerHTML = contents[index];
+  }
+  
+  // Demo del drawer
+  function toggleDrawer() {
+    const drawer = document.getElementById('drawer');
+    drawer.classList.toggle('open');
+    
+    setTimeout(() => {
+      drawer.classList.remove('open');
+    }, 3000);
+  }
+</script>
+</div>
