@@ -29,7 +29,20 @@
         code[class*="language-"] { font-size: 0.875rem !important; line-height: 1.5 !important; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans h-screen flex flex-col md:flex-row overflow-hidden custom-scrollbar">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col overflow-hidden custom-scrollbar">
+
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md z-50 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../../index.html" class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
+                    Material Didáctico
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="flex flex-1 flex-col md:flex-row overflow-hidden">
 
     <!-- Chosen Palette: Warm Neutrals with Indigo/Blue Accents (#f8fafc background, #1e3a8a primary text, #2563eb interactive elements, #10b981 success state) -->
     <!-- Application Structure Plan: The SPA uses a sidebar-navigation dashboard architecture. The source report is highly sequential (10 steps). To optimize consumption, the application breaks the monolithic text into an interactive step-by-step tutorial. The left sidebar tracks progress and allows non-linear navigation. The main viewing area displays the active module. Each step is further organized into functional tabs (Concepto, Código, Prueba) to reduce cognitive load and separate pedagogical theory from actionable code. An Overview section uses visual diagrams and a progress chart to summarize the goal before the user begins coding. -->
@@ -575,5 +588,6 @@
             app.init();
         });
     </script>
+    </div>
 </body>
 </html>

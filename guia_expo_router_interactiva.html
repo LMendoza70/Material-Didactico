@@ -1,4 +1,25 @@
-<div style="padding: 0;">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Expo Router interactiva</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="./index.html" class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
+                    Material Didáctico
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div style="padding: 0; flex-grow: 1;">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: var(--font-sans); }
@@ -1305,6 +1326,7 @@ const handleBack = () => {
     setTimeout(() => {
       drawer.classList.remove('open');
     }, 3000);
-  }
 </script>
 </div>
+</body>
+</html>

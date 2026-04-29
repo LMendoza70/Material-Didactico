@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Docente: Cloudinary + JS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        pre {
+            background-color: #1e293b;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .code-label {
+            display: inline-block;
+            background: #475569;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 0.3rem 0.3rem 0 0;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .drop-zone.active {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="./index.html" class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
+                    Material Didáctico
+                </a>
+                <div class="space-x-4 text-sm font-medium hidden md:block">
+                    <a href="#setup" class="hover:text-indigo-200 transition-colors">Setup</a>
+                    <a href="#code" class="hover:text-indigo-200 transition-colors">Código</a>
+                    <a href="#demo" class="hover:text-indigo-200 transition-colors">Demo Vivo</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto max-w-4xl py-12 px-4">
+        
+        <!-- Introducción -->
+        <section class="mb-12">
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Integración de Cloudinary</h1>
+            <p class="text-lg text-slate-600">Esta guía detalla cómo permitir que los usuarios suban imágenes directamente a la nube desde el navegador utilizando <strong>JavaScript Vanilla</strong> y <strong>Fetch API</strong>.</p>
+        </section>
+
+        <!-- Setup -->
+        <section id="setup" class="mb-16 bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">1</span>
+                Configuración de Cloudinary
+            </h2>
+            <ol class="space-y-4 list-decimal list-inside text-slate-700">
+                <li>Accede a tu consola de <a href="https://cloudinary.com/" class="text-indigo-600 font-bold">Cloudinary</a>.</li>
+                <li>Obtén tu <strong>Cloud Name</strong> desde el Dashboard principal.</li>
+                <li>Ve a <strong>Settings > Upload</strong> y crea un <strong>Upload Preset</strong>.</li>
+                <li>Cambia el modo de firmado a <code class="bg-slate-200 px-1 rounded">Unsigned</code>. Esto permite subir imágenes sin un API Secret (ideal para frontend).</li>
+            </ol>
+        </section>
+
+        <!-- Bloques de Código Separados -->
+        <section id="code" class="mb-16">
+            <h2 class="text-2xl font-bold mb-8 flex items-center">
+                <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">2</span>
+                Implementación Técnica
+            </h2>
+
+            <!-- HTML -->
+            <div class="code-label">Estructura (HTML)</div>
+<pre><code>&lt;!-- Input invisible para capturar el archivo --&gt;
+&lt;input type="file" id="fileInput" accept="image/*" style="display:none"&gt;
+
+&lt;!-- Zona de interacción --&gt;
+&lt;div id="dropZone"&gt;
+    &lt;p&gt;Haz clic para seleccionar imagen&lt;/p&gt;
+    &lt;img id="preview" src="" style="display:none; width: 200px"&gt;
+&lt;/div&gt;
+
+&lt;!-- Botón de acción --&gt;
+&lt;button id="btnUpload" disabled&gt;Subir a Cloudinary&lt;/button&gt;</code></pre>
+
+            <!-- CSS -->
+            <div class="code-label">Estilos (CSS)</div>
+<pre><code>.drop-zone {
+    border: 2px dashed #ccc;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.drop-zone:hover {
+    border-color: #4f46e5;
+}
+
+.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}</code></pre>
+
+            <!-- JS con Promesas (.then) -->
+            <div class="code-label">Lógica (JavaScript)</div>
+<pre><code>// Configuración
+const CLOUD_NAME = "tu_cloud_name";
+const PRESET = "tu_unsigned_preset";
+
+const btnUpload = document.querySelector('#btnUpload');
+const fileInput = document.querySelector('#fileInput');
+
+btnUpload.addEventListener('click', () => {
+    const file = fileInput.files[0];
+    
+    // Preparar el cuerpo de la petición (FormData)
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', PRESET);
+
+    // Iniciar petición Fetch
+    fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Fallo en la comunicación");
+        return response.json(); // Convertir respuesta a JSON
+    })
+    .then(data => {
+        // 'data.secure_url' contiene la URL final de la imagen
+        console.log("Imagen subida con éxito:", data.secure_url);
+        alert("¡Subida exitosa!");
+    })
+    .catch(error => {
+        // Capturar errores de red o de proceso
+        console.error("Error detectado:", error);
+    });
+});</code></pre>
+        </section>
+
+        <!-- Demo Vivo -->
+        <section id="demo" class="mb-16 bg-indigo-50 p-8 rounded-xl border-2 border-indigo-200">
+            <h2 class="text-2xl font-bold mb-2">Prueba el Demo</h2>
+            <p class="text-slate-600 mb-8">Configura tu Cloud Name y Preset abajo para probar la subida real.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <input type="text" id="cfg_name" placeholder="Tu Cloud Name" class="p-3 border rounded shadow-sm">
+                <input type="text" id="cfg_preset" placeholder="Tu Upload Preset" class="p-3 border rounded shadow-sm">
+            </div>
+
+            <div class="flex flex-col items-center">
+                <div id="demoDropZone" class="w-full max-w-md bg-white border-2 border-dashed border-slate-300 rounded-lg p-10 text-center cursor-pointer hover:border-indigo-400 transition-all">
+                    <img id="demoPreview" src="" class="hidden mx-auto mb-4 w-32 h-32 object-cover rounded-full shadow-md">
+                    <p id="demoLabel" class="text-slate-500 font-medium">Click para seleccionar imagen</p>
+                    <input type="file" id="demoInput" class="hidden" accept="image/*">
+                </div>
+
+                <button id="demoBtn" disabled class="mt-6 px-8 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg disabled:bg-slate-300 disabled:shadow-none hover:bg-indigo-700 transition-colors">
+                    SUBIR AHORA
+                </button>
+
+                <div id="demoResult" class="hidden mt-6 p-4 bg-white rounded-lg border border-green-200 text-center w-full max-w-md">
+                    <p class="text-green-600 font-bold text-sm">URL generada:</p>
+                    <a id="demoUrl" href="#" target="_blank" class="text-xs text-indigo-600 underline break-all"></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bonus -->
+        <section class="border-t border-slate-200 pt-12">
+            <h2 class="text-2xl font-bold mb-6">Sección Bonus: Nivel Avanzado</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-indigo-700 mb-2">El Widget de Cloudinary</h3>
+                    <p class="text-sm text-slate-600">Cloudinary ofrece una interfaz completa (Upload Widget) que ya incluye cámara, filtros y múltiples fuentes. Se usa importando su script oficial y ejecutando <code>cloudinary.openUploadWidget()</code>.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-indigo-700 mb-2">Subida desde Backend</h3>
+                    <p class="text-sm text-slate-600">En una arquitectura robusta, el Frontend envía la imagen a un servidor (Node.js/Python). El servidor valida al usuario y usa el <strong>API Secret</strong> para una subida firmada (Signed Upload), garantizando máxima seguridad.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-sm">
+        Material de apoyo docente - MTI. Luis Alberto Mendoza San Juan 2026
+    </footer>
+
+    <script>
+        // LÓGICA DEL DEMO INTEGRADO (Sintaxis .then como solicitó el colega)
+        const demoInput = document.getElementById('demoInput');
+        const demoDropZone = document.getElementById('demoDropZone');
+        const demoBtn = document.getElementById('demoBtn');
+        const demoPreview = document.getElementById('demoPreview');
+        const demoLabel = document.getElementById('demoLabel');
+        const demoResult = document.getElementById('demoResult');
+        const demoUrl = document.getElementById('demoUrl');
+
+        // Configuración dinámica por el usuario
+        const cfgNameInput = document.getElementById('cfg_name');
+        const cfgPresetInput = document.getElementById('cfg_preset');
+
+        demoDropZone.addEventListener('click', () => demoInput.click());
+
+        demoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    demoPreview.src = ev.target.result;
+                    demoPreview.classList.remove('hidden');
+                    demoLabel.classList.add('hidden');
+                    demoBtn.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        demoBtn.addEventListener('click', () => {
+            const file = demoInput.files[0];
+            const name = cfgNameInput.value.trim();
+            const preset = cfgPresetInput.value.trim();
+
+            if(!name || !preset) {
+                alert("Por favor configura Cloud Name y Preset arriba.");
+                return;
+            }
+
+            demoBtn.textContent = "Procesando...";
+            demoBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', preset);
+
+            // Uso de FETCH con .then y .catch
+            fetch(`https://api.cloudinary.com/v1_1/${name}/image/upload`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Verifica que el Cloud Name y el Preset sean correctos y que el Preset sea 'Unsigned'.");
+                return res.json();
+            })
+            .then(data => {
+                demoBtn.textContent = "¡SUBIDA LISTA!";
+                demoResult.classList.remove('hidden');
+                demoUrl.href = data.secure_url;
+                demoUrl.textContent = data.secure_url;
+            })
+            .catch(err => {
+                alert("Error: " + err.message);
+                demoBtn.textContent = "INTENTAR DE NUEVO";
+                demoBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

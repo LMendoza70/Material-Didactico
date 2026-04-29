@@ -77,7 +77,19 @@
     </style>
     <!-- Chosen Palette: Warm Tech - #fdfbf7 (Background), #1e293b (Slate - Code), #d97706 (Amber - Accent/Node), #0ea5e9 (Sky - MySQL) -->
 </head>
-<body class="h-screen flex flex-col md:flex-row overflow-hidden">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col overflow-hidden">
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md z-50 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../index.html" class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
+                    Material Didáctico
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="flex flex-1 flex-col md:flex-row overflow-hidden">
 
     <!-- Sidebar Navigation -->
     <aside class="w-full md:w-64 bg-white border-r border-stone-200 flex-shrink-0 flex flex-col h-full z-10 shadow-sm">
@@ -1027,5 +1039,6 @@ if (process.env.NODE_ENV !== 'production') {
         }
 
     </script>
+    </div>
 </body>
 </html>
