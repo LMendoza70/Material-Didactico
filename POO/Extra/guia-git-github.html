@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte Interactivo: Dominando Git y GitHub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    
+
+    <style>
+        /* Estilos base y personalizaciones mínimas */
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ocultar barra de desplazamiento para un diseño más limpio (opcional) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        /* Contenedor estricto para las gráficas */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        /* Transiciones suaves */
+        .transition-all-smooth {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+        }
+
+        .active-tab {
+            border-bottom: 2px solid #4f46e5;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background-color: #1E293B;
+            color: #E2E8F0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+        }
+    </style>
+
+    <!--
+    Chosen Palette: Slate/Blue Professional
+    - Fondo: Slate 50 (#F8FAFC) - Cálido y neutro
+    - Texto Principal: Slate 800 (#1E293B) - Alto contraste, legible
+    - Acento: Blue 600 (#2563EB) - Profesional, llama a la acción
+    - Tarjetas: Blanco - Separa el contenido del fondo
+    
+    Application Structure Plan:
+    Estructura de "Dashboard de Aprendizaje" con navegación lateral (o superior en móviles)
+    - Justificación: El reporte original es secuencial (instalación -> cuenta -> vinculación -> flujo de trabajo). Un dashboard con pestañas temáticas permite al usuario saltar directamente a lo que necesita (ej. "Solo necesito recordar el flujo de trabajo") o seguir la guía paso a paso.
+    - Secciones:
+      1. Inicio/Contexto: Por qué aprender Git (Datos de stack overflow para enganchar).
+      2. Configuración Inicial: Instalación y creación de cuentas (Pasos 1 y 2 del doc).
+      3. Entorno (Visual Studio): Cómo integrar las herramientas en el IDE.
+      4. Flujo de Trabajo (Core): La parte más importante, desglosada interactivamente.
+    - Interacciones Clave: Navegación por pestañas, simulador de flujo de trabajo paso a paso (para reforzar el ciclo de commit), gráficas para mostrar relevancia.
+
+    Visualization & Content Choices:
+    1. Relevancia de Git (Info): Gráfico de dona (Chart.js) mostrando el 93% de adopción (Dato extraído del documento sobre Stack Overflow). Meta: Informar y justificar el aprendizaje.
+    2. Flujo de Trabajo (Organización/Cambio): Simulador interactivo HTML/CSS/JS. El usuario hace clic en los pasos (Stage -> Commit -> Push) y ve cómo cambia el estado de los archivos y los comandos asociados. Meta: Enseñar el proceso de forma activa. Evita SVG/Mermaid y usa interacción pura.
+    3. Guías Paso a Paso (Información): Tarjetas con listas numeradas y bloques de código copiables para los pasos de instalación y configuración de Visual Studio. Meta: Presentar instrucciones claras y utilizables.
+
+    CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+</head>
+
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../../index.html" class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
+                    Material Didáctico
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sub Navegación GitMaster -->
+    <div class="bg-white shadow-sm border-b border-slate-200 sticky top-16 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-14">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center mr-6">
+                        <span class="text-xl font-bold text-indigo-600 tracking-tight flex items-center gap-2">📘 GitMaster</span>
+                    </div>
+                    <div class="hidden sm:flex sm:space-x-8 h-full" id="desktop-nav">
+                        <!-- Las clases active-tab se gestionarán con JS -->
+                        <button onclick="switchTab('inicio')"
+                            class="nav-btn inline-flex items-center px-1 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-900 hover:border-slate-300 active-tab h-full"
+                            data-target="inicio">
+                            Contexto & Relevancia
+                        </button>
+                        <button onclick="switchTab('configuracion')"
+                            class="nav-btn inline-flex items-center px-1 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-900 hover:border-slate-300 h-full"
+                            data-target="configuracion">
+                            1. Configuración Básica
+                        </button>
+                        <button onclick="switchTab('ide')"
+                            class="nav-btn inline-flex items-center px-1 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-900 hover:border-slate-300 h-full"
+                            data-target="ide">
+                            2. Integración en IDE
+                        </button>
+                        <button onclick="switchTab('flujo')"
+                            class="nav-btn inline-flex items-center px-1 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-900 hover:border-slate-300 h-full"
+                            data-target="flujo">
+                            3. Flujo de Trabajo
+                        </button>
+                    </div>
+                </div>
+                <!-- Menú móvil (simplificado con select) -->
+                <div class="flex items-center sm:hidden py-2">
+                    <select id="mobile-nav" onchange="switchTab(this.value)"
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-600 focus:border-indigo-600 sm:text-sm rounded-md shadow-sm">
+                        <option value="inicio">Contexto & Relevancia</option>
+                        <option value="configuracion">1. Configuración Básica</option>
+                        <option value="ide">2. Integración en IDE</option>
+                        <option value="flujo">3. Flujo de Trabajo</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- SECCIÓN: INICIO / CONTEXTO -->
+        <section id="section-inicio" class="content-section transition-all-smooth opacity-100">
+            <header class="mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">¿Por qué dominar Git y GitHub?</h1>
+                <p class="mt-4 text-xl text-slate-500 max-w-3xl">
+                    Esta sección introduce la importancia fundamental del control de versiones en el desarrollo de
+                    software moderno, basándose en encuestas de la industria, y establece los cimientos para entender
+                    por qué estas herramientas son un estándar.
+                </p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <!-- Tarjeta de Texto -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <h2 class="text-2xl font-bold mb-4 text-indigo-600">El Estándar de la Industria</h2>
+                    <p class="text-slate-500 mb-4 leading-relaxed">
+                        Trabajar con nuestro código de forma segura es tan importante como aprender a programar.
+                        Herramientas como Git y GitHub son esenciales en el mundo del desarrollo de software.
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <span class="text-success mr-2 font-bold">✓</span>
+                            <span><strong>Histórico seguro:</strong> Registra cada cambio en tu código.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-success mr-2 font-bold">✓</span>
+                            <span><strong>Trabajo en equipo:</strong> Permite colaboración rápida y sin
+                                conflictos.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-success mr-2 font-bold">✓</span>
+                            <span><strong>Visibilidad:</strong> Colaborar en código abierto mejora tu perfil profesional
+                                (tu "currículum verde").</span>
+                        </li>
+                    </ul>
+                    <div class="mt-6 p-4 bg-blue-50 border-l-4 border-indigo-600 text-sm text-blue-800">
+                        "Sinceramente no existe una tecnología que se utilice tanto como Git en el mundo del desarrollo
+                        de software, sin importar el lenguaje de programación."
+                    </div>
+                </div>
+
+                <!-- Gráfica de Adopción -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center">
+                    <h3 class="text-lg font-semibold text-center mb-2">Adopción de Git según Stack Overflow</h3>
+                    <p class="text-sm text-slate-500 text-center mb-4">Porcentaje de desarrolladores que utilizan Git
+                        como sistema principal de control de versiones.</p>
+
+                    <div class="chart-container">
+                        <canvas id="adoptionChart"></canvas>
+                    </div>
+
+                    <button onclick="switchTab('configuracion')"
+                        class="mt-6 w-full sm:w-auto inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 transition-colors">
+                        Comenzar Instalación →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: CONFIGURACIÓN BÁSICA -->
+        <section id="section-configuracion" class="content-section transition-all-smooth opacity-0 hidden">
+            <header class="mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">Preparando el Terreno</h1>
+                <p class="mt-4 text-xl text-slate-500 max-w-3xl">
+                    Aquí encontrarás los pasos esenciales para instalar el motor (Git) en tu máquina local y crear tu
+                    identidad en la nube (GitHub). Es el primer paso hacia el código colaborativo.
+                </p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Instalación Local -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+                    <div class="bg-slate-800 px-6 py-4">
+                        <h2 class="text-xl font-bold text-white flex items-center">
+                            <span class="mr-2">💻</span> 1. Instalación de Git
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <ol class="list-decimal list-inside space-y-4 text-slate-500">
+                            <li class="pl-2">
+                                <span class="font-semibold text-slate-900">Descarga el instalador:</span> Ve al sitio
+                                oficial <a href="https://git-scm.com/downloads" target="_blank"
+                                    class="text-indigo-600 hover:underline">git-scm.com</a>.
+                            </li>
+                            <li class="pl-2">
+                                <span class="font-semibold text-slate-900">Ejecuta el asistente:</span> Abre el archivo
+                                descargado.
+                                <p class="text-sm mt-1 ml-6 text-gray-500 italic">Recomendación: Deja las opciones por
+                                    defecto. Asegúrate de marcar "Git Bash Here".</p>
+                            </li>
+                            <li class="pl-2">
+                                <span class="font-semibold text-slate-900">Verificación:</span> Abre una terminal (CMD o
+                                PowerShell) y escribe:
+                                <div class="mt-2 ml-6 code-block">
+                                    <span class="text-green-400">$</span> git --version
+                                </div>
+                                <p class="text-sm mt-1 ml-6 text-gray-500">Si aparece un número (ej. git version 2.x.x),
+                                    fue un éxito.</p>
+                            </li>
+                            <li class="pl-2">
+                                <span class="font-semibold text-slate-900">Configuración Inicial:</span> Identifícate para
+                                dar autoría a tus cambios:
+                                <div class="mt-2 ml-6 code-block">
+                                    <span class="text-green-400">$</span> git config --global user.name "Tu Nombre"<br>
+                                    <span class="text-green-400">$</span> git config --global user.email
+                                    "tu-email@ejemplo.com"
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Cuenta en la Nube -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+                    <div class="bg-blue-600 px-6 py-4">
+                        <h2 class="text-xl font-bold text-white flex items-center">
+                            <span class="mr-2">☁️</span> 2. Tu Cuenta en GitHub
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-500 mb-6">GitHub es la plataforma donde alojarás tus repositorios remotos
+                            para colaborar o tener copias de seguridad.</p>
+
+                        <div
+                            class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
+                            <!-- Pasos estilo timeline -->
+                            <div
+                                class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                                <div
+                                    class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-100 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 font-bold">
+                                    1</div>
+                                <div
+                                    class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-4 rounded border border-slate-200 shadow-sm">
+                                    <h4 class="font-bold text-slate-900">Registro</h4>
+                                    <p class="text-sm text-slate-500">Ingresa a github.com y haz clic en <strong>Sign
+                                            up</strong>.</p>
+                                </div>
+                            </div>
+
+                            <div
+                                class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                                <div
+                                    class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-100 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 font-bold">
+                                    2</div>
+                                <div
+                                    class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-4 rounded border border-slate-200 shadow-sm">
+                                    <h4 class="font-bold text-slate-900">Tus Datos</h4>
+                                    <p class="text-sm text-slate-500">Introduce correo, crea contraseña y elige un
+                                        nombre de usuario único.</p>
+                                </div>
+                            </div>
+
+                            <div
+                                class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                                <div
+                                    class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-100 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 font-bold">
+                                    3</div>
+                                <div
+                                    class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-4 rounded border border-slate-200 shadow-sm">
+                                    <h4 class="font-bold text-slate-900">Verificación</h4>
+                                    <p class="text-sm text-slate-500">Confirma el correo desde tu bandeja de entrada.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <p class="text-sm text-gray-500 italic">Nota: Puedes saltar las encuestas iniciales. Tu
+                                "perfil de desarrollador" está listo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end">
+                <button onclick="switchTab('ide')"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 transition-colors">
+                    Siguiente: Vincular en IDE →
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: INTEGRACIÓN EN IDE (VISUAL STUDIO) -->
+        <section id="section-ide" class="content-section transition-all-smooth opacity-0 hidden">
+            <header class="mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">Conectando las Piezas en Visual Studio</h1>
+                <p class="mt-4 text-xl text-slate-500 max-w-3xl">
+                    Detalla cómo vincular tu entorno local (Git) y tu cuenta en la nube (GitHub) directamente dentro de
+                    Visual Studio para no tener que usar la terminal constantemente.
+                </p>
+                <div
+                    class="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                    <span class="mr-2">⚠️</span> Nota: Orientado a Visual Studio (2019/2022). Similar en VS Code vía
+                    extensiones.
+                </div>
+            </header>
+
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+                    <!-- Paso 1 -->
+                    <div class="flex flex-col items-center text-center">
+                        <div
+                            class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-2xl mb-4 border-4 border-white shadow-sm">
+                            👤
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">1. Iniciar Sesión</h3>
+                        <p class="text-slate-500 text-sm">
+                            En la esquina superior derecha, haz clic en el icono de perfil o ve a <strong>Archivo >
+                                Cuenta de Microsoft</strong>. Inicia sesión vinculando tus credenciales de GitHub.
+                        </p>
+                    </div>
+
+                    <!-- Paso 2 -->
+                    <div class="flex flex-col items-center text-center relative">
+                        <!-- Flecha conectora visible en desktop -->
+                        <div class="hidden md:block absolute top-8 left-0 w-full h-0.5 bg-gray-200 -z-10"></div>
+
+                        <div
+                            class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-2xl mb-4 border-4 border-white shadow-sm">
+                            ⚙️
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">2. Configuración</h3>
+                        <p class="text-slate-500 text-sm">
+                            Ve a <strong>Herramientas > Opciones</strong>. Busca <strong>Control de código fuente >
+                                Configuración de repositorio de Git</strong>. Verifica que nombre y correo coincidan con
+                            los de Git local.
+                        </p>
+                    </div>
+
+                    <!-- Paso 3 -->
+                    <div class="flex flex-col items-center text-center relative">
+                        <!-- Flecha conectora visible en desktop -->
+                        <div class="hidden md:block absolute top-8 left-0 w-full h-0.5 bg-gray-200 -z-10"></div>
+
+                        <div
+                            class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-2xl mb-4 border-4 border-white shadow-sm">
+                            🎛️
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">3. El Panel de Control</h3>
+                        <p class="text-slate-500 text-sm">
+                            Ve a <strong>Ver > Cambios de Git</strong>. Este panel lateral será tu centro de operaciones
+                            diario para manejar versiones y subir código a la nube.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="mt-12 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <h4 class="font-bold text-lg mb-3">Creando tu primer Repositorio (Paso A)</h4>
+                    <p class="text-slate-500 mb-4">Para publicar un proyecto nuevo desde cero dentro del IDE:</p>
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-500">
+                        <li class="bg-white p-3 rounded shadow-sm border border-gray-100"><span
+                                class="font-bold text-indigo-600">1.</span> Clic en "Crear repositorio de Git" (barra
+                            inferior).</li>
+                        <li class="bg-white p-3 rounded shadow-sm border border-gray-100"><span
+                                class="font-bold text-indigo-600">2.</span> Selecciona "GitHub" en la ventana emergente.
+                        </li>
+                        <li class="bg-white p-3 rounded shadow-sm border border-gray-100"><span
+                                class="font-bold text-indigo-600">3.</span> Elige cuenta, nombra el repo y elige
+                            Privado/Público.</li>
+                        <li class="bg-white p-3 rounded shadow-sm border border-gray-100"><span
+                                class="font-bold text-indigo-600">4.</span> Clic en "Crear e insertar". ¡Código en la nube!
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end">
+                <button onclick="switchTab('flujo')"
+                    class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 transition-colors">
+                    Entender el Flujo de Trabajo Diario →
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: FLUJO DE TRABAJO (INTERACTIVA) -->
+        <section id="section-flujo" class="content-section transition-all-smooth opacity-0 hidden">
+            <header class="mb-8 text-center max-w-4xl mx-auto">
+                <h1 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">El Ciclo Diario del Desarrollador</h1>
+                <p class="mt-4 text-xl text-slate-500">
+                    Comprender el viaje de tu código desde que lo editas hasta que está seguro en la nube. Interactúa
+                    con los botones abajo para simular el proceso de <strong class="text-slate-900">Stage -> Commit ->
+                        Push</strong>.
+                </p>
+            </header>
+
+            <!-- SIMULADOR INTERACTIVO -->
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden max-w-5xl mx-auto">
+
+                <!-- Visor de Estado Superior -->
+                <div class="bg-slate-800 p-6 flex justify-between items-center text-white relative">
+                    <!-- Conectores visuales bg -->
+                    <div class="absolute inset-0 top-1/2 h-1 bg-slate-700 w-3/4 mx-auto z-0 -translate-y-1/2"></div>
+
+                    <!-- Estado: Workspace -->
+                    <div class="z-10 flex flex-col items-center w-1/4">
+                        <div id="state-icon-workspace"
+                            class="w-14 h-14 rounded-full bg-slate-600 flex items-center justify-center text-2xl transition-all duration-300 ring-4 ring-slate-800">
+                            💻
+                        </div>
+                        <span class="mt-2 text-sm font-semibold text-slate-300">Mi PC<br>(Workspace)</span>
+                    </div>
+
+                    <!-- Estado: Staging -->
+                    <div class="z-10 flex flex-col items-center w-1/4">
+                        <div id="state-icon-staging"
+                            class="w-14 h-14 rounded-full bg-slate-600 flex items-center justify-center text-2xl transition-all duration-300 ring-4 ring-slate-800">
+                            📦
+                        </div>
+                        <span class="mt-2 text-sm font-semibold text-slate-300 text-center">Área de
+                            Prepa.<br>(Staging)</span>
+                    </div>
+
+                    <!-- Estado: Local Repo -->
+                    <div class="z-10 flex flex-col items-center w-1/4">
+                        <div id="state-icon-local"
+                            class="w-14 h-14 rounded-full bg-slate-600 flex items-center justify-center text-2xl transition-all duration-300 ring-4 ring-slate-800">
+                            💾
+                        </div>
+                        <span class="mt-2 text-sm font-semibold text-slate-300 text-center">Repo. Local<br>(.git)</span>
+                    </div>
+
+                    <!-- Estado: Remote Repo -->
+                    <div class="z-10 flex flex-col items-center w-1/4">
+                        <div id="state-icon-remote"
+                            class="w-14 h-14 rounded-full bg-slate-600 flex items-center justify-center text-2xl transition-all duration-300 ring-4 ring-slate-800">
+                            ☁️
+                        </div>
+                        <span class="mt-2 text-sm font-semibold text-slate-300 text-center">GitHub<br>(Remote)</span>
+                    </div>
+                </div>
+
+                <!-- Controles e Información -->
+                <div class="p-8 bg-white grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                    <!-- Panel de Acción -->
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-4 border-b pb-2">Acciones en Visual Studio</h3>
+
+                        <div class="space-y-4">
+                            <!-- Botón 1: Editar -->
+                            <button onclick="simulateStep(1)" id="btn-step-1"
+                                class="w-full text-left px-4 py-3 rounded-lg border-2 border-indigo-600 bg-blue-50 hover:bg-blue-100 transition-colors flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold block">0. Modificar Archivos</span>
+                                    <span class="text-sm text-slate-500">Escribes código nuevo.</span>
+                                </div>
+                                <span class="text-xl">✍️</span>
+                            </button>
+
+                            <!-- Botón 2: Stage -->
+                            <button onclick="simulateStep(2)" id="btn-step-2" disabled
+                                class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-400 transition-colors flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold block">1. Stage (Preparar) [+]</span>
+                                    <span class="text-sm">Seleccionas qué cambios guardar.</span>
+                                </div>
+                                <span class="text-xl">➕</span>
+                            </button>
+
+                            <!-- Botón 3: Commit -->
+                            <button onclick="simulateStep(3)" id="btn-step-3" disabled
+                                class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-400 transition-colors flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold block">2. Commit (Confirmar)</span>
+                                    <span class="text-sm">Guardas versión en tu disco duro.</span>
+                                </div>
+                                <span class="text-xl">✅</span>
+                            </button>
+
+                            <!-- Botón 4: Push -->
+                            <button onclick="simulateStep(4)" id="btn-step-4" disabled
+                                class="w-full text-left px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-400 transition-colors flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold block">3. Push (Empujar) [↑]</span>
+                                    <span class="text-sm">Subes al repositorio en la nube.</span>
+                                </div>
+                                <span class="text-xl">🚀</span>
+                            </button>
+                        </div>
+
+                        <div class="mt-4 text-center">
+                            <button onclick="resetSimulation()"
+                                class="text-sm text-slate-500 hover:text-indigo-600 underline">Reiniciar Simulación</button>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Explicación Dinámica -->
+                    <div
+                        class="bg-gray-50 rounded-lg p-6 border border-gray-200 flex flex-col justify-center min-h-[300px]">
+                        <div id="sim-content" class="transition-opacity duration-300">
+                            <h4 class="text-xl font-bold text-slate-900 mb-3">¿Qué está pasando?</h4>
+                            <p class="text-slate-500 mb-4 text-lg">Haz clic en <strong>"0. Modificar Archivos"</strong>
+                                a la izquierda para comenzar el ciclo.</p>
+
+                            <div class="p-4 bg-white rounded border border-gray-200 shadow-inner">
+                                <p class="text-sm text-gray-500 font-mono">Estado Actual: Esperando cambios...</p>
+                            </div>
+                        </div>
+
+                        <!-- Pull info estático abajo -->
+                        <div class="mt-auto pt-6 border-t border-gray-200">
+                            <h5 class="font-bold text-sm text-slate-900 flex items-center">
+                                <span class="mr-2 text-xl">⬇️</span> Mantenerse Actualizado (Pull)
+                            </h5>
+                            <p class="text-xs text-slate-500 mt-1">Si trabajas desde otra PC o en equipo, antes de
+                                programar haz clic en la flecha hacia abajo (↓) o <strong>Extraer (Pull)</strong> para
+                                traer los cambios más recientes de la nube.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Buenas Prácticas -->
+            <div class="mt-12 bg-white p-6 rounded-lg shadow-sm border border-l-4 border-l-green-500 max-w-5xl mx-auto">
+                <h3 class="text-lg font-bold text-slate-900 mb-2">💡 Sugerencias de Buenas Prácticas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-500">
+                    <div>
+                        <strong class="text-gray-900 block mb-1">Archivo README.md</strong>
+                        La carta de presentación del proyecto. Explica de qué trata y cómo ejecutarlo en local.
+                    </div>
+                    <div>
+                        <strong class="text-gray-900 block mb-1">Archivo .gitignore</strong>
+                        Creado por VS automáticamente. Evita subir archivos innecesarios (como carpetas temporales
+                        `bin/` o `obj/`).
+                    </div>
+                    <div>
+                        <strong class="text-gray-900 block mb-1">Mensajes de Commit Claros</strong>
+                        Evita "cambios" o "fix". Usa descripciones directas: "Corregido error en cálculo de impuestos".
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-500 text-sm font-medium">Material de apoyo docente - MTI. Luis Alberto Mendoza San Juan</p>
+            <p class="text-slate-400 text-sm mt-2">Reporte interactivo basado en la "Guía Completa: Git, GitHub y Visual Studio".</p>
+        </div>
+    </footer>
+
+    <!-- LOGICA DE LA APLICACIÓN JAVASCRIPT -->
+    <script>
+        // --- 1. GESTIÓN DE NAVEGACIÓN Y PESTAÑAS ---
+        function switchTab(tabId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+                section.classList.remove('opacity-100');
+                section.classList.add('opacity-0');
+            });
+
+            // Actualizar botones de navegación desktop
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active-tab', 'border-indigo-600');
+                btn.classList.add('border-transparent');
+
+                if (btn.dataset.target === tabId) {
+                    btn.classList.add('active-tab', 'border-indigo-600');
+                    btn.classList.remove('border-transparent');
+                }
+            });
+
+            // Sincronizar select móvil
+            document.getElementById('mobile-nav').value = tabId;
+
+            // Mostrar la sección seleccionada con una pequeña demora para la animación de opacidad
+            const targetSection = document.getElementById(`section-${tabId}`);
+            targetSection.classList.remove('hidden');
+
+            // Forzar reflow para que la transición de opacidad funcione
+            void targetSection.offsetWidth;
+
+            targetSection.classList.remove('opacity-0');
+            targetSection.classList.add('opacity-100');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        // --- 2. GRÁFICA CHART.JS ---
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('adoptionChart').getContext('2d');
+
+            // Datos basados en la fuente: "más del 93% responde que es el más utilizado"
+            const data = {
+                labels: ['Utilizan Git', 'Otros / No utilizan'],
+                datasets: [{
+                    data: [93.9, 6.1],
+                    backgroundColor: [
+                        '#4f46e5', // Indigo 600
+                        '#CBD5E1'  // Slate 300 (Gris claro para contraste)
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            };
+
+            const config = {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return ' ' + context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'textCenter',
+                    beforeDraw: function (chart) {
+                        var width = chart.width,
+                            height = chart.height,
+                            ctx = chart.ctx;
+
+                        ctx.restore();
+                        var fontSize = (height / 114).toFixed(2);
+                        ctx.font = "bold " + fontSize + "em Inter, sans-serif";
+                        ctx.textBaseline = "middle";
+                        ctx.fillStyle = "#1E293B";
+
+                        var text = "93%",
+                            textX = Math.round((width - ctx.measureText(text).width) / 2),
+                            textY = height / 2 - 10;
+
+                        ctx.fillText(text, textX, textY);
+
+                        ctx.font = (fontSize * 0.4).toFixed(2) + "em Inter, sans-serif";
+                        ctx.fillStyle = "#475569";
+                        var text2 = "Desarrolladores",
+                            text2X = Math.round((width - ctx.measureText(text2).width) / 2),
+                            text2Y = height / 2 + 15;
+                        ctx.fillText(text2, text2X, text2Y);
+
+                        ctx.save();
+                    }
+                }]
+            };
+
+            new Chart(ctx, config);
+        });
+
+
+        // --- 3. LÓGICA DEL SIMULADOR DE FLUJO DE TRABAJO ---
+
+        // Base de datos de textos para la simulación
+        const simData = {
+            0: {
+                title: "¿Qué está pasando?",
+                desc: "Haz clic en <strong>'0. Modificar Archivos'</strong> a la izquierda para comenzar el ciclo.",
+                code: "Estado Actual: Esperando cambios..."
+            },
+            1: {
+                title: "Archivos Modificados",
+                desc: "Has editado el código. Visual Studio detecta estos cambios, pero aún no los ha preparado para guardarlos. Están solo en tu área de trabajo (Workspace).",
+                code: 'git status\n> Archivos modificados: \n> <span class="text-red-500">index.html (modificado)</span>'
+            },
+            2: {
+                title: "Cambios en Staging (Preparados)",
+                desc: "Al hacer clic en '+' (Stage), indicas qué archivos específicos quieres incluir en tu próximo guardado. Se mueven al Área de Preparación.",
+                code: 'git add .\n> Archivos preparados para commit:\n> <span class="text-green-500">index.html (listo)</span>'
+            },
+            3: {
+                title: "Commit Realizado (Guardado Local)",
+                desc: "Al confirmar (Commit) con un mensaje descriptivo, los cambios se guardan permanentemente en el historial de tu Repositorio Local en tu PC.",
+                code: 'git commit -m "Añadida nueva sección"\n> [main f4a3b2c] Añadida nueva sección\n> 1 file changed, 10 insertions(+)'
+            },
+            4: {
+                title: "Push Exitoso (Guardado en Nube)",
+                desc: "Al hacer Push (↑), tu Repositorio Local se sincroniza con GitHub. Tu código ahora está seguro en la nube y accesible para tu equipo.",
+                code: 'git push origin main\n> Enumerating objects: 5, done.\n> Writing objects: 100% (3/3), done.\n> To https://github.com/tu-usuario/tu-repo.git'
+            }
+        };
+
+        function updateSimContent(step) {
+            const contentDiv = document.getElementById('sim-content');
+            contentDiv.style.opacity = 0; // Inicia fade out
+
+            setTimeout(() => {
+                contentDiv.innerHTML = `
+                    <h4 class="text-xl font-bold text-slate-900 mb-3">${simData[step].title}</h4>
+                    <p class="text-slate-500 mb-4 text-base">${simData[step].desc}</p>
+                    <div class="p-4 bg-slate-900 rounded-lg border border-slate-700 shadow-inner code-block">
+                        <pre class="whitespace-pre-wrap leading-relaxed">${simData[step].code}</pre>
+                    </div>
+                `;
+                contentDiv.style.opacity = 1; // Fade in
+            }, 300);
+        }
+
+        function setActiveIcon(iconId, colorClass) {
+            const icons = ['workspace', 'staging', 'local', 'remote'];
+            icons.forEach(id => {
+                const el = document.getElementById(`state-icon-${id}`);
+                // Reset a estado inactivo
+                el.className = "w-14 h-14 rounded-full bg-slate-600 flex items-center justify-center text-2xl transition-all duration-300 ring-4 ring-slate-800 opacity-50";
+            });
+
+            if (iconId) {
+                const activeEl = document.getElementById(`state-icon-${iconId}`);
+                activeEl.className = `w-14 h-14 rounded-full ${colorClass} flex items-center justify-center text-2xl transition-all duration-300 ring-4 ring-slate-800 shadow-[0_0_15px_rgba(255,255,255,0.3)] scale-110`;
+            }
+        }
+
+        function setButtonActive(btnId, isNextAction) {
+            const btn = document.getElementById(btnId);
+            btn.disabled = false;
+            if (isNextAction) {
+                btn.className = "w-full text-left px-4 py-3 rounded-lg border-2 border-indigo-600 bg-blue-50 hover:bg-blue-100 transition-colors flex items-center justify-between cursor-pointer";
+            } else {
+                // Estado completado
+                btn.className = "w-full text-left px-4 py-3 rounded-lg border border-green-200 bg-green-50 text-gray-700 transition-colors flex items-center justify-between opacity-70";
+            }
+        }
+
+        function setButtonDisabled(btnId) {
+            const btn = document.getElementById(btnId);
+            btn.disabled = true;
+            btn.className = "w-full text-left px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-400 transition-colors flex items-center justify-between cursor-not-allowed opacity-50";
+        }
+
+        function simulateStep(stepNumber) {
+            updateSimContent(stepNumber);
+
+            if (stepNumber === 1) {
+                // Modificado (Workspace)
+                setActiveIcon('workspace', 'bg-yellow-500');
+                setButtonActive('btn-step-1', false); // Ya se hizo
+                setButtonActive('btn-step-2', true);  // Siguiente acción
+                setButtonDisabled('btn-step-3');
+                setButtonDisabled('btn-step-4');
+            }
+            else if (stepNumber === 2) {
+                // Staging
+                setActiveIcon('staging', 'bg-blue-500');
+                setButtonActive('btn-step-1', false);
+                setButtonActive('btn-step-2', false);
+                setButtonActive('btn-step-3', true); // Siguiente acción
+                setButtonDisabled('btn-step-4');
+            }
+            else if (stepNumber === 3) {
+                // Commit (Local Repo)
+                setActiveIcon('local', 'bg-emerald-500');
+                setButtonActive('btn-step-1', false);
+                setButtonActive('btn-step-2', false);
+                setButtonActive('btn-step-3', false);
+                setButtonActive('btn-step-4', true); // Siguiente acción
+            }
+            else if (stepNumber === 4) {
+                // Push (Remote Repo)
+                setActiveIcon('remote', 'bg-purple-500');
+                setButtonActive('btn-step-1', false);
+                setButtonActive('btn-step-2', false);
+                setButtonActive('btn-step-3', false);
+                setButtonActive('btn-step-4', false); // Terminado
+
+                // Mensaje final animado
+                setTimeout(() => {
+                    const contentDiv = document.getElementById('sim-content');
+                    contentDiv.innerHTML += `
+                        <div class="mt-4 p-3 bg-green-100 text-green-800 rounded-md border border-green-200 text-center font-bold animate-pulse">
+                            🎉 ¡Ciclo completado exitosamente!
+                        </div>
+                    `;
+                }, 800);
+            }
+        }
+
+        function resetSimulation() {
+            updateSimContent(0);
+            setActiveIcon(null, null);
+            setButtonActive('btn-step-1', true);
+            setButtonDisabled('btn-step-2');
+            setButtonDisabled('btn-step-3');
+            setButtonDisabled('btn-step-4');
+        }
+
+        // Inicializar estado del simulador
+        resetSimulation();
+
+    </script>
+</body>
+
+</html>
