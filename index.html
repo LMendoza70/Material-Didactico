@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,17 +8,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 </head>
+
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
     <!-- Navegación Unificada -->
     <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="./index.html" class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
-                    <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
+                <a href="./index.html"
+                    class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    <span
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
                     Material Didáctico
                 </a>
             </div>
@@ -27,32 +33,41 @@
     <!-- Contenido Principal -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="text-center mb-16">
-            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">Portal de <span class="text-indigo-600">Aprendizaje</span></h1>
-            <p class="text-lg text-slate-500 max-w-2xl mx-auto">Explora los diferentes recursos y materiales organizados por materias para facilitar tu proceso de estudio.</p>
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">Portal de <span
+                    class="text-indigo-600">Aprendizaje</span></h1>
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto">Explora los diferentes recursos y materiales organizados
+                por materias para facilitar tu proceso de estudio.</p>
         </div>
 
         <div class="grid grid-cols-1 max-w-lg mx-auto gap-8">
 
             <!-- Materia: Programación Orientada a Objetos -->
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all hover:-translate-y-1">
+            <div
+                class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all hover:-translate-y-1">
                 <div class="bg-slate-800 h-2"></div>
                 <div class="p-6 md:p-8">
-                    <div class="w-12 h-12 bg-slate-100 text-slate-800 rounded-xl flex items-center justify-center text-2xl mb-6 shadow-sm">
+                    <div
+                        class="w-12 h-12 bg-slate-100 text-slate-800 rounded-xl flex items-center justify-center text-2xl mb-6 shadow-sm">
                         📦
                     </div>
                     <h2 class="text-2xl font-bold text-slate-900 mb-2">Programación Orientada a Objetos (POO)</h2>
-                    <p class="text-slate-500 text-sm mb-6 line-clamp-2">Fundamentos, conceptos y principios de la ingeniería en tecnologías de información y POO.</p>
-                    
+                    <p class="text-slate-500 text-sm mb-6 line-clamp-2">Fundamentos, conceptos y principios de la
+                        ingeniería en tecnologías de información y POO.</p>
+
                     <ul class="space-y-3">
                         <li>
-                            <a href="./POO/Unidad1/T1.html" class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                                <span class="font-medium text-slate-700 group-hover:text-indigo-600">Unidad 1 - Dashboard Interactivo</span>
+                            <a href="./POO/Unidad1/T1.html"
+                                class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                                <span class="font-medium text-slate-700 group-hover:text-indigo-600">Tema 1: Fundamentos
+                                    de POO</span>
                                 <span class="text-indigo-400 group-hover:text-indigo-600">→</span>
                             </a>
                         </li>
                         <li>
-                            <a href="./POO/Unidad1/infografia.html" class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                                <span class="font-medium text-slate-700 group-hover:text-indigo-600">Infografía - Pilares POO</span>
+                            <a href="./POO/Unidad1/infografia.html"
+                                class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                                <span class="font-medium text-slate-700 group-hover:text-indigo-600">Infografía -
+                                    Pilares POO</span>
                                 <span class="text-indigo-400 group-hover:text-indigo-600">→</span>
                             </a>
                         </li>
@@ -61,8 +76,10 @@
                     <h3 class="text-sm font-bold text-slate-400 mt-6 mb-3 uppercase tracking-wider">Material Extra</h3>
                     <ul class="space-y-3">
                         <li>
-                            <a href="./POO/Extra/guia-git-github.html" class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                                <span class="font-medium text-slate-700 group-hover:text-indigo-600">Guía de Git y GitHub</span>
+                            <a href="./POO/Extra/guia-git-github.html"
+                                class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                                <span class="font-medium text-slate-700 group-hover:text-indigo-600">Guía de Git y
+                                    GitHub</span>
                                 <span class="text-indigo-400 group-hover:text-indigo-600">→</span>
                             </a>
                         </li>
@@ -76,9 +93,11 @@
     <!-- Pie de página -->
     <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-slate-400 text-sm font-medium">Material de apoyo docente - MTI. Luis Alberto Mendoza San Juan</p>
+            <p class="text-slate-400 text-sm font-medium">Material de apoyo docente - MTI. Luis Alberto Mendoza San Juan
+            </p>
         </div>
     </footer>
 
 </body>
+
 </html>

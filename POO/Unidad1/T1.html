@@ -4,401 +4,625 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mentor POO - Dashboard Educativo</title>
+    <title>Fundamentos POO en C# - Guía Interactiva</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Fira+Code:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
         rel="stylesheet">
+
+    <!-- Configuration for Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6', // C#-esque purple/violet accent
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        /* Chart Container Styling as required */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            /* Constrained width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 250px;
+            max-height: 300px;
+            /* Constrained height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .code-font {
-            font-family: 'Fira Code', monospace;
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
         }
 
-        .sidebar-transition {
-            transition: width 0.3s ease;
+        /* Custom Scrollbar for code blocks and sidebars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
 
-        [lucide] {
-            width: 20px;
-            height: 20px;
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
         }
 
-        .illustration-svg {
-            max-width: 100%;
-            height: auto;
-            border-radius: 1rem;
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Syntax highlighting simulator */
+        .keyword {
+            color: #c678dd;
+        }
+
+        /* Purple */
+        .type {
+            color: #e5c07b;
+        }
+
+        /* Yellow */
+        .string {
+            color: #98c379;
+        }
+
+        /* Green */
+        .comment {
+            color: #7f848e;
+            font-style: italic;
+        }
+
+        /* Gray */
+        .method {
+            color: #61afef;
+        }
+
+        /* Blue */
+
+        /* Smooth transitions */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900 overflow-hidden flex flex-col h-screen">
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-500 selection:text-white">
 
+    <!-- Chosen Palette: Warm neutral background (slate-50), dark slate for text for readability, and a deep violet/purple accent (brand) inspired by C# and Visual Studio themes. -->
+
+    <!-- Application Structure Plan: The SPA is designed as an interactive learning dashboard. 
+         1. Header: Sets the context.
+         2. Section 1 (Paradigm Shift): Uses a side-by-side layout comparing structured vs OOP, supported by a Doughnut chart showing industry dominance to immediately justify learning OOP.
+         3. Section 2 (The 10 Pillars Explorer): A master-detail interface (vertical tabs on desktop, horizontal scroll on mobile). This structure is chosen because reading 10 sequential technical definitions is exhausting. By separating them into clickable tabs, the user controls the pace of information consumption, focusing on one concept, its analogy, and its code at a time. 
+         This non-linear exploration maximizes engagement and cognitive retention. -->
+
+    <!-- Visualization & Content Choices: 
+         - Report Info: Paradigm comparison (Structured vs OOP usefulness). -> Goal: Compare/Inform. -> Viz: CSS Cards & Chart.js Doughnut Chart (90% modern software uses OOP). -> Interaction: Hover states. -> Justification: Shows the overwhelming industry preference for OOP visually.
+         - Report Info: 10 OOP Concepts (Classes, Objects, etc.). -> Goal: Organize & Inform. -> Viz: Interactive Master-Detail UI with syntax-highlighted code blocks. -> Interaction: Clickable concept list updating the main reading pane. -> Justification: Prevents text fatigue, allows side-by-side comparison of theory (analogy) and practice (C# code).
+         - Library/Method: Chart.js for data. Vanilla JS for tab state management. Tailwind for layout. NO SVG/Mermaid used. Unicode emojis used for iconography. -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Navigation / Header -->
     <!-- Navegación Unificada -->
     <nav class="bg-indigo-700 text-white shadow-md z-50 shrink-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="../../index.html" class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
-                    <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
+                <a href="../../index.html"
+                    class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    <span
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
                     Material Didáctico
                 </a>
             </div>
         </div>
     </nav>
 
-    <div class="flex flex-1 w-full overflow-hidden">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="bg-slate-900 text-white w-72 sidebar-transition flex flex-col shadow-2xl z-20">
-            <div class="p-6 flex items-center gap-3 border-b border-slate-800">
-                <div class="bg-blue-600 p-2 rounded-xl">
-                    <i data-lucide="terminal" class="text-white"></i>
-                </div>
-                <span id="logo-text" class="font-bold text-lg tracking-tight">Mentor POO <span
-                        class="text-blue-400 font-mono text-sm">v2.5</span></span>
-            </div>
-
-            <nav class="flex-1 p-4 space-y-2 overflow-y-auto" id="nav-links">
-                <!-- Generado por JS -->
-            </nav>
-
-            <div class="p-4 border-t border-slate-800">
-                <button onclick="toggleSidebar()"
-                    class="w-full flex items-center justify-center p-2 text-slate-500 hover:text-white transition-colors">
-                    <i data-lucide="chevron-left" id="toggle-icon"></i>
-                </button>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="flex-1 flex flex-col overflow-hidden">
-            <header class="bg-white/80 backdrop-blur-md border-b p-6 flex justify-between items-center shrink-0">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl" aria-hidden="true">💻</span>
                 <div>
-                    <h1 id="main-title" class="text-2xl font-black text-slate-800 tracking-tight">Cargando...</h1>
-                    <p class="text-slate-400 text-sm font-medium">Unidad 1 • Fundamentos de Ingeniería en TI</p>
+                    <h1 class="text-xl font-bold text-slate-900 leading-tight">Programación Orientada a Objetos</h1>
+                    <p class="text-xs text-slate-500 font-medium tracking-wide uppercase">MTI. Luis Alberto Mendoza San
+                        Juan</p>
                 </div>
-                <div
-                    class="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full text-xs font-bold text-slate-500">
-                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> SISTEMA EDUCATIVO ONLINE
-                </div>
+            </div>
+            <div class="hidden sm:block">
+                <span
+                    class="bg-brand-50 text-brand-700 text-xs font-bold px-3 py-1 rounded-full border border-brand-200">Unidad
+                    1: Fundamentos</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- SECTION 1: El Cambio de Paradigma -->
+        <section id="paradigm-shift" class="space-y-6">
+            <header class="max-w-3xl">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">El Cambio de Paradigma</h2>
+                <p class="text-slate-600 text-lg leading-relaxed">
+                    Antes de crear objetos, el mundo de la programación se basaba en secuencias lógicas. Entender la
+                    diferencia entre la programación clásica (estructurada) y la moderna (orientada a objetos) es el
+                    primer paso para dominar el desarrollo de software actual. Esta sección compara ambos enfoques y
+                    demuestra por qué la POO es el estándar de la industria.
+                </p>
             </header>
 
-            <div class="flex-1 overflow-y-auto p-4 md:p-8">
-                <!-- Vista de Lecciones -->
-                <div id="lesson-view" class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div class="lg:col-span-7 space-y-6">
-                        <section class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
-                            <h3 class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Concepto Maestro
-                            </h3>
-                            <p id="theory-text" class="text-slate-700 leading-relaxed text-lg mb-6"></p>
-                            <div id="illustration-container"
-                                class="bg-slate-50 rounded-2xl p-6 border border-slate-100 flex justify-center items-center overflow-hidden">
-                            </div>
-                        </section>
-
-                        <div id="code-container" class="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl hidden">
-                            <div
-                                class="bg-slate-800 px-6 py-3 flex items-center justify-between border-b border-slate-700">
-                                <div class="flex gap-1.5">
-                                    <div class="w-3 h-3 rounded-full bg-red-500/30"></div>
-                                    <div class="w-3 h-3 rounded-full bg-amber-500/30"></div>
-                                    <div class="w-3 h-3 rounded-full bg-emerald-500/30"></div>
-                                </div>
-                                <span
-                                    class="text-[10px] font-mono text-slate-500 font-bold tracking-widest uppercase">Logic_Implementation.cs</span>
-                            </div>
-                            <div class="p-6 overflow-x-auto">
-                                <pre id="code-block" class="code-font text-blue-300 text-sm leading-relaxed"></pre>
-                            </div>
-                        </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+                <!-- Estructurada Card -->
+                <div
+                    class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-2xl mb-4">📜
                     </div>
-
-                    <div class="lg:col-span-5 space-y-6">
-                        <div id="interaction-card"
-                            class="bg-white p-8 rounded-3xl shadow-xl border border-slate-200 relative overflow-hidden min-h-[300px]">
-                        </div>
-
-                        <div id="console-card" class="bg-slate-900 rounded-3xl shadow-2xl flex flex-col hidden">
-                            <div class="p-6 flex items-center justify-between border-b border-slate-800">
-                                <h3 class="text-white font-bold flex items-center gap-2 text-sm tracking-tight">
-                                    <i data-lucide="terminal" class="text-blue-500"></i> Terminal de Salida
-                                </h3>
-                                <button onclick="runSimulation()"
-                                    class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-[10px] font-black flex items-center gap-2 transition-all shadow-lg shadow-blue-600/30">
-                                    <i data-lucide="play" class="w-3 h-3"></i> EJECUTAR C#
-                                </button>
-                            </div>
-                            <div class="p-6 font-mono text-sm h-48 overflow-y-auto">
-                                <div id="console-output"
-                                    class="text-emerald-400 whitespace-pre-wrap opacity-90 leading-relaxed italic">A la
-                                    espera de comandos...</div>
-                            </div>
-                        </div>
-
-                        <div class="bg-blue-50 border border-blue-100 p-6 rounded-3xl">
-                            <h4
-                                class="text-blue-800 font-bold text-sm mb-2 flex items-center gap-2 uppercase tracking-wide">
-                                <i data-lucide="zap" class="w-4 h-4 fill-current"></i> Mentor Tip
-                            </h4>
-                            <p id="mentor-tip" class="text-blue-700 text-xs leading-relaxed font-medium"></p>
-                        </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Prog. Estructurada</h3>
+                    <p class="text-sm text-slate-600 mb-4 flex-grow">
+                        Enfocada en las <strong>acciones</strong> y el flujo lógico (paso a paso). Los datos y las
+                        funciones están separados.
+                    </p>
+                    <div class="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                        <span class="text-xs font-bold text-slate-500 uppercase block mb-1">Analogía</span>
+                        <p class="text-sm font-medium text-slate-700">Una receta de cocina paso a paso.</p>
                     </div>
                 </div>
 
-                <!-- Vista de Evaluación Final -->
-                <div id="exam-view" class="max-w-4xl mx-auto hidden">
-                    <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-200">
-                        <div id="exam-content"></div>
+                <!-- POO Card -->
+                <div
+                    class="bg-brand-50 rounded-2xl shadow-sm border border-brand-200 p-6 flex flex-col hover:shadow-md transition-shadow relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">🚀</div>
+                    <div
+                        class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl mb-4 shadow-sm border border-brand-100">
+                        🏠</div>
+                    <h3 class="text-xl font-bold text-brand-900 mb-2">Prog. Orientada a Objetos</h3>
+                    <p class="text-sm text-brand-700 mb-4 flex-grow relative z-10">
+                        Modela el mundo real. Entidades interactúan entre sí. Cada entidad tiene características (datos)
+                        y comportamientos (métodos).
+                    </p>
+                    <div class="bg-white/60 rounded-lg p-3 border border-brand-100 relative z-10">
+                        <span class="text-xs font-bold text-brand-600 uppercase block mb-1">Analogía</span>
+                        <p class="text-sm font-medium text-brand-900">Una cocina real con un Cocinero, un Horno e
+                            Ingredientes colaborando.</p>
+                    </div>
+                </div>
+
+                <!-- Uso Chart -->
+                <div
+                    class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col items-center justify-center">
+                    <h3 class="text-sm font-bold text-slate-500 uppercase mb-4 text-center">Adopción en la Industria
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="industryChart"></canvas>
+                    </div>
+                    <p class="text-xs text-slate-400 text-center mt-4">Uso en software moderno y empresarial.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Explorador de Conceptos (10 Pilares) -->
+        <section id="concept-explorer" class="space-y-6 pt-8 border-t border-slate-200">
+            <header class="max-w-3xl">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">Explorador de Conceptos POO</h2>
+                <p class="text-slate-600 text-lg leading-relaxed">
+                    A continuación, desglosamos los conceptos fundamentales del paradigma orientado a objetos.
+                    Selecciona un concepto en el menú para visualizar su definición formal, una analogía de la vida real
+                    para facilitar su comprensión, y su implementación directa utilizando código en C#.
+                </p>
+            </header>
+
+            <div
+                class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+
+                <!-- Sidebar / Menu -->
+                <div
+                    class="w-full md:w-1/3 lg:w-1/4 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 overflow-x-auto md:overflow-y-auto max-h-[300px] md:max-h-[600px]">
+                    <div class="flex flex-row md:flex-col p-2 gap-1" id="menu-container">
+                        <!-- Buttons injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Content Display Area -->
+                <div class="w-full md:w-2/3 lg:w-3/4 p-6 md:p-8 flex flex-col" id="content-display">
+                    <!-- Placeholder content before JS loads -->
+                    <div class="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-50">
+                        <span class="text-6xl">👆</span>
+                        <p class="text-xl font-medium">Selecciona un concepto del menú para comenzar a explorar.</p>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+        </section>
 
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="font-mono text-sm">Elaborado para la docencia de Programación Orientada a Objetos en C#</p>
+            <p class="text-xs mt-2 opacity-50">Basado en el manual de estudio - Unidad 1</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
     <script>
-        const finalQuestions = [
+        // 1. Data Storage: Store base data and textual snippets
+        const oopConcepts = [
             {
-                q: "¿Qué es esencialmente una Clase en POO?",
-                options: ["Un objeto ya instanciado.", "Un plano o plantilla que define atributos y métodos.", "Un arreglo de datos."],
-                correct: 1
+                id: 'clases',
+                icon: '📐',
+                title: 'Clases',
+                concept: 'Es la plantilla, molde o plano que define las características y comportamientos que tendrán los objetos que se creen a partir de ella. Una clase no es un dato real, es solo el diseño.',
+                analogy: 'Un <strong>plano arquitectónico</strong> de una casa. El plano te dice cuántas puertas y ventanas habrá, pero no puedes vivir en el plano.',
+                code: `// Definición de la plantilla (Clase)
+<span class="keyword">public class</span> <span class="type">Auto</span> 
+{
+    <span class="comment">// Aquí irán las características y comportamientos</span>
+}`
             },
             {
-                q: "¿Cuál es el propósito principal del Encapsulamiento?",
-                options: ["Hacer el código corto.", "Proteger el estado interno ocultando campos privados.", "Permitir acceso total."],
-                correct: 1
+                id: 'objetos',
+                icon: '🏠',
+                title: 'Objetos e Instanciamiento',
+                concept: 'Un objeto es la entidad real creada a partir de una clase. El proceso de construir ese objeto en la memoria de la computadora se llama <strong>instanciamiento</strong> (usando la palabra reservada <code>new</code>).',
+                analogy: 'Si la clase es el plano arquitectónico, el objeto es la <strong>casa real ya construida</strong> en la que puedes vivir. Puedes construir muchas casas (objetos) a partir de un solo plano.',
+                code: `<span class="comment">// Instanciamiento: Creando objetos reales a partir de la clase Auto</span>
+<span class="type">Auto</span> miCoche = <span class="keyword">new</span> <span class="type">Auto</span>(); 
+<span class="type">Auto</span> cocheDeMiAmigo = <span class="keyword">new</span> <span class="type">Auto</span>();`
             },
             {
-                q: "Si 'Vendedor' hereda de 'Empleado', ¿cuál es la relación?",
-                options: ["Vendedor 'Es Un' Empleado.", "Empleado 'Es Un' Vendedor.", "No hay relación."],
-                correct: 0
+                id: 'atributos',
+                icon: '🏷️',
+                title: 'Atributos',
+                concept: 'Son las variables dentro de una clase que almacenan el <em>estado</em> o las características del objeto.',
+                analogy: 'Las características físicas de una persona: <code>colorDeOjos</code>, <code>estatura</code>, <code>nombre</code>.',
+                code: `<span class="keyword">public class</span> <span class="type">Auto</span> 
+{
+    <span class="comment">// Atributos (Características)</span>
+    <span class="keyword">public string</span> marca;
+    <span class="keyword">public string</span> color;
+    <span class="keyword">public int</span> año;
+}`
             },
             {
-                q: "¿Qué palabra clave permite sobrescribir un método base en C#?",
-                options: ["private", "static", "virtual"],
-                correct: 2
+                id: 'metodos',
+                icon: '⚙️',
+                title: 'Métodos',
+                concept: 'Son las funciones dentro de una clase que definen el <em>comportamiento</em> o las acciones que el objeto puede realizar.',
+                analogy: 'Las acciones que puede hacer una persona: <code>Caminar()</code>, <code>Hablar()</code>, <code>Dormir()</code>.',
+                code: `<span class="keyword">public class</span> <span class="type">Auto</span> 
+{
+    <span class="keyword">public string</span> marca; <span class="comment">// Atributo</span>
+
+    <span class="comment">// Método (Acción)</span>
+    <span class="keyword">public void</span> <span class="method">Arrancar</span>() 
+    {
+        Console.<span class="method">WriteLine</span>(<span class="string">"El auto "</span> + marca + <span class="string">" está en marcha. ¡Brum, brum!"</span>);
+    }
+}`
             },
             {
-                q: "¿Qué operador crea una instancia de una clase?",
-                options: ["operator static", "operator new", "operator override"],
-                correct: 1
+                id: 'constructores',
+                icon: '✨',
+                title: 'Constructores',
+                concept: 'Es un método especial que se ejecuta automáticamente en el momento en que se instancia (crea) un objeto. Sirve para darle los valores iniciales a sus atributos. Tiene el mismo nombre que la clase.',
+                analogy: 'El <strong>acta de nacimiento</strong> de un bebé o el proceso de ensamblaje en una fábrica, donde el producto sale con su color y número de serie ya asignados desde el primer segundo de existencia.',
+                code: `<span class="keyword">public class</span> <span class="type">Auto</span> 
+{
+    <span class="keyword">public string</span> marca;
+    <span class="keyword">public string</span> color;
+
+    <span class="comment">// Constructor: Inicializa el objeto al nacer</span>
+    <span class="keyword">public</span> <span class="method">Auto</span>(<span class="keyword">string</span> marcaInicial, <span class="keyword">string</span> colorInicial) 
+    {
+        marca = marcaInicial;
+        color = colorInicial;
+    }
+}
+
+<span class="comment">// Uso en el programa principal:</span>
+<span class="type">Auto</span> miCoche = <span class="keyword">new</span> <span class="type">Auto</span>(<span class="string">"Toyota"</span>, <span class="string">"Rojo"</span>); <span class="comment">// El constructor entra en acción aquí</span>`
+            },
+            {
+                id: 'encapsulamiento',
+                icon: '🛡️',
+                title: 'Encapsulamiento',
+                concept: 'Es el mecanismo de ocultar los datos internos de un objeto (haciéndolos <code>private</code>) y solo permitir el acceso a ellos a través de métodos controlados. Protege al objeto de modificaciones externas indebidas.',
+                analogy: 'Un <strong>cajero automático</strong> o una <strong>cuenta bancaria</strong>. No puedes meter la mano y alterar tu saldo directamente; debes usar los métodos oficiales (pantalla y ranuras) para <code>Depositar()</code> o <code>Retirar()</code>.',
+                code: `<span class="keyword">public class</span> <span class="type">CuentaBancaria</span>
+{
+    <span class="comment">// Privado: Nadie de afuera puede modificarlo directamente</span>
+    <span class="keyword">private double</span> saldo; 
+
+    <span class="comment">// Constructor</span>
+    <span class="keyword">public</span> <span class="method">CuentaBancaria</span>(<span class="keyword">double</span> saldoInicial)
+    {
+        saldo = saldoInicial;
+    }
+
+    <span class="comment">// Método público controlado para modificar el saldo</span>
+    <span class="keyword">public void</span> <span class="method">Depositar</span>(<span class="keyword">double</span> cantidad)
+    {
+        <span class="keyword">if</span> (cantidad > <span class="keyword">0</span>)
+        {
+            saldo += cantidad;
+            Console.<span class="method">WriteLine</span>(<span class="string">$"Depósito exitoso. Nuevo saldo: {saldo}"</span>);
+        }
+    }
+}`
+            },
+            {
+                id: 'abstraccion',
+                icon: '🕹️',
+                title: 'Abstracción',
+                concept: 'Consiste en identificar las características esenciales de un objeto y ocultar los detalles complejos de su funcionamiento interno, mostrando al usuario solo lo que necesita para interactuar con él.',
+                analogy: 'Manejar un automóvil. Tú solo necesitas saber usar el volante, el acelerador y el freno. No necesitas saber cómo funciona la inyección de combustible o la combustión interna del motor para poder conducir.',
+                code: `<span class="keyword">public class</span> <span class="type">Cafetera</span>
+{
+    <span class="comment">// Detalles complejos ocultos (Privados)</span>
+    <span class="keyword">private void</span> <span class="method">CalentarAgua</span>() { <span class="comment">/* Lógica compleja */</span> }
+    <span class="keyword">private void</span> <span class="method">MolerGrano</span>() { <span class="comment">/* Lógica compleja */</span> }
+    <span class="keyword">private void</span> <span class="method">Filtrar</span>() { <span class="comment">/* Lógica compleja */</span> }
+
+    <span class="comment">// Abstracción: Lo único que el usuario ve y usa</span>
+    <span class="keyword">public void</span> <span class="method">PrepararCafe</span>()
+    {
+        <span class="method">CalentarAgua</span>();
+        <span class="method">MolerGrano</span>();
+        <span class="method">Filtrar</span>();
+        Console.<span class="method">WriteLine</span>(<span class="string">"¡Tu café está listo!"</span>);
+    }
+}`
+            },
+            {
+                id: 'herencia',
+                icon: '🧬',
+                title: 'Herencia',
+                concept: 'Es la capacidad de crear nuevas clases basadas en clases existentes. La clase hija "hereda" todos los atributos y métodos de la clase padre, promoviendo la reutilización de código.',
+                analogy: 'La herencia biológica (un hijo hereda rasgos de sus padres) o las categorías de productos. Un <code>Perro</code> y un <code>Gato</code> heredan características comunes de una clase general llamada <code>Animal</code>.',
+                code: `<span class="comment">// Clase Padre</span>
+<span class="keyword">public class</span> <span class="type">Animal</span>
+{
+    <span class="keyword">public string</span> nombre;
+    <span class="keyword">public void</span> <span class="method">Comer</span>() { Console.<span class="method">WriteLine</span>(nombre + <span class="string">" come."</span>); }
+}
+
+<span class="comment">// Clase Hija: Hereda de Animal (usando los dos puntos ':')</span>
+<span class="keyword">public class</span> <span class="type">Perro</span> : <span class="type">Animal</span>
+{
+    <span class="keyword">public void</span> <span class="method">Ladrar</span>() { Console.<span class="method">WriteLine</span>(<span class="string">"¡Guau!"</span>); }
+}
+
+<span class="comment">// Uso:</span>
+<span class="type">Perro</span> miPerro = <span class="keyword">new</span> <span class="type">Perro</span>();
+miPerro.nombre = <span class="string">"Firulais"</span>; <span class="comment">// Heredado</span>
+miPerro.<span class="method">Comer</span>();             <span class="comment">// Heredado</span>
+miPerro.<span class="method">Ladrar</span>();            <span class="comment">// Propio</span>`
+            },
+            {
+                id: 'polimorfismo',
+                icon: '🎭',
+                title: 'Polimorfismo',
+                concept: 'Proviene del griego "muchas formas". Es la capacidad que tienen los objetos de diferentes clases de responder al mismo método (misma orden), pero ejecutando un comportamiento distinto y específico.',
+                analogy: 'Imagina que eres un director de orquesta y das la orden: <strong>"¡Tocar!"</strong>. El violinista tocará el violín, el baterista los tambores. La orden es la misma, pero la ejecución es diferente según el objeto.',
+                code: `<span class="keyword">public class</span> <span class="type">Animal</span>
+{
+    <span class="comment">// 'virtual' permite que los hijos cambien este método</span>
+    <span class="keyword">public virtual void</span> <span class="method">HacerSonido</span>() { Console.<span class="method">WriteLine</span>(<span class="string">"..."</span>); }
+}
+
+<span class="keyword">public class</span> <span class="type">Gato</span> : <span class="type">Animal</span>
+{
+    <span class="comment">// 'override' sobreescribe el comportamiento</span>
+    <span class="keyword">public override void</span> <span class="method">HacerSonido</span>() { Console.<span class="method">WriteLine</span>(<span class="string">"¡Miau!"</span>); }
+}
+
+<span class="keyword">public class</span> <span class="type">Vaca</span> : <span class="type">Animal</span>
+{
+    <span class="keyword">public override void</span> <span class="method">HacerSonido</span>() { Console.<span class="method">WriteLine</span>(<span class="string">"¡Muuu!"</span>); }
+}`
+            },
+            {
+                id: 'relaciones',
+                icon: '🔗',
+                title: 'Relaciones (Estáticas y Dinámicas)',
+                concept: 'Los objetos rara vez trabajan solos. <br><strong>Estática (Estructural):</strong> Se define en el código, es a largo plazo (Ej: Composición, "tiene un"). <br><strong>Dinámica (Comportamiento):</strong> Ocurre en tiempo de ejecución. Un objeto interactúa temporalmente con otro (paso de parámetros).',
+                analogy: '<strong>Estática:</strong> Un auto <em>tiene un</em> motor (vive dentro de él).<br><strong>Dinámica:</strong> Un conductor <em>usa un</em> auto temporalmente para ir al trabajo.',
+                code: `<span class="keyword">public class</span> <span class="type">Auto</span>
+{
+    <span class="comment">// Relación estática: El Auto "TIENE UN" Motor</span>
+    <span class="keyword">private</span> <span class="type">Motor</span> miMotor = <span class="keyword">new</span> <span class="type">Motor</span>(); 
+
+    <span class="comment">// Relación dinámica: Interactúa temporalmente con Conductor</span>
+    <span class="keyword">public void</span> <span class="method">RecibirConductor</span>(<span class="type">Conductor</span> chofer)
+    {
+        Console.<span class="method">WriteLine</span>(chofer.nombre + <span class="string">" se ha subido."</span>);
+        miMotor.<span class="method">Iniciar</span>(); 
+    }
+}`
             }
         ];
 
-        const sections = {
-            inicio: {
-                title: "Concepto de POO e Inventario",
-                icon: "zap",
-                type: "quiz",
-                theory: "La Programación Orientada a Objetos (POO) es un paradigma que organiza el software como una colección de 'Objetos' que contienen tanto datos como comportamiento. Esto resuelve el 'Dilema del Inventario' al agrupar datos relacionados en una sola unidad segura.",
-                illustration: `
-                    <svg width="400" height="150" viewBox="0 0 400 150" class="illustration-svg">
-                        <text x="70" y="20" font-size="12" font-weight="bold" fill="#64748b">ESTRUCTURADA</text>
-                        <circle cx="50" cy="60" r="15" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" />
-                        <rect x="70" y="80" width="30" height="10" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" />
-                        <path d="M160 75 L200 75" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arrowhead)" />
-                        <text x="270" y="20" font-size="12" font-weight="bold" fill="#3b82f6">ORIENTADA A OBJETOS</text>
-                        <rect x="260" y="50" width="100" height="60" rx="12" fill="#3b82f6" fill-opacity="0.1" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4" />
-                        <circle cx="285" cy="80" r="10" fill="#ef4444" fill-opacity="0.5" />
-                        <rect x="305" y="75" width="20" height="10" fill="#f59e0b" fill-opacity="0.5" />
-                    </svg>`,
-                quiz: {
-                    question: "¿Cuál es la principal ventaja de agrupar datos y funciones en un Objeto?",
-                    options: ["Ahorra disco duro.", "Garantiza que datos relacionados viajen juntos.", "Elimina las variables."],
-                    correct: 1,
-                    explanation: "Correcto. El objeto mantiene la integridad de la información."
-                },
-                tip: "La POO modela la realidad mediante objetos."
-            },
-            clases: {
-                title: "Clases y Objetos",
-                icon: "book-open",
-                type: "simulator",
-                theory: "La Clase es el plano (template) y el Objeto es la instancia real creada a partir de ese plano que vive en la memoria RAM.",
-                illustration: `
-                    <svg width="400" height="160" viewBox="0 0 400 160" class="illustration-svg">
-                        <rect x="50" y="30" width="100" height="100" rx="4" fill="none" stroke="#64748b" stroke-width="1" stroke-dasharray="5" />
-                        <text x="100" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#64748b">CLASE (Plano)</text>
-                        <path d="M170 80 L210 80" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowhead)" />
-                        <rect x="230" y="30" width="100" height="100" rx="8" fill="#3b82f6" fill-opacity="0.1" stroke="#3b82f6" stroke-width="3" />
-                        <text x="280" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a8a">OBJETO (Realidad)</text>
-                    </svg>`,
-                code: "public class Heroe {\n    public string Alias;\n}\nHeroe spiderman = new Heroe();\nspiderman.Alias = \"Peter Parker\";",
-                simulation: function () { return ">>> [MOLDE]: Cargando definición de 'Heroe'...\n>>> [OPERACIÓN]: new Heroe()\n>>> [HEAP]: Espacio asignado.\n>>> [STATUS]: Objeto listo."; },
-                tip: "Usa PascalCase para tus clases en C#."
-            },
-            encapsulamiento: {
-                title: "Encapsulamiento",
-                icon: "layers",
-                type: "interactive",
-                theory: "Oculta detalles internos y protege el estado del objeto usando modificadores 'private' y 'Propiedades' controladas.",
-                illustration: `
-                    <svg width="400" height="150" viewBox="0 0 400 150" class="illustration-svg">
-                        <circle cx="200" cy="75" r="60" fill="#3b82f6" fill-opacity="0.05" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4" />
-                        <rect x="175" y="55" width="50" height="40" rx="4" fill="#1e293b" />
-                        <rect x="240" y="65" width="40" height="20" rx="4" fill="#10b981" />
-                        <text x="200" y="145" text-anchor="middle" font-size="10" fill="#64748b">La Propiedad actúa como una aduana de seguridad.</text>
-                    </svg>`,
-                code: "private int _edad;\npublic int Edad {\n    get { return _edad; }\n    set {\n        if (value >= 0) { _edad = value; }\n        else { _edad = 0; }\n    }\n}",
-                tip: "¡Nunca expongas tus campos privados directamente!"
-            },
-            herencia: {
-                title: "Herencia",
-                icon: "share-2",
-                type: "simulator",
-                theory: "Permite que una clase hija adquiera atributos y métodos de una clase padre, estableciendo una relación 'Es Un'.",
-                illustration: `
-                    <svg width="400" height="180" viewBox="0 0 400 180" class="illustration-svg">
-                        <rect x="140" y="10" width="120" height="50" rx="8" fill="#3b82f6" fill-opacity="0.1" stroke="#3b82f6" stroke-width="2"/>
-                        <text x="200" y="40" text-anchor="middle" font-weight="bold" fill="#1e293b" font-size="12">PADRE (Vehiculo)</text>
-                        <path d="M200 110 L200 70" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowhead)"/>
-                        <rect x="140" y="110" width="120" height="50" rx="8" fill="#10b981" fill-opacity="0.1" stroke="#10b981"/>
-                        <text x="200" y="140" text-anchor="middle" font-weight="bold" fill="#1e293b" font-size="12">HIJO (Auto)</text>
-                    </svg>`,
-                code: "public class Vehiculo {\n    public string Marca;\n}\npublic class Auto : Vehiculo {\n    public int Puertas;\n}",
-                simulation: function () { return ">>> [HERENCIA]: Incluyendo miembros de base 'Vehiculo'.\n>>> OK: Propiedad 'Marca' heredada con éxito."; },
-                tip: "La herencia evita la duplicidad de código."
-            },
-            polimorfismo: {
-                title: "Polimorfismo",
-                icon: "code",
-                type: "simulator",
-                theory: "Capacidad de un método de comportarse diferente según el objeto. Se logra con 'virtual' y 'override'.",
-                illustration: `
-                    <svg width="400" height="150" viewBox="0 0 400 150" class="illustration-svg">
-                        <rect x="20" y="60" width="100" height="30" rx="15" fill="#6366f1" />
-                        <path d="M120 75 L160 45" stroke="#cbd5e1" stroke-width="1" />
-                        <path d="M120 75 L160 105" stroke="#cbd5e1" stroke-width="1" />
-                        <text x="210" y="50" font-size="10" fill="#ef4444">PERRO -> Guau</text>
-                        <text x="210" y="110" font-size="10" fill="#f59e0b">GATO -> Miau</text>
-                    </svg>`,
-                code: "public override void Hablar() {\n    Console.WriteLine(\"¡Guau!\");\n}",
-                simulation: function () { return ">>> Buscando implementación más específica...\n>>> [VIRTUAL TABLE]: Redireccionando.\n>>> [OUTPUT]: ¡Guau!"; },
-                tip: "El polimorfismo hace que tu código sea extensible."
-            },
-            evaluacion: {
-                title: "Evaluación Final",
-                icon: "award",
-                type: "exam"
-            }
+        // 2. State Management
+        let currentState = {
+            activeConceptId: null
         };
 
-        let currentTab = 'inicio';
-        let sidebarOpen = true;
-        let intentos = 0;
-        let examStep = 0;
-        let examIndex = 0;
-        let examScore = 0;
-        let activeQuestions = [];
+        // 3. Core Interaction Handling
+        const menuContainer = document.getElementById('menu-container');
+        const contentDisplay = document.getElementById('content-display');
 
-        function init() {
-            renderNav();
-            loadSection('inicio');
-            lucide.createIcons();
-        }
-
-        function renderNav() {
-            const nav = document.getElementById('nav-links');
-            nav.innerHTML = '';
-            const keys = Object.keys(sections);
-            for (let i = 0; i < keys.length; i++) {
-                const id = keys[i];
-                const data = sections[id];
+        // Function to render the sidebar menu
+        function renderMenu() {
+            oopConcepts.forEach(concept => {
                 const btn = document.createElement('button');
-                let bStyle = "w-full flex items-center gap-3 p-3 rounded-xl transition-all ";
-                let iStyle = "";
-                let lStyle = "nav-label text-sm font-medium capitalize ";
-                if (currentTab === id) {
-                    bStyle += "bg-blue-600/10 text-blue-400 border border-blue-600/20";
-                    iStyle = "text-blue-400";
+                btn.className = 'w-full text-left px-4 py-3 md:py-4 flex-shrink-0 md:flex-shrink rounded-xl md:rounded-none md:border-b border-slate-200 transition-colors flex items-center space-x-3 text-slate-600 hover:bg-white hover:text-brand-600 outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500';
+                btn.id = `btn-${concept.id}`;
+                btn.innerHTML = `
+                    <span class="text-xl" aria-hidden="true">${concept.icon}</span>
+                    <span class="font-medium whitespace-nowrap md:whitespace-normal text-sm">${concept.title}</span>
+                `;
+                btn.addEventListener('click', () => setActiveConcept(concept.id));
+                menuContainer.appendChild(btn);
+            });
+        }
+
+        // Function to update the display area based on state
+        function setActiveConcept(id) {
+            // Update State
+            currentState.activeConceptId = id;
+
+            const selectedConcept = oopConcepts.find(c => c.id === id);
+
+            // Update Menu UI
+            Array.from(menuContainer.children).forEach(btn => {
+                if (btn.id === `btn-${id}`) {
+                    btn.classList.add('bg-white', 'text-brand-700', 'border-l-4', 'border-l-brand-500', 'md:border-l-brand-500');
+                    btn.classList.remove('text-slate-600', 'border-l-transparent');
+                    // Scroll into view on mobile
+                    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 } else {
-                    bStyle += "hover:bg-slate-800 text-slate-400";
-                    iStyle = "text-slate-500";
+                    btn.classList.remove('bg-white', 'text-brand-700', 'border-l-4', 'border-l-brand-500');
+                    btn.classList.add('text-slate-600', 'border-l-4', 'border-l-transparent');
                 }
-                if (sidebarOpen === false) { lStyle += "hidden"; }
-                btn.className = bStyle;
-                btn.onclick = function () { loadSection(id); };
-                btn.innerHTML = `<i data-lucide="${data.icon}" class="${iStyle}"></i><span class="${lStyle}">${data.title}</span>`;
-                nav.appendChild(btn);
-            }
-            lucide.createIcons();
+            });
+
+            // Update Content UI with fade animation
+            contentDisplay.innerHTML = `
+                <div class="fade-in flex flex-col h-full">
+                    <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-100">
+                        <span class="text-4xl" aria-hidden="true">${selectedConcept.icon}</span>
+                        <h3 class="text-2xl font-bold text-slate-900">${selectedConcept.title}</h3>
+                    </div>
+                    
+                    <div class="space-y-6 flex-grow">
+                        <div>
+                            <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">Concepto Formal</h4>
+                            <p class="text-slate-700 leading-relaxed">${selectedConcept.concept}</p>
+                        </div>
+                        
+                        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
+                            <h4 class="text-xs font-bold uppercase text-amber-700 tracking-wider mb-2 flex items-center"><span class="mr-2">💡</span> Analogía de la Vida Real</h4>
+                            <p class="text-amber-900 text-sm leading-relaxed">${selectedConcept.analogy}</p>
+                        </div>
+
+                        <div class="mt-auto pt-6">
+                            <h4 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">Representación en C#</h4>
+                            <div class="bg-[#1e1e1e] rounded-xl overflow-hidden shadow-inner border border-slate-800">
+                                <div class="bg-[#2d2d2d] px-4 py-2 flex space-x-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                </div>
+                                <pre class="p-4 overflow-x-auto text-sm font-mono text-slate-300 leading-relaxed"><code>${selectedConcept.code}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
-        function loadSection(id) {
-            currentTab = id;
-            const data = sections[id];
-            document.getElementById('main-title').innerText = data.title;
-            const lv = document.getElementById('lesson-view');
-            const ev = document.getElementById('exam-view');
-
-            if (data.type === "exam") {
-                lv.classList.add('hidden');
-                ev.classList.remove('hidden');
-                examStep = 0;
-                renderExam();
-            } else {
-                lv.classList.remove('hidden');
-                ev.classList.add('hidden');
-                document.getElementById('theory-text').innerText = data.theory;
-                document.getElementById('mentor-tip').innerText = data.tip;
-                const ic = document.getElementById('illustration-container');
-                if (data.illustration) { ic.innerHTML = data.illustration; ic.classList.remove('hidden'); }
-                else { ic.classList.add('hidden'); }
-                const cc = document.getElementById('code-container');
-                if (data.code) { cc.classList.remove('hidden'); document.getElementById('code-block').innerText = data.code; }
-                else { cc.classList.add('hidden'); }
-                const pc = document.getElementById('interaction-card');
-                const cp = document.getElementById('console-card');
-                pc.innerHTML = ''; cp.classList.add('hidden');
-                if (data.type === 'quiz') { renderQuiz(data.quiz); }
-                else if (data.type === 'simulator') {
-                    cp.classList.remove('hidden');
-                    pc.innerHTML = `<div class="flex items-center gap-3 mb-6 text-blue-600"><i data-lucide="activity"></i><h3 class="font-bold text-slate-800">Simulador de Lógica</h3></div><p class="text-slate-500 text-sm italic">Ejecuta para ver el comportamiento interno.</p>`;
-                } else if (data.type === 'interactive') {
-                    cp.classList.remove('hidden');
-                    pc.innerHTML = `<div class="flex items-center gap-3 mb-6 text-blue-600"><i data-lucide="edit-3"></i><h3 class="font-bold text-slate-800">Prueba de Seguridad</h3></div><input type="number" id="user-input" placeholder="Ej: 25" class="w-full bg-slate-100 border border-slate-200 rounded-xl p-4 text-slate-800 font-mono text-sm">`;
+        // Initialize Chart.js
+        function initChart() {
+            const ctx = document.getElementById('industryChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sistemas POO (C#, Java, etc.)', 'Scripts Estructurados (C, Bash)'],
+                    datasets: [{
+                        data: [90, 10],
+                        backgroundColor: [
+                            '#8b5cf6', // brand-500
+                            '#cbd5e1'  // slate-300
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 11
+                                },
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return ' ' + context.label + ': ' + context.parsed + '%';
+                                }
+                            },
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            padding: 12,
+                            cornerRadius: 8
+                        }
+                    }
                 }
-            }
-            renderNav();
-            lucide.createIcons();
+            });
         }
 
-        function renderExam() {
-            const container = document.getElementById('exam-content');
-            container.innerHTML = '';
-            if (examStep === 0) {
-                container.innerHTML = `<div class="text-center space-y-6"><div class="w-20 h-20 bg-blue-600 rounded-3xl flex items-center justify-center mx-auto shadow-xl"><i data-lucide="award" class="text-white w-10 h-10"></i></div><h2 class="text-4xl font-black text-slate-800">Certificación Final</h2><p class="text-slate-500 text-lg">Valida tus conocimientos de la Unidad 1.</p><button onclick="startExam()" class="bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold hover:bg-blue-600 transition-all shadow-lg mx-auto flex items-center gap-2">Comenzar <i data-lucide="play"></i></button><p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Intentos previos: ${intentos}</p></div>`;
-            } else if (examStep === 1) {
-                const q = activeQuestions[examIndex];
-                let optsHtml = "";
-                for (let i = 0; i < q.options.length; i++) {
-                    optsHtml += `<button onclick="processExam(${i})" class="w-full text-left p-6 rounded-3xl border-2 border-slate-100 hover:border-blue-600 hover:bg-blue-50 transition-all font-bold text-slate-700 text-lg flex items-center justify-between">${q.options[i]} <i data-lucide="chevron-right"></i></button>`;
-                }
-                container.innerHTML = `<div class="space-y-8"><div class="flex justify-between items-center"><span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-xs font-black uppercase">P ${examIndex + 1}/${activeQuestions.length}</span><span class="text-slate-400 text-xs font-bold">INTENTO #${intentos}</span></div><h3 class="text-3xl font-black text-slate-800 leading-tight">${q.q}</h3><div class="grid grid-cols-1 gap-4">${optsHtml}</div></div>`;
-            } else if (examStep === 2) {
-                let grade = Math.round(examScore);
-                container.innerHTML = `<div class="text-center space-y-8"><h2 class="text-3xl font-black text-slate-800">Resultado</h2><div class="text-9xl font-black ${grade < 70 ? 'text-amber-500' : 'text-emerald-500'}">${grade}</div><p class="text-slate-600 font-medium text-xl">Calificación Obtenida</p><div class="bg-slate-50 p-4 rounded-2xl border">Este fue tu <strong>intento número ${intentos}</strong>.</div><div class="pt-4 flex gap-4 justify-center"><button onclick="loadSection('evaluacion')" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold">Reintentar</button><button onclick="loadSection('inicio')" class="bg-slate-100 px-8 py-4 rounded-2xl font-bold">Inicio</button></div></div>`;
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMenu();
+            initChart();
+            // Automatically select the first concept to populate the view
+            if (oopConcepts.length > 0) {
+                setActiveConcept(oopConcepts[0].id);
             }
-            lucide.createIcons();
-        }
+        });
 
-        function startExam() { intentos = intentos + 1; examScore = 0; examIndex = 0; examStep = 1; activeQuestions = [...finalQuestions].sort(function () { return 0.5 - Math.random(); }); renderExam(); }
-        function processExam(i) { if (i === activeQuestions[examIndex].correct) { examScore = examScore + (100 / activeQuestions.length); } examIndex = examIndex + 1; if (examIndex >= activeQuestions.length) { examStep = 2; } renderExam(); }
-        function renderQuiz(q) { const p = document.getElementById('interaction-card'); let h = ""; for (let i = 0; i < q.options.length; i++) { h += `<button onclick="checkAnswer(${i}, ${q.correct}, '${q.explanation.replace(/'/g, "\\'")}')" class="quiz-opt w-full text-left p-4 rounded-2xl border-2 border-slate-100 hover:border-blue-500 hover:bg-blue-50 transition-all text-sm font-medium text-slate-700">${q.options[i]}</button>`; } p.innerHTML = `<div class="flex items-center gap-3 mb-6"><i data-lucide="help-circle" class="text-blue-600"></i><h3 class="font-bold text-slate-800">Check rápido</h3></div><p class="text-slate-600 mb-6 font-medium">${q.question}</p><div class="space-y-3">${h}</div><div id="quiz-feedback" class="mt-6 hidden"></div>`; lucide.createIcons(); }
-        function checkAnswer(i, c, f) { const os = document.querySelectorAll('.quiz-opt'); for (let j = 0; j < os.length; j++) { os[j].disabled = true; } const r = document.getElementById('quiz-feedback'); r.classList.remove('hidden'); if (i === c) { r.innerHTML = `<div class="p-4 bg-emerald-500 text-white rounded-2xl font-bold">Correcto <p class="text-xs font-normal mt-1">${f}</p></div>`; } else { r.innerHTML = `<div class="p-4 bg-red-500 text-white rounded-2xl font-bold">Error <p class="text-xs font-normal mt-1">Revisa el contenido.</p></div>`; } }
-        function runSimulation() { const o = document.getElementById('console-output'); const d = sections[currentTab]; o.innerText = ">>> Procesando...\n"; setTimeout(function () { if (d.type === 'simulator') { o.innerText = d.simulation(); } else if (d.type === 'interactive') { const v = parseFloat(document.getElementById('user-input').value); if (v < 0) { o.innerText = ">>> ERROR: Valor inválido."; } else { o.innerText = ">>> OK: Valor " + v + " asignado."; } } }, 600); }
-        function toggleSidebar() { const s = document.getElementById('sidebar'); const l = document.getElementById('logo-text'); const ls = document.querySelectorAll('.nav-label'); if (sidebarOpen === true) { sidebarOpen = false; s.classList.replace('w-72', 'w-20'); l.classList.add('hidden'); for (let i = 0; i < ls.length; i++) { ls[i].classList.add('hidden'); } } else { sidebarOpen = true; s.classList.replace('w-20', 'w-72'); l.classList.remove('hidden'); for (let i = 0; i < ls.length; i++) { ls[i].classList.remove('hidden'); } } lucide.createIcons(); }
-        window.onload = init;
     </script>
-    <svg width="0" height="0">
-        <defs>
-            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-                <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
-            </marker>
-        </defs>
-    </svg>
 </body>
 
 </html>
