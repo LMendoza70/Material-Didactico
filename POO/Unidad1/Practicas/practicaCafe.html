@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica POO - Simulador de Cafetería</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e1e2f, #2d3436);
+            color: white;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #6f4e37, #3e2723);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+            margin-bottom: 30px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            line-height: 1.7;
+        }
+
+        .section {
+            background: #ffffff10;
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        .section h2 {
+            color: #ffcc80;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .section p,
+        .section li {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        ul {
+            margin-left: 25px;
+        }
+
+        .code {
+            background: #111827;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            overflow-x: auto;
+            border-left: 5px solid #ff9800;
+        }
+
+        code {
+            color: #90caf9;
+            font-size: 1rem;
+        }
+
+        .highlight {
+            color: #ffd54f;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: .7;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #ff9800;
+            color: black;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="hero">
+            <div class="badge">Práctica de Laboratorio</div>
+
+            <h1>☕ El Simulador de la Cafetería</h1>
+
+            <p>
+                Desarrolla una aplicación en consola utilizando
+                <span class="highlight">Programación Orientada a Objetos en C#</span>.
+                En esta práctica trabajarás con clases, objetos, atributos,
+                constructores y métodos para modelar bebidas de una cafetería.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Objetivo</h2>
+
+            <p>
+                Crear un sistema básico que permita registrar bebidas,
+                aplicar descuentos y simular su preparación utilizando
+                conceptos fundamentales de POO.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>📌 Contexto</h2>
+
+            <p>
+                Una cafetería necesita un sistema sencillo para registrar
+                bebidas y mostrar información sobre cada una.
+                Cada bebida tendrá:
+            </p>
+
+            <ul>
+                <li>Nombre</li>
+                <li>Tamaño</li>
+                <li>Precio</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🧩 Requerimientos</h2>
+
+            <ul>
+                <li>
+                    Crear una clase llamada
+                    <span class="highlight">Bebida</span>.
+                </li>
+
+                <li>
+                    La clase debe contener atributos privados:
+                    nombre, tamaño y precio.
+                </li>
+
+                <li>
+                    Crear un constructor que permita inicializar
+                    todos los atributos.
+                </li>
+
+                <li>
+                    Crear un método
+                    <span class="highlight">Preparar()</span>
+                    que muestre un mensaje en consola.
+                </li>
+
+                <li>
+                    Crear un método
+                    <span class="highlight">
+                        AplicarDescuento(double porcentaje)
+                    </span>
+                    para modificar el precio de la bebida.
+                </li>
+
+                <li>
+                    Crear un método
+                    <span class="highlight">MostrarDescripcion()</span>
+                    que muestre:
+                </li>
+            </ul>
+
+            <div class="code">
+                <code>
+"Esto es un [nombre] de tamaño [tamaño]
+con un costo de [precio]"
+</code>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💻 Desarrollo en Main</h2>
+
+            <ul>
+                <li>Solicitar al usuario los datos de 3 bebidas.</li>
+
+                <li>Crear 3 objetos diferentes.</li>
+
+                <li>Aplicar descuento a una bebida.</li>
+
+                <li>Llamar al método Preparar() de todas.</li>
+
+                <li>Mostrar la descripción de cada bebida.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🖥️ Ejemplo Esperado</h2>
+
+            <div class="code">
+                <code>
+Preparando un Latte tamaño Grande...
+
+Esto es un Latte de tamaño Grande
+con un costo de $85
+
+Preparando un Capuccino tamaño Mediano...
+
+Esto es un Capuccino de tamaño Mediano
+con un costo de $70
+</code>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🚫 Restricciones</h2>
+
+            <ul>
+                <li>No utilizar herencia.</li>
+                <li>No utilizar listas.</li>
+                <li>No utilizar interfaces.</li>
+                <li>No utilizar bases de datos.</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>Programación Orientada a Objetos • C# • Consola</p>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
