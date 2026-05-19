@@ -5,24 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Práctica POO - Simulador de Cafetería</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
         }
 
         body {
             background: linear-gradient(135deg, #1e1e2f, #2d3436);
             color: white;
-            padding: 40px;
         }
 
         .container {
             max-width: 1200px;
             margin: auto;
+            padding: 30px 20px 40px;
         }
 
         .hero {
@@ -106,6 +108,19 @@
 </head>
 
 <body>
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md z-50 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../../index.html"
+                    class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    <span
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
+                    Material Didáctico
+                </a>
+            </div>
+        </div>
+    </nav>
 
     <div class="container">
 
