@@ -21,13 +21,14 @@
     <link rel="manifest"
         href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22LexControl%20Multiproyecto%22%2C%22short_name%22%3A%22LexControl%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%253E%25F0%259F%259B%25A1%25EF%25B8%258F%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%2C%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%253E%25F0%259F%259B%25A1%25EF%25B8%258F%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D" />
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs v12.13.0 -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, updateDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, updateDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-        window.firebaseImports = { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, updateDoc, deleteDoc, addDoc };
+        window.firebaseImports = { initializeApp, getAnalytics, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, updateDoc, deleteDoc, addDoc };
     </script>
 
     <!-- Chosen Palette: Slate & Teal Modern (Fondo neutral claro, acentos en turquesa/teal y gris pizarra profesional) -->
@@ -590,15 +591,26 @@
 
         // Inicializar Firebase
         function startFirebase() {
-            // CARGA INICIAL INSTANTÁNEA: Cargamos del localStorage antes de hacer la conexión a Firebase
+            // CARGA INICIAL INSTANTÁNEA: Cargamos del localStorage antes de conectar a Firebase
             loadOfflineData();
 
             try {
-                const firebaseConfig = JSON.parse(__firebase_config);
+                const firebaseConfig = {
+                    apiKey: "AIzaSyC6dXF6XNTIXF09hE7QtWIimLSaeoc_dLI",
+                    authDomain: "checkdev-a71c6.firebaseapp.com",
+                    projectId: "checkdev-a71c6",
+                    storageBucket: "checkdev-a71c6.firebasestorage.app",
+                    messagingSenderId: "692733075016",
+                    appId: "1:692733075016:web:f3bdce602f18fc8174c27d",
+                    measurementId: "G-MBDQ0QR042"
+                };
+
                 const app = initializeApp(firebaseConfig);
+                // Inicializar Analytics (solo en entornos con window.location https o localhost)
+                try { getAnalytics(app); } catch (_) {}
                 auth = getAuth(app);
                 db = getFirestore(app);
-                appId = typeof __app_id !== 'undefined' ? __app_id : 'lexcontrol-multiproject';
+                appId = 'lexcontrol-multiproject';
 
                 setupAuth();
             } catch (error) {

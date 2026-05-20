@@ -1,0 +1,103 @@
+mutation CreateDemoData @transaction @auth(level: USER, insecureReason: "This is a seed data mutation, not user-facing.") {
+  user_insertMany(data: [
+    {
+      id: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+      displayName: "Alice Smith",
+      email: "alice.smith@example.com",
+      createdAt: "2023-01-01T10:00:00Z",
+      photoUrl: "https://example.com/alice.jpg"
+    },
+    {
+      id: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22",
+      displayName: "Bob Johnson",
+      email: "bob.johnson@example.com",
+      createdAt: "2023-01-02T11:00:00Z",
+      photoUrl: "https://example.com/bob.jpg"
+    },
+    {
+      id: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33",
+      displayName: "Charlie Brown",
+      email: "charlie.brown@example.com",
+      createdAt: "2023-01-03T12:00:00Z"
+    }
+  ])
+  project_insertMany(data: [
+    {
+      id: "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a44",
+      name: "Firebase SQL Connect Demo Project",
+      description: "A demo project to showcase Firebase SQL Connect features.",
+      dueDate: "2024-12-31",
+      createdAt: "2023-01-05T09:30:00Z",
+      ownerId: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+    },
+    {
+      id: "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a55",
+      name: "Marketing Campaign Q3",
+      description: "Plan and execute marketing activities for Q3.",
+      dueDate: "2023-09-30",
+      createdAt: "2023-02-10T14:00:00Z",
+      ownerId: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22"
+    }
+  ])
+  projectMember_insertMany(data: [
+    {
+      projectId: "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a44",
+      memberId: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+      role: "Owner",
+      joinedAt: "2023-01-05T09:30:00Z"
+    },
+    {
+      projectId: "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a44",
+      memberId: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22",
+      role: "Developer",
+      joinedAt: "2023-01-06T10:00:00Z"
+    },
+    {
+      projectId: "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a55",
+      memberId: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22",
+      role: "Owner",
+      joinedAt: "2023-02-10T14:00:00Z"
+    },
+    {
+      projectId: "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a55",
+      memberId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33",
+      role: "Marketer",
+      joinedAt: "2023-02-11T15:00:00Z"
+    }
+  ])
+  task_insertMany(data: [
+    {
+      id: "f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a66",
+      title: "Set up project infrastructure",
+      description: "Initialize database, deploy services.",
+      dueDate: "2023-01-15",
+      isCompleted: false,
+      priority: "High",
+      createdAt: "2023-01-05T10:00:00Z",
+      projectId: "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a44",
+      assignedToId: "b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22"
+    },
+    {
+      id: "g0eebc99-9c0b-4ef8-bb6d-6bb9bd380a77",
+      title: "Design UI/UX for app",
+      description: "Create wireframes and mockups for the application interface.",
+      dueDate: "2023-02-01",
+      isCompleted: false,
+      priority: "Medium",
+      createdAt: "2023-01-07T11:00:00Z",
+      projectId: "d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a44",
+      assignedToId: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+    },
+    {
+      id: "h0eebc99-9c0b-4ef8-bb6d-6bb9bd380a88",
+      title: "Launch social media ads",
+      description: "Prepare and launch ad campaigns on social media platforms.",
+      dueDate: "2023-03-01",
+      isCompleted: false,
+      priority: "High",
+      createdAt: "2023-02-12T10:00:00Z",
+      projectId: "e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a55",
+      assignedToId: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33"
+    }
+  ])
+}
