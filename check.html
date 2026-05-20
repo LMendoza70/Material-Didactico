@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LexControl – Gestor Multiproyecto | Material Didáctico</title>
+    <title>LexControl - Gestor de Proyectos con Persistencia Dual</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- PWA Meta Tags y Manifest -->
     <meta name="theme-color" content="#0f172a">
@@ -56,69 +56,21 @@
             background: #cbd5e1;
             border-radius: 3px;
         }
-        .app-shell {
-            min-height: calc(100vh - 3.5rem);
-        }
-        @media (max-width: 767px) {
-            .app-shell {
-                height: auto !important;
-                min-height: auto;
-                overflow: visible;
-            }
-            .mobile-sidebar {
-                max-height: none;
-                border-right: 0;
-            }
-            .mobile-sidebar-list {
-                max-height: 260px;
-            }
-            .mobile-main {
-                overflow: visible;
-            }
-            #project-nav-tabs {
-                width: 100%;
-                overflow-x: auto;
-            }
-            #project-nav-tabs .tab-btn {
-                white-space: nowrap;
-            }
-            #main-views-container {
-                padding: 1rem;
-            }
-            .chart-container {
-                height: 240px;
-            }
-        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col" style="font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;">
-
-    <!-- Navegación del Portal -->
-    <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-[100]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-14">
-                <a href="./index.html"
-                    class="flex items-center gap-2 font-bold text-base tracking-tight transition-transform hover:scale-105 min-w-0">
-                    <span
-                        class="bg-white text-indigo-700 rounded-lg w-7 h-7 flex shrink-0 items-center justify-center font-black text-sm">←</span>
-                    <span class="truncate">Material Didáctico</span>
-                </a>
-                <span class="text-indigo-300 text-sm font-medium hidden sm:block">🛡️ LexControl – Gestor Multiproyecto</span>
-            </div>
-        </div>
-    </nav>
+<body class="min-h-screen flex flex-col">
 
     <!-- Notificación flotante para feedback del usuario -->
     <div id="toast-notification" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 flex items-center gap-2">
         <span id="toast-icon">✨</span>
-        <span id="toast-message">Cargando base de datos...</span>
+        <span id="toast-message">Inicializando aplicación...</span>
     </div>
 
     <!-- Layout Principal -->
-    <div class="app-shell flex flex-col md:flex-row flex-grow md:overflow-hidden" style="height: calc(100vh - 3.5rem);">
+    <div class="flex flex-col md:flex-row h-screen overflow-hidden">
         
         <!-- BARRA LATERAL: Control de proyectos -->
-        <aside class="mobile-sidebar w-full md:w-80 bg-slate-900 text-white flex flex-col border-r border-slate-800">
+        <aside class="w-full md:w-80 bg-slate-900 text-white flex flex-col border-r border-slate-800">
             <!-- Header de Barra Lateral -->
             <div class="p-6 border-b border-slate-800">
                 <div class="flex items-center gap-3 mb-1">
@@ -138,29 +90,30 @@
             </div>
 
             <!-- Listado de Proyectos -->
-            <div class="mobile-sidebar-list flex-grow overflow-y-auto px-4 pb-4 custom-scrollbar">
+            <div class="flex-grow overflow-y-auto px-4 pb-4 custom-scrollbar">
                 <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-2">Mis Proyectos</h2>
                 <div id="projects-list" class="space-y-1">
-                    <!-- Dinámico -->
-                    <div class="p-4 text-center text-xs text-slate-500">Buscando proyectos...</div>
+                    <div class="p-4 text-center text-xs text-slate-500">Cargando proyectos...</div>
                 </div>
             </div>
 
-            <!-- Info Usuario / Estado Conexión -->
-            <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex items-center justify-between text-xs text-slate-400">
-                <div class="flex items-center gap-2">
-                    <div id="connection-status" class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
-                    <span id="user-display-id">Anon-Session</span>
+            <!-- Info Usuario / Estado Conexión / Botón de PWA -->
+            <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex flex-col gap-3 text-xs text-slate-400">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div id="connection-status" class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+                        <span id="user-display-id">Local & Cloud</span>
+                    </div>
+                    <span class="text-slate-600">v1.2.0</span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button id="btn-install-pwa" class="hidden bg-slate-800 hover:bg-slate-700 text-teal-400 font-bold py-1 px-2 rounded text-xs transition-all">📱 Instalar</button>
-                    <span class="text-slate-600">v1.1.0</span>
-                </div>
+                <button id="btn-install-pwa" class="hidden w-full bg-slate-800 hover:bg-slate-700 text-teal-400 font-bold py-2 px-3 rounded-xl transition-all text-center">
+                    📱 Instalar como App Móvil
+                </button>
             </div>
         </aside>
 
         <!-- CONTENIDO PRINCIPAL -->
-        <main class="mobile-main flex-grow flex flex-col md:overflow-hidden bg-slate-50">
+        <main class="flex-grow flex flex-col overflow-hidden bg-slate-50">
             
             <!-- Dashboard Header / Navigation -->
             <header class="bg-white border-b border-slate-200 p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 shrink-0">
@@ -205,7 +158,7 @@
                             <div>
                                 <span class="bg-teal-500/20 text-teal-400 text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">Progreso de Implementación</span>
                                 <h3 class="text-3xl font-extrabold mt-2">Seguimiento en Curso</h3>
-                                <p class="text-slate-400 text-sm mt-1">Monitorea el completado de tareas técnicas de tu software de forma interactiva.</p>
+                                <p class="text-slate-400 text-sm mt-1">Monitorea el completado de tareas técnicas de tu software de forma interactiva con doble persistencia activa.</p>
                             </div>
                             <div class="text-right flex flex-col items-end">
                                 <span id="overview-percentage-text" class="text-5xl font-extrabold text-teal-400">0%</span>
@@ -350,7 +303,7 @@
 
     <!-- SCRIPT DE APLICACIÓN -->
     <script type="module">
-        // Datos base por defecto para inicializar cualquier proyecto nuevo
+        // Estructura por defecto para nuevos proyectos
         const defaultChecklistStructure = [
             {
                 id: 'f1',
@@ -527,6 +480,9 @@
 
         // Inicializar Firebase
         function startFirebase() {
+            // CARGA INICIAL INSTANTÁNEA: Cargamos del localStorage antes de hacer la conexión a Firebase
+            loadOfflineData();
+
             try {
                 const firebaseConfig = JSON.parse(__firebase_config);
                 const app = initializeApp(firebaseConfig);
@@ -536,9 +492,10 @@
                 
                 setupAuth();
             } catch (error) {
-                console.error("Fallo de conexión Firebase. Utilizando modo offline local.", error);
-                showToast("Modo Offline Activado", "⚠️");
-                loadOfflineData();
+                console.error("Fallo de conexión Firebase. Trabajando solo en modo Local.", error);
+                document.getElementById('connection-status').className = "w-2.5 h-2.5 rounded-full bg-amber-500";
+                document.getElementById('user-display-id').textContent = "Modo Local Activo";
+                showToast("Modo Local Activo (Offline)", "⚠️");
             }
         }
 
@@ -557,7 +514,7 @@
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     document.getElementById('connection-status').className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
-                    document.getElementById('user-display-id').textContent = `ID: ${user.uid.substring(0, 8)}...`;
+                    document.getElementById('user-display-id').textContent = `Nube & Local (ID: ${user.uid.substring(0, 5)})`;
                     listenToProjects(user.uid);
                 } else {
                     document.getElementById('connection-status').className = "w-2.5 h-2.5 rounded-full bg-red-500";
@@ -565,21 +522,23 @@
             });
         }
 
-        // Listener en tiempo real de Firestore (Regla 1 / Regla 2 / Regla 3 cumplidas)
+        // Listener en tiempo real de Firestore (Sincroniza la Nube hacia el Local)
         function listenToProjects(uid) {
             const publicCollection = collection(db, 'artifacts', appId, 'users', uid, 'projects');
             onSnapshot(publicCollection, (snapshot) => {
-                projects = [];
+                const cloudProjects = [];
                 snapshot.forEach(docSnapshot => {
-                    projects.push({ id: docSnapshot.id, ...docSnapshot.data() });
+                    cloudProjects.push({ id: docSnapshot.id, ...docSnapshot.data() });
                 });
-                renderProjectsList();
-                
-                // Mantener activo el proyecto actual o seleccionar el primero si acaba de cargar
-                if (projects.length > 0) {
-                    if (!activeProject) {
-                        selectProject(projects[0].id);
-                    } else {
+
+                // Si hay datos en la nube, actualizamos la memoria y el almacenamiento local
+                if (cloudProjects.length > 0) {
+                    projects = cloudProjects;
+                    saveOfflineData(); // Almacenar en local de inmediato para mantener sincronía
+                    renderProjectsList();
+
+                    // Restaurar la selección del proyecto activo
+                    if (activeProject) {
                         const updated = projects.find(p => p.id === activeProject.id);
                         if (updated) {
                             activeProject = updated;
@@ -587,14 +546,26 @@
                         } else {
                             selectProject(projects[0].id);
                         }
+                    } else {
+                        selectProject(projects[0].id);
                     }
                 } else {
-                    activeProject = null;
-                    showEmptyState();
+                    // Si no hay datos en la nube pero sí tenemos datos locales, los migramos a la nube
+                    const localData = localStorage.getItem('lexcontrol_offline_projects');
+                    if (localData) {
+                        const parsedLocal = JSON.parse(localData);
+                        if (parsedLocal.length > 0) {
+                            showToast("Sincronizando datos locales con la nube...", "🔄");
+                            parsedLocal.forEach(async (proj) => {
+                                const userDoc = doc(db, 'artifacts', appId, 'users', uid, 'projects', proj.id);
+                                await setDoc(userDoc, proj);
+                            });
+                        }
+                    }
                 }
             }, (error) => {
                 console.error("Error en Snapshot", error);
-                showToast("Error al sincronizar datos", "❌");
+                showToast("Sincronización de nube pausada", "⚠️");
             });
         }
 
@@ -885,20 +856,29 @@
             showToast("Métricas y estadísticas guardadas", "📊");
         });
 
-        // Alta / Modificación de proyectos en base de datos (Firestore o LocalStorage)
+        // PERSISTENCIA DUAL SIMULTÁNEA: Guarda en LocalStorage e intenta respaldar en la nube al mismo tiempo
         async function updateProjectOnStorage() {
+            if (!activeProject) return;
+
+            // 1. Guardar en memoria de la aplicación
+            const idx = projects.findIndex(p => p.id === activeProject.id);
+            if (idx !== -1) {
+                projects[idx] = activeProject;
+            }
+
+            // 2. Guardar inmediatamente en localStorage (Acceso local instantáneo)
+            saveOfflineData();
+            refreshActiveProjectUI();
+            renderProjectsList();
+
+            // 3. Intentar respaldar en Cloud Firestore en segundo plano (Respaldo en la nube si hay sesión activa)
             if (auth && auth.currentUser) {
-                // Guarda en Cloud Firestore respetando reglas estrictas
-                const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', activeProject.id);
-                await setDoc(userDoc, activeProject);
-            } else {
-                // Sincroniza localmente
-                const idx = projects.findIndex(p => p.id === activeProject.id);
-                if (idx !== -1) {
-                    projects[idx] = activeProject;
-                    saveOfflineData();
-                    refreshActiveProjectUI();
-                    renderProjectsList();
+                try {
+                    const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', activeProject.id);
+                    await setDoc(userDoc, activeProject);
+                } catch (error) {
+                    console.warn("Fallo de red temporal. Cambios resguardados en local.", error);
+                    showToast("Guardado localmente. Pendiente sincronizar en la nube.", "⚠️");
                 }
             }
         }
@@ -908,21 +888,29 @@
             const confirmAction = confirm(`¿Está seguro de que desea eliminar el proyecto "${name}"? Esta acción no se puede deshacer.`);
             if (!confirmAction) return;
 
+            // 1. Eliminar de memoria y de localStorage
+            projects = projects.filter(p => p.id !== id);
+            saveOfflineData();
+
+            // 2. Intentar eliminar de la nube en paralelo
             if (auth && auth.currentUser) {
-                const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', id);
-                await deleteDoc(userDoc);
-                showToast("Proyecto eliminado", "🗑️");
-            } else {
-                projects = projects.filter(p => p.id !== id);
-                saveOfflineData();
-                showToast("Proyecto eliminado localmente", "🗑️");
-                if (projects.length > 0) {
-                    selectProject(projects[0].id);
-                } else {
-                    showEmptyState();
+                try {
+                    const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', id);
+                    await deleteDoc(userDoc);
+                } catch (error) {
+                    console.error("Error al eliminar en la nube", error);
                 }
-                renderProjectsList();
             }
+
+            showToast("Proyecto eliminado", "🗑️");
+
+            // Actualizar interfaz
+            if (projects.length > 0) {
+                selectProject(projects[0].id);
+            } else {
+                showEmptyState();
+            }
+            renderProjectsList();
         }
 
         // Gestión de la Ventana Modal de Proyectos
@@ -973,25 +961,30 @@
             const faseActiva = document.getElementById('input-project-fase').value;
 
             if (pId) {
-                // Guardar cambios sobre existente
+                // Modificar Proyecto Existente
                 const pIndex = projects.findIndex(p => p.id === pId);
                 if (pIndex !== -1) {
                     projects[pIndex].name = name;
                     projects[pIndex].description = description;
                     projects[pIndex].faseActiva = faseActiva;
                     
+                    // Doble Persistencia Simultánea
+                    saveOfflineData();
+                    refreshActiveProjectUI();
+                    renderProjectsList();
+
                     if (auth && auth.currentUser) {
-                        const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', pId);
-                        await updateDoc(userDoc, { name, description, faseActiva });
-                    } else {
-                        saveOfflineData();
-                        refreshActiveProjectUI();
-                        renderProjectsList();
+                        try {
+                            const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', pId);
+                            await updateDoc(userDoc, { name, description, faseActiva });
+                        } catch (err) {
+                            console.warn("Fallo de red al editar. Cambios resguardados en local.", err);
+                        }
                     }
                     showToast("Proyecto modificado", "✏️");
                 }
             } else {
-                // Crear Nuevo
+                // Crear Nuevo Proyecto
                 const newId = 'proj_' + Date.now();
                 const newProj = {
                     id: newId,
@@ -1004,14 +997,19 @@
                     createdAt: new Date().toISOString()
                 };
 
+                // Doble Guardado Inicial
+                projects.push(newProj);
+                saveOfflineData();
+                renderProjectsList();
+                selectProject(newId);
+
                 if (auth && auth.currentUser) {
-                    const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', newId);
-                    await setDoc(userDoc, newProj);
-                } else {
-                    projects.push(newProj);
-                    saveOfflineData();
-                    renderProjectsList();
-                    selectProject(newId);
+                    try {
+                        const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', newId);
+                        await setDoc(userDoc, newProj);
+                    } catch (err) {
+                        console.warn("Creado localmente. Se subirá a la nube cuando haya red.", err);
+                    }
                 }
                 showToast("Proyecto creado con éxito", "🚀");
             }
@@ -1134,27 +1132,17 @@
             });
         }
 
-        // Inicializar Aplicación al Cargar
-        window.onload = () => {
-            registerUIListeners();
-            startFirebase();
-            setupPWA();
-        };
-
-        // PWA Setup (Manifest y Prompt de Instalación)
+        // Instalación como PWA en Dispositivos Compatibles
         let deferredPrompt;
-        
         function setupPWA() {
             const installBtn = document.getElementById('btn-install-pwa');
             
-            // 1. Escuchar el evento de instalación para mostrar el botón
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
                 if(installBtn) installBtn.classList.remove('hidden');
             });
 
-            // 2. Ejecutar prompt cuando el usuario haga clic en instalar
             if(installBtn) {
                 installBtn.addEventListener('click', async () => {
                     if (deferredPrompt) {
@@ -1167,23 +1155,17 @@
                     }
                 });
             }
-
-            // Nota: Se ha eliminado el registro del Service Worker mediante Blob.
-            // El protocolo 'blob:' no está permitido para Service Workers por 
-            // políticas de seguridad del navegador en este entorno de previsualización.
-            // Sin embargo, la persistencia offline sigue funcionando gracias a localStorage,
-            // y el manifest permitirá la instalación en dispositivos compatibles.
         }
 
+        // Inicializar Aplicación al Cargar
+        window.onload = () => {
+            registerUIListeners();
+            startFirebase();
+            setupPWA();
+        };
+
     </script>
-
-    <!-- Pie de página -->
-    <footer class="bg-white border-t border-slate-200 py-4 shrink-0" style="flex-shrink:0;">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-slate-400 text-xs font-medium">Material de apoyo docente – MTI. Luis Alberto Mendoza San Juan
-            </p>
-        </div>
-    </footer>
-
 </body>
 </html>
+
+
