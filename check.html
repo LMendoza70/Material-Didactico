@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor Multoproyecto - Checklist de Desarrollo</title>
+    <title>LexControl – Gestor Multiproyecto | Material Didáctico</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- PWA Meta Tags y Manifest -->
     <meta name="theme-color" content="#0f172a">
@@ -58,7 +58,22 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col" style="font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;">
+
+    <!-- Navegación del Portal -->
+    <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-[100]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-14">
+                <a href="./index.html"
+                    class="flex items-center gap-2 font-bold text-base tracking-tight transition-transform hover:scale-105">
+                    <span
+                        class="bg-white text-indigo-700 rounded-lg w-7 h-7 flex items-center justify-center font-black text-sm">←</span>
+                    Material Didáctico
+                </a>
+                <span class="text-indigo-300 text-sm font-medium hidden sm:block">🛡️ LexControl – Gestor Multiproyecto</span>
+            </div>
+        </div>
+    </nav>
 
     <!-- Notificación flotante para feedback del usuario -->
     <div id="toast-notification" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 flex items-center gap-2">
@@ -67,7 +82,7 @@
     </div>
 
     <!-- Layout Principal -->
-    <div class="flex flex-col md:flex-row h-screen overflow-hidden">
+    <div class="flex flex-col md:flex-row flex-grow overflow-hidden" style="height: calc(100vh - 3.5rem);">
         
         <!-- BARRA LATERAL: Control de proyectos -->
         <aside class="w-full md:w-80 bg-slate-900 text-white flex flex-col border-r border-slate-800">
@@ -1128,5 +1143,14 @@
         }
 
     </script>
+
+    <!-- Pie de página -->
+    <footer class="bg-white border-t border-slate-200 py-4 shrink-0" style="flex-shrink:0;">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-400 text-xs font-medium">Material de apoyo docente – MTI. Luis Alberto Mendoza San Juan
+            </p>
+        </div>
+    </footer>
+
 </body>
 </html>
