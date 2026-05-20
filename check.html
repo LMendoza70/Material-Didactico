@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LexControl - Gestor de Proyectos con Persistencia Dual</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
     <!-- PWA Meta Tags y Manifest -->
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22LexControl%20Multiproyecto%22%2C%22short_name%22%3A%22LexControl%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%253E%25F0%259F%259B%25A1%25EF%25B8%258F%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%2C%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%253E%25F0%259F%259B%25A1%25EF%25B8%258F%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D" />
+    <link rel="manifest"
+        href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22LexControl%20Multiproyecto%22%2C%22short_name%22%3A%22LexControl%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%253E%25F0%259F%259B%25A1%25EF%25B8%258F%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%2C%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%253E%25F0%259F%259B%25A1%25EF%25B8%258F%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D" />
 
     <!-- Firebase SDKs -->
     <script type="module">
@@ -34,10 +36,11 @@
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
             color: #0f172a;
         }
+
         .chart-container {
             position: relative;
             width: 100%;
@@ -45,30 +48,49 @@
             height: 280px;
             max-height: 300px;
         }
+
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
+
         .custom-scrollbar::-webkit-scrollbar-track {
             background: #f1f5f9;
         }
+
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 3px;
         }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col">
 
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="./index.html"
+                    class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
+                    <span
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                    <span class="truncate">Material Didáctico</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
     <!-- Notificación flotante para feedback del usuario -->
-    <div id="toast-notification" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 flex items-center gap-2">
+    <div id="toast-notification"
+        class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 flex items-center gap-2">
         <span id="toast-icon">✨</span>
         <span id="toast-message">Inicializando aplicación...</span>
     </div>
 
     <!-- Layout Principal -->
-    <div class="flex flex-col md:flex-row h-screen overflow-hidden">
-        
+    <div class="flex flex-col md:flex-row h-[calc(100vh-4rem)] overflow-hidden">
+
         <!-- BARRA LATERAL: Control de proyectos -->
         <aside class="w-full md:w-80 bg-slate-900 text-white flex flex-col border-r border-slate-800">
             <!-- Header de Barra Lateral -->
@@ -84,7 +106,8 @@
 
             <!-- Botón Crear Nuevo Proyecto -->
             <div class="p-4">
-                <button id="btn-new-project" class="w-full bg-teal-500 hover:bg-teal-600 text-slate-950 font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-teal-500/20">
+                <button id="btn-new-project"
+                    class="w-full bg-teal-500 hover:bg-teal-600 text-slate-950 font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-teal-500/20">
                     <span>➕</span> Nuevo Proyecto
                 </button>
             </div>
@@ -106,20 +129,27 @@
                     </div>
                     <span class="text-slate-600">v1.2.0</span>
                 </div>
-                <button id="btn-install-pwa" class="hidden w-full bg-slate-800 hover:bg-slate-700 text-teal-400 font-bold py-2 px-3 rounded-xl transition-all text-center">
+                <button id="btn-install-pwa"
+                    class="hidden w-full bg-slate-800 hover:bg-slate-700 text-teal-400 font-bold py-2 px-3 rounded-xl transition-all text-center mb-1">
                     📱 Instalar como App Móvil
                 </button>
+                <div class="border-t border-slate-800/60 pt-2 text-[10px] text-slate-500 text-center leading-relaxed">
+                    Material de apoyo docente<br>MTI. Luis Alberto Mendoza San Juan
+                </div>
             </div>
         </aside>
 
         <!-- CONTENIDO PRINCIPAL -->
         <main class="flex-grow flex flex-col overflow-hidden bg-slate-50">
-            
+
             <!-- Dashboard Header / Navigation -->
-            <header class="bg-white border-b border-slate-200 p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 shrink-0">
+            <header
+                class="bg-white border-b border-slate-200 p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 shrink-0">
                 <div class="flex-grow">
-                    <h2 id="active-project-name" class="text-2xl font-extrabold text-slate-900">Selecciona un Proyecto</h2>
-                    <p id="active-project-desc" class="text-sm text-slate-500 mt-1">Crea un nuevo proyecto en el panel izquierdo para comenzar.</p>
+                    <h2 id="active-project-name" class="text-2xl font-extrabold text-slate-900">Selecciona un Proyecto
+                    </h2>
+                    <p id="active-project-desc" class="text-sm text-slate-500 mt-1">Crea un nuevo proyecto en el panel
+                        izquierdo para comenzar.</p>
                 </div>
 
                 <!-- Barra de progreso global del proyecto activo (Header) -->
@@ -129,63 +159,82 @@
                         <span id="global-progress-text" class="text-slate-700">0%</span>
                     </div>
                     <div class="w-full bg-slate-200 rounded-full h-2">
-                        <div id="global-progress-bar" class="bg-teal-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        <div id="global-progress-bar" class="bg-teal-500 h-2 rounded-full transition-all duration-500"
+                            style="width: 0%"></div>
                     </div>
                 </div>
 
                 <!-- Tabs de Navegación del Proyecto Seleccionado -->
                 <div id="project-nav-tabs" class="flex bg-slate-100 p-1 rounded-xl shrink-0 hidden">
-                    <button data-tab="tab-overview" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all">Vista General</button>
-                    <button data-tab="tab-checklist" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all bg-white text-slate-950 shadow-sm">Checklist Técnico</button>
-                    <button data-tab="tab-qa" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all font-semibold">QA y Métricas</button>
+                    <button data-tab="tab-overview"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all">Vista
+                        General</button>
+                    <button data-tab="tab-checklist"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all bg-white text-slate-950 shadow-sm">Checklist
+                        Técnico</button>
+                    <button data-tab="tab-qa"
+                        class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all font-semibold">QA
+                        y Métricas</button>
                 </div>
             </header>
 
             <!-- VISTAS / CONTENEDOR DE CONTENIDO -->
             <div id="main-views-container" class="flex-grow overflow-y-auto p-6 md:p-8 custom-scrollbar">
-                
+
                 <!-- ESTADO VACÍO (Placeholder) -->
                 <div id="empty-state-view" class="h-full flex flex-col justify-center items-center text-center p-8">
                     <span class="text-6xl mb-4">📂</span>
                     <h3 class="text-xl font-bold text-slate-800">No hay proyecto activo</h3>
-                    <p class="text-slate-500 max-w-sm mt-2">Crea un nuevo proyecto o selecciona uno del menú lateral para comenzar a realizar el seguimiento.</p>
+                    <p class="text-slate-500 max-w-sm mt-2">Crea un nuevo proyecto o selecciona uno del menú lateral
+                        para comenzar a realizar el seguimiento.</p>
                 </div>
 
                 <!-- 1. VISTA GENERAL (Dashboard de Métricas) -->
                 <div id="tab-overview" class="tab-content hidden space-y-8">
                     <div class="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden shadow-xl">
-                        <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        <div
+                            class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                             <div>
-                                <span class="bg-teal-500/20 text-teal-400 text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">Progreso de Implementación</span>
+                                <span
+                                    class="bg-teal-500/20 text-teal-400 text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">Progreso
+                                    de Implementación</span>
                                 <h3 class="text-3xl font-extrabold mt-2">Seguimiento en Curso</h3>
-                                <p class="text-slate-400 text-sm mt-1">Monitorea el completado de tareas técnicas de tu software de forma interactiva con doble persistencia activa.</p>
+                                <p class="text-slate-400 text-sm mt-1">Monitorea el completado de tareas técnicas de tu
+                                    software de forma interactiva con doble persistencia activa.</p>
                             </div>
                             <div class="text-right flex flex-col items-end">
-                                <span id="overview-percentage-text" class="text-5xl font-extrabold text-teal-400">0%</span>
+                                <span id="overview-percentage-text"
+                                    class="text-5xl font-extrabold text-teal-400">0%</span>
                                 <span class="text-xs text-slate-400 mt-1">Compleción general</span>
                             </div>
                         </div>
                         <div class="w-full bg-slate-800 rounded-full h-3 mt-6">
-                            <div id="overview-progress-bar" class="bg-teal-400 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            <div id="overview-progress-bar"
+                                class="bg-teal-400 h-3 rounded-full transition-all duration-500" style="width: 0%">
+                            </div>
                         </div>
                     </div>
 
                     <!-- Gráficos e Información Interactiva -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div
+                            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
                             <div>
                                 <h4 class="font-bold text-slate-800 text-lg mb-1">Tareas Totales</h4>
-                                <p class="text-xs text-slate-500 mb-6">Comparativa entre hitos logrados y pendientes del plan estratégico.</p>
+                                <p class="text-xs text-slate-500 mb-6">Comparativa entre hitos logrados y pendientes del
+                                    plan estratégico.</p>
                             </div>
                             <div class="chart-container">
                                 <canvas id="donutChart"></canvas>
                             </div>
                         </div>
 
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div
+                            class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
                             <div>
                                 <h4 class="font-bold text-slate-800 text-lg mb-1">Desglose por Fase</h4>
-                                <p class="text-xs text-slate-500 mb-6">Rendimiento e hitos conseguidos por cada fase de diseño y desarrollo.</p>
+                                <p class="text-xs text-slate-500 mb-6">Rendimiento e hitos conseguidos por cada fase de
+                                    diseño y desarrollo.</p>
                             </div>
                             <div class="chart-container">
                                 <canvas id="barChart"></canvas>
@@ -198,7 +247,8 @@
                 <div id="tab-checklist" class="tab-content hidden space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-6">
                         <h3 class="font-bold text-slate-800 text-lg">Hitos de Desarrollo de Software</h3>
-                        <p class="text-sm text-slate-500 mt-1">A continuación se detallan las fases metodológicas para un proyecto robusto. Marca las tareas a medida que se completen.</p>
+                        <p class="text-sm text-slate-500 mt-1">A continuación se detallan las fases metodológicas para
+                            un proyecto robusto. Marca las tareas a medida que se completen.</p>
                     </div>
 
                     <!-- Contenedor dinámico de Fases -->
@@ -209,14 +259,15 @@
 
                 <!-- 3. MÉTricas y QA -->
                 <div id="tab-qa" class="tab-content hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    
+
                     <!-- Validaciones Clave QA -->
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
                         <div>
                             <h3 class="font-bold text-slate-800 text-lg">Validaciones Clave (Quality Assurance)</h3>
-                            <p class="text-xs text-slate-500 mt-1">Aspectos críticos obligatorios para asegurar un producto final de calidad comercial.</p>
+                            <p class="text-xs text-slate-500 mt-1">Aspectos críticos obligatorios para asegurar un
+                                producto final de calidad comercial.</p>
                         </div>
-                        
+
                         <div id="qa-checklist-container" class="space-y-4">
                             <!-- Dinámico -->
                         </div>
@@ -226,34 +277,57 @@
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
                         <div>
                             <h3 class="font-bold text-slate-800 text-lg">Estadísticas del Entregable</h3>
-                            <p class="text-xs text-slate-500 mt-1">Métricas cuantitativas del código y de la base de datos.</p>
+                            <p class="text-xs text-slate-500 mt-1">Métricas cuantitativas del código y de la base de
+                                datos.</p>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Módulos Core</label>
-                                <input id="stat-modules" type="number" min="0" class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none" value="0">
+                                <label
+                                    class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Módulos
+                                    Core</label>
+                                <input id="stat-modules" type="number" min="0"
+                                    class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                                    value="0">
                             </div>
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Tablas de DB</label>
-                                <input id="stat-tables" type="number" min="0" class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none" value="0">
+                                <label
+                                    class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Tablas
+                                    de DB</label>
+                                <input id="stat-tables" type="number" min="0"
+                                    class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                                    value="0">
                             </div>
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Endpoints / Rutas</label>
-                                <input id="stat-routes" type="number" min="0" class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none" value="0">
+                                <label
+                                    class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Endpoints
+                                    / Rutas</label>
+                                <input id="stat-routes" type="number" min="0"
+                                    class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                                    value="0">
                             </div>
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Cobertura de Tests (%)</label>
-                                <input id="stat-coverage" type="number" min="0" max="100" class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none" value="0">
+                                <label
+                                    class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Cobertura
+                                    de Tests (%)</label>
+                                <input id="stat-coverage" type="number" min="0" max="100"
+                                    class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                                    value="0">
                             </div>
                             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 sm:col-span-2">
-                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Integraciones Externas</label>
-                                <input id="stat-integrations" type="number" min="0" class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none" value="0">
+                                <label
+                                    class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Integraciones
+                                    Externas</label>
+                                <input id="stat-integrations" type="number" min="0"
+                                    class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none"
+                                    value="0">
                             </div>
                         </div>
 
                         <div class="pt-2">
-                            <button id="btn-save-stats" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-xl transition-all">Guardar Estadísticas</button>
+                            <button id="btn-save-stats"
+                                class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-xl transition-all">Guardar
+                                Estadísticas</button>
                         </div>
                     </div>
                 </div>
@@ -264,25 +338,35 @@
 
     <!-- MODAL: Crear / Editar Proyecto -->
     <div id="project-modal" class="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl transition-all transform scale-95 opacity-0 duration-300" id="project-modal-card">
+        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl transition-all transform scale-95 opacity-0 duration-300"
+            id="project-modal-card">
             <div class="p-6 border-b border-slate-200 flex justify-between items-center">
                 <h3 id="modal-title" class="text-lg font-bold text-slate-900">Crear Proyecto</h3>
-                <button id="close-modal-btn" class="text-slate-400 hover:text-slate-600 text-2xl font-semibold">&times;</button>
+                <button id="close-modal-btn"
+                    class="text-slate-400 hover:text-slate-600 text-2xl font-semibold">&times;</button>
             </div>
-            
+
             <form id="project-form" class="p-6 space-y-4">
                 <input type="hidden" id="modal-project-id">
                 <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Nombre del Proyecto</label>
-                    <input id="input-project-name" type="text" required class="bg-slate-50 border border-slate-300 rounded-xl p-3 w-full text-sm font-medium text-slate-800 focus:ring-2 focus:ring-teal-500 outline-none" placeholder="Ej. E-Commerce API, LexControl Web App">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Nombre del
+                        Proyecto</label>
+                    <input id="input-project-name" type="text" required
+                        class="bg-slate-50 border border-slate-300 rounded-xl p-3 w-full text-sm font-medium text-slate-800 focus:ring-2 focus:ring-teal-500 outline-none"
+                        placeholder="Ej. E-Commerce API, LexControl Web App">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Descripción Corta</label>
-                    <textarea id="input-project-desc" required class="bg-slate-50 border border-slate-300 rounded-xl p-3 w-full text-sm font-medium text-slate-800 focus:ring-2 focus:ring-teal-500 outline-none h-24" placeholder="Breve resumen o stack principal..."></textarea>
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Descripción
+                        Corta</label>
+                    <textarea id="input-project-desc" required
+                        class="bg-slate-50 border border-slate-300 rounded-xl p-3 w-full text-sm font-medium text-slate-800 focus:ring-2 focus:ring-teal-500 outline-none h-24"
+                        placeholder="Breve resumen o stack principal..."></textarea>
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Fase Activa Inicial</label>
-                    <select id="input-project-fase" class="bg-slate-50 border border-slate-300 rounded-xl p-3 w-full text-sm font-medium text-slate-800 focus:ring-2 focus:ring-teal-500 outline-none">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Fase Activa
+                        Inicial</label>
+                    <select id="input-project-fase"
+                        class="bg-slate-50 border border-slate-300 rounded-xl p-3 w-full text-sm font-medium text-slate-800 focus:ring-2 focus:ring-teal-500 outline-none">
                         <option value="FASE 1: ANÁLISIS Y PLANIFICACIÓN">Fase 1: Análisis y Planificación</option>
                         <option value="FASE 2: CONFIGURACIÓN BASE">Fase 2: Configuración Base</option>
                         <option value="FASE 3: BASE DE DATOS Y MODELADO">Fase 3: Base de Datos</option>
@@ -294,8 +378,10 @@
                 </div>
 
                 <div class="pt-4 flex gap-3 justify-end">
-                    <button type="button" id="btn-cancel-modal" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-5 rounded-xl text-sm transition-all">Cancelar</button>
-                    <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold py-2.5 px-5 rounded-xl text-sm transition-all">Guardar</button>
+                    <button type="button" id="btn-cancel-modal"
+                        class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-5 rounded-xl text-sm transition-all">Cancelar</button>
+                    <button type="submit"
+                        class="bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold py-2.5 px-5 rounded-xl text-sm transition-all">Guardar</button>
                 </div>
             </form>
         </div>
@@ -489,7 +575,7 @@
                 auth = getAuth(app);
                 db = getFirestore(app);
                 appId = typeof __app_id !== 'undefined' ? __app_id : 'lexcontrol-multiproject';
-                
+
                 setupAuth();
             } catch (error) {
                 console.error("Fallo de conexión Firebase. Trabajando solo en modo Local.", error);
@@ -569,7 +655,7 @@
             });
         }
 
-        // Modos Offline
+        // Métodos Offline (Lectura y Escritura Local de contingencia)
         function loadOfflineData() {
             const localData = localStorage.getItem('lexcontrol_offline_projects');
             if (localData) {
@@ -579,7 +665,10 @@
             }
             renderProjectsList();
             if (projects.length > 0) {
-                selectProject(projects[0].id);
+                // Solo auto-selecciona si el estado actual está vacío
+                if (!activeProject) {
+                    selectProject(projects[0].id);
+                }
             } else {
                 showEmptyState();
             }
@@ -624,11 +713,10 @@
 
                 const item = document.createElement('div');
                 const isActive = activeProject && activeProject.id === p.id;
-                
-                item.className = `group flex flex-col p-3 rounded-xl cursor-pointer transition-all ${
-                    isActive ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/40 text-slate-300'
-                }`;
-                
+
+                item.className = `group flex flex-col p-3 rounded-xl cursor-pointer transition-all ${isActive ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/40 text-slate-300'
+                    }`;
+
                 item.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div class="font-semibold text-sm truncate flex-grow mr-2 select-none">${p.name}</div>
@@ -670,13 +758,13 @@
 
             document.getElementById('empty-state-view').classList.add('hidden');
             document.getElementById('project-nav-tabs').classList.remove('hidden');
-            
+
             // Mostrar el contenedor de progreso en el header
             const progressContainer = document.getElementById('header-progress-container');
             if (progressContainer) {
                 progressContainer.classList.remove('hidden');
             }
-            
+
             // Forzar volver a tab principal si se cambia de proyecto
             switchTab('tab-overview');
 
@@ -688,7 +776,7 @@
             document.getElementById('project-nav-tabs').classList.add('hidden');
             document.getElementById('active-project-name').textContent = "Selecciona un Proyecto";
             document.getElementById('active-project-desc').textContent = "Crea un nuevo proyecto en el panel izquierdo para comenzar.";
-            
+
             // Esconder la barra de progreso en el header
             const progressContainer = document.getElementById('header-progress-container');
             if (progressContainer) {
@@ -765,7 +853,7 @@
                 const phaseCard = document.createElement('details');
                 phaseCard.open = phaseIdx === 0; // El primero abierto por defecto
                 phaseCard.className = "bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm transition-all group";
-                
+
                 phaseCard.innerHTML = `
                     <summary class="flex justify-between items-center p-4 bg-slate-50/50 hover:bg-slate-50 cursor-pointer select-none border-b border-slate-100 list-none">
                         <div class="flex items-center gap-3">
@@ -797,7 +885,7 @@
                     input.addEventListener('change', async (e) => {
                         const pIdx = parseInt(e.target.dataset.phaseIdx);
                         const tIdx = parseInt(e.target.dataset.taskIdx);
-                        
+
                         activeProject.checklist[pIdx].tasks[tIdx].done = e.target.checked;
                         await updateProjectOnStorage();
                         showToast("Checklist actualizado", "💾");
@@ -818,7 +906,7 @@
             qaList.forEach((item, idx) => {
                 const row = document.createElement('div');
                 row.className = 'flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-slate-200 transition-all';
-                
+
                 row.innerHTML = `
                     <input type="checkbox" id="qa-${item.id}" ${item.done ? 'checked' : ''} 
                         class="qa-chk mt-0.5 h-5 w-5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer shrink-0"
@@ -830,7 +918,7 @@
 
                 row.querySelector('.qa-chk').addEventListener('change', async (e) => {
                     const idx = parseInt(e.target.dataset.idx);
-                    if(!activeProject.qa) activeProject.qa = JSON.parse(JSON.stringify(defaultQaStructure));
+                    if (!activeProject.qa) activeProject.qa = JSON.parse(JSON.stringify(defaultQaStructure));
                     activeProject.qa[idx].done = e.target.checked;
                     await updateProjectOnStorage();
                     showToast("Validaciones QA actualizadas", "🛡️");
@@ -917,7 +1005,7 @@
         function openModal(projectId = null) {
             const modal = document.getElementById('project-modal');
             const card = document.getElementById('project-modal-card');
-            
+
             modal.classList.remove('hidden');
             setTimeout(() => {
                 card.classList.remove('scale-95', 'opacity-0');
@@ -944,7 +1032,7 @@
         function closeModal() {
             const modal = document.getElementById('project-modal');
             const card = document.getElementById('project-modal-card');
-            
+
             card.classList.add('scale-95', 'opacity-0');
             setTimeout(() => {
                 modal.classList.add('hidden');
@@ -954,7 +1042,7 @@
         // Submit del Formulario Proyecto
         document.getElementById('project-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const pId = document.getElementById('modal-project-id').value;
             const name = document.getElementById('input-project-name').value;
             const description = document.getElementById('input-project-desc').value;
@@ -967,7 +1055,7 @@
                     projects[pIndex].name = name;
                     projects[pIndex].description = description;
                     projects[pIndex].faseActiva = faseActiva;
-                    
+
                     // Doble Persistencia Simultánea
                     saveOfflineData();
                     refreshActiveProjectUI();
@@ -1136,14 +1224,14 @@
         let deferredPrompt;
         function setupPWA() {
             const installBtn = document.getElementById('btn-install-pwa');
-            
+
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
-                if(installBtn) installBtn.classList.remove('hidden');
+                if (installBtn) installBtn.classList.remove('hidden');
             });
 
-            if(installBtn) {
+            if (installBtn) {
                 installBtn.addEventListener('click', async () => {
                     if (deferredPrompt) {
                         deferredPrompt.prompt();
@@ -1166,6 +1254,5 @@
 
     </script>
 </body>
+
 </html>
-
-
