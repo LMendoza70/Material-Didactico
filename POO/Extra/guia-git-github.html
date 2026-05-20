@@ -102,6 +102,11 @@
             font-size: 0.875rem;
             overflow-x: auto;
         }
+        @media (max-width: 640px) {
+            .code-block {
+                font-size: 0.78rem;
+            }
+        }
     </style>
 
     <!--
@@ -136,10 +141,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <a href="../../index.html"
-                    class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
                     <span
-                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
-                    Material Didáctico
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                    <span class="truncate">Material Didáctico</span>
                 </a>
             </div>
         </div>
@@ -148,10 +153,10 @@
     <!-- Navegación -->
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+            <div class="flex justify-between h-16 gap-3">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <span class="text-2xl font-bold text-accent tracking-tight">📘 GitMaster</span>
+                        <span class="text-xl sm:text-2xl font-bold text-accent tracking-tight">📘 GitMaster</span>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8" id="desktop-nav">
                         <!-- Las clases active-tab se gestionarán con JS -->

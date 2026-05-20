@@ -11,6 +11,15 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        @media (max-width: 640px) {
+            .portal-card {
+                border-radius: 1rem;
+            }
+            .portal-link {
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+        }
     </style>
 </head>
 
@@ -21,19 +30,19 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <a href="./index.html"
-                    class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
                     <span
-                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
-                    Material Didáctico
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                    <span class="truncate">Material Didáctico</span>
                 </a>
             </div>
         </div>
     </nav>
 
     <!-- Contenido Principal -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="text-center mb-16">
-            <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">Portal de <span
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div class="text-center mb-10 sm:mb-16">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">Portal de <span
                     class="text-indigo-600">Aprendizaje</span></h1>
             <p class="text-lg text-slate-500 max-w-2xl mx-auto">Explora los diferentes recursos y materiales organizados
                 por materias para facilitar tu proceso de estudio.</p>
@@ -43,7 +52,7 @@
 
             <!-- Materia: Programación Orientada a Objetos -->
             <div
-                class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all hover:-translate-y-1">
+                class="portal-card bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all hover:-translate-y-1">
                 <div class="bg-slate-800 h-2"></div>
                 <div class="p-6 md:p-8">
                     <div
@@ -57,7 +66,7 @@
                     <ul class="space-y-3">
                         <li>
                             <a href="./POO/Unidad1/T1.html"
-                                class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                                class="portal-link group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                                 <span class="font-medium text-slate-700 group-hover:text-indigo-600">Tema 1: Fundamentos
                                     de POO</span>
                                 <span class="text-indigo-400 group-hover:text-indigo-600">→</span>
@@ -65,7 +74,7 @@
                         </li>
                         <li>
                             <a href="./POO/Unidad1/infografia.html"
-                                class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                                class="portal-link group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                                 <span class="font-medium text-slate-700 group-hover:text-indigo-600">Infografía -
                                     Pilares POO</span>
                                 <span class="text-indigo-400 group-hover:text-indigo-600">→</span>
@@ -73,7 +82,7 @@
                         </li>
                         <li>
                             <a href="./POO/Unidad1/diagramaClases.html"
-                                class="group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                                class="portal-link group flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                                 <span class="font-medium text-slate-700 group-hover:text-indigo-600">Guía Interactiva
                                     UML &amp; Diagramas de Clases</span>
                                 <span class="text-indigo-400 group-hover:text-indigo-600">→</span>
@@ -108,7 +117,7 @@
 
             <!-- Herramientas de Gestión: LexControl -->
             <div
-                class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all hover:-translate-y-1">
+                class="portal-card bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 hover:shadow-2xl transition-all hover:-translate-y-1">
                 <div class="bg-teal-600 h-2"></div>
                 <div class="p-6 md:p-8">
                     <div

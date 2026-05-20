@@ -12,9 +12,9 @@
     <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="./index.html" class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
-                    <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
-                    Material Didáctico
+                <a href="./index.html" class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
+                    <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                    <span class="truncate">Material Didáctico</span>
                 </a>
             </div>
         </div>
@@ -437,6 +437,35 @@
   
   tr:hover {
     background: var(--color-background-secondary);
+  }
+  @media (max-width: 640px) {
+    .header {
+      padding: 2rem 1rem;
+    }
+    .header h1 {
+      font-size: 28px;
+      line-height: 1.15;
+    }
+    .header p {
+      font-size: 16px;
+    }
+    .content {
+      padding: 1rem;
+      min-height: auto;
+    }
+    .section-title {
+      font-size: 24px;
+    }
+    .section-subtitle {
+      font-size: 18px;
+    }
+    .nav-tab {
+      padding: 0.875rem 1rem;
+      font-size: 14px;
+    }
+    pre, code {
+      font-size: 0.78rem;
+    }
   }
 </style>
 

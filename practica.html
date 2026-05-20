@@ -21,6 +21,19 @@ max-height: 400px;
 }
 .flow-line { flex-grow: 1; height: 2px; background-color: #6366f1; }
 .arrow-right { width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid #6366f1; }
+@media (max-width: 640px) {
+    .chart-container {
+        height: 260px;
+    }
+    .flow-line,
+    .arrow-right {
+        display: none;
+    }
+    .mobile-stack {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
 
     /* Spinner para IA */
     .loader {
@@ -60,28 +73,28 @@ max-height: 400px;
 <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
-            <a href="./index.html" class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
-                <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
-                Material Didáctico
+            <a href="./index.html" class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
+                <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                <span class="truncate">Material Didáctico</span>
             </a>
-            <div class="flex items-center space-x-4 text-sm font-medium">
+            <div class="flex items-center gap-2 sm:space-x-4 text-sm font-medium shrink-0">
                 <span class="text-indigo-200 hidden sm:inline">Práctica: Cloudinary</span>
-                <span class="bg-rose-500 text-white px-3 py-1 rounded-full text-xs font-bold">FECHA LÍMITE: MAÑANA</span>
+                <span class="bg-rose-500 text-white px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold">FECHA LÍMITE: MAÑANA</span>
             </div>
         </div>
     </div>
 </nav>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
     
     <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-indigo-700 to-indigo-900 rounded-3xl shadow-xl p-8 mb-10 text-white relative overflow-hidden">
+    <div class="bg-gradient-to-r from-indigo-700 to-indigo-900 rounded-2xl sm:rounded-3xl shadow-xl p-5 sm:p-8 mb-8 sm:mb-10 text-white relative overflow-hidden">
         <div class="relative z-10 max-w-2xl">
-            <h2 class="text-3xl font-bold mb-4">Potencia tu código con Inteligencia Artificial</h2>
-            <p class="text-indigo-100 text-lg mb-6 leading-relaxed">
+            <h2 class="text-2xl sm:text-3xl font-bold mb-4">Potencia tu código con Inteligencia Artificial</h2>
+            <p class="text-indigo-100 text-base sm:text-lg mb-6 leading-relaxed">
                 Hemos integrado a <strong>Gemini</strong> para que sea tu mentor personal. Úsalo para validar si tu lógica de promesas es correcta o para redactar tu documentación.
             </p>
-            <div class="flex gap-4">
+            <div class="mobile-stack flex gap-4">
                 <a href="#ai-lab" class="bg-white text-indigo-700 px-6 py-2 rounded-full font-bold hover:bg-indigo-50 transition-all shadow-md">Ir al Laboratorio ✨</a>
             </div>
         </div>

@@ -104,6 +104,35 @@
             font-weight: bold;
             margin-bottom: 15px;
         }
+        @media (max-width: 640px) {
+            .container {
+                padding: 20px 14px 32px;
+            }
+            .hero,
+            .section {
+                padding: 22px;
+                border-radius: 16px;
+            }
+            .hero h1 {
+                font-size: 2rem;
+                line-height: 1.15;
+            }
+            .hero p,
+            .section p,
+            .section li {
+                font-size: 1rem;
+            }
+            .section h2 {
+                font-size: 1.5rem;
+            }
+            .code {
+                padding: 14px;
+                border-radius: 12px;
+            }
+            code {
+                font-size: 0.82rem;
+            }
+        }
     </style>
 </head>
 
@@ -113,10 +142,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <a href="../../index.html"
-                    class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
                     <span
-                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
-                    Material Didáctico
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                    <span class="truncate">Material Didáctico</span>
                 </a>
             </div>
         </div>

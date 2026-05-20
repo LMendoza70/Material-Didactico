@@ -128,6 +128,14 @@
                 transform: translateY(0);
             }
         }
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 240px;
+            }
+            pre, code {
+                font-size: 0.78rem;
+            }
+        }
     </style>
 </head>
 
@@ -154,17 +162,17 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <a href="../../index.html"
-                    class="flex items-center gap-2 font-bold text-xl tracking-tight transition-transform hover:scale-105">
+                    class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
                     <span
-                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex items-center justify-center font-black">M</span>
-                    Material Didáctico
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                    <span class="truncate">Material Didáctico</span>
                 </a>
             </div>
         </div>
     </nav>
 
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-start sm:items-center gap-3">
             <div class="flex items-center space-x-3">
                 <span class="text-3xl" aria-hidden="true">💻</span>
                 <div>
@@ -181,13 +189,13 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-10 sm:space-y-12">
 
         <!-- SECTION 1: El Cambio de Paradigma -->
         <section id="paradigm-shift" class="space-y-6">
             <header class="max-w-3xl">
-                <h2 class="text-3xl font-bold text-slate-900 mb-2">El Cambio de Paradigma</h2>
-                <p class="text-slate-600 text-lg leading-relaxed">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">El Cambio de Paradigma</h2>
+                <p class="text-slate-600 text-base sm:text-lg leading-relaxed">
                     Antes de crear objetos, el mundo de la programación se basaba en secuencias lógicas. Entender la
                     diferencia entre la programación clásica (estructurada) y la moderna (orientada a objetos) es el
                     primer paso para dominar el desarrollo de software actual. Esta sección compara ambos enfoques y
