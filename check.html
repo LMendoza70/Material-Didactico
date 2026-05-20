@@ -11,7 +11,8 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- PWA Meta Tags y Manifest -->
     <meta name="theme-color" content="#0f172a">
@@ -36,7 +37,7 @@
 
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #f8fafc;
             color: #0f172a;
         }
@@ -61,6 +62,20 @@
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 3px;
+        }
+
+        @keyframes spin-slow {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin-custom {
+            animation: spin-slow 1s linear infinite;
         }
     </style>
 </head>
@@ -120,17 +135,26 @@
                 </div>
             </div>
 
-            <!-- Info Usuario / Estado Conexión / Botón de PWA -->
+            <!-- Info Usuario / Estado Conexión / Botón de PWA y Botón de Sincronización Manual -->
             <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex flex-col gap-3 text-xs text-slate-400">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div id="connection-status" class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
-                        <span id="user-display-id">Local & Cloud</span>
+                <div class="flex flex-col gap-2 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div id="connection-status" class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+                            <span id="user-display-id" class="font-medium">Local & Cloud</span>
+                        </div>
+                        <span class="text-slate-600 font-semibold">v1.2.5</span>
                     </div>
-                    <span class="text-slate-600">v1.2.0</span>
+
+                    <!-- NUEVO: Botón de Sincronización Manual -->
+                    <button id="btn-manual-sync"
+                        class="w-full bg-slate-800 hover:bg-slate-700 active:scale-95 text-teal-400 hover:text-teal-300 font-bold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2 border border-slate-700/50">
+                        <span id="sync-icon">🔄</span> Sincronizar Nube
+                    </button>
                 </div>
+
                 <button id="btn-install-pwa"
-                    class="hidden w-full bg-slate-800 hover:bg-slate-700 text-teal-400 font-bold py-2 px-3 rounded-xl transition-all text-center mb-1">
+                    class="hidden w-full bg-slate-800 hover:bg-slate-700 text-teal-400 font-bold py-2 px-3 rounded-xl transition-all text-center">
                     📱 Instalar como App Móvil
                 </button>
                 <div class="border-t border-slate-800/60 pt-2 text-[10px] text-slate-500 text-center leading-relaxed">
@@ -600,7 +624,7 @@
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     document.getElementById('connection-status').className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
-                    document.getElementById('user-display-id').textContent = `Nube & Local (ID: ${user.uid.substring(0, 5)})`;
+                    document.getElementById('user-display-id').textContent = `ID: ${user.uid.substring(0, 5)}`;
                     listenToProjects(user.uid);
                 } else {
                     document.getElementById('connection-status').className = "w-2.5 h-2.5 rounded-full bg-red-500";
@@ -694,6 +718,7 @@
         // Renderizado del Listado de Proyectos
         function renderProjectsList() {
             const listContainer = document.getElementById('projects-list');
+            if (!listContainer) return;
             listContainer.innerHTML = '';
 
             if (projects.length === 0) {
@@ -843,6 +868,7 @@
         // Renderizado Dinámico del Checklist de Fases
         function renderChecklistAccordion() {
             const container = document.getElementById('checklist-phases-accordion');
+            if (!container) return;
             container.innerHTML = '';
 
             activeProject.checklist.forEach((phase, phaseIdx) => {
@@ -899,6 +925,7 @@
         // Renderizado del control QA
         function renderQAChecklist() {
             const container = document.getElementById('qa-checklist-container');
+            if (!container) return;
             container.innerHTML = '';
 
             const qaList = activeProject.qa || defaultQaStructure;
@@ -968,6 +995,49 @@
                     console.warn("Fallo de red temporal. Cambios resguardados en local.", error);
                     showToast("Guardado localmente. Pendiente sincronizar en la nube.", "⚠️");
                 }
+            }
+        }
+
+        // Sincronización Manual Forzada
+        async function triggerManualSync() {
+            const syncIcon = document.getElementById('sync-icon');
+            const syncButton = document.getElementById('btn-manual-sync');
+
+            // Efecto visual de rotación en el botón
+            if (syncIcon) syncIcon.classList.add('animate-spin-custom');
+            if (syncButton) syncButton.disabled = true;
+
+            showToast("Iniciando sincronización manual...", "🔄");
+
+            try {
+                if (!auth || !auth.currentUser) {
+                    throw new Error("No hay una sesión de red activa.");
+                }
+
+                const uid = auth.currentUser.uid;
+                const localData = localStorage.getItem('lexcontrol_offline_projects');
+
+                if (localData) {
+                    const parsedLocal = JSON.parse(localData);
+                    if (parsedLocal.length > 0) {
+                        // Sincronizar todos los proyectos locales a la nube
+                        for (const proj of parsedLocal) {
+                            const userDoc = doc(db, 'artifacts', appId, 'users', uid, 'projects', proj.id);
+                            await setDoc(userDoc, proj);
+                        }
+                    }
+                }
+
+                showToast("Sincronización finalizada con éxito", "✅");
+            } catch (error) {
+                console.error("Error durante la sincronización manual:", error);
+                showToast("Fallo al conectar con la nube. Datos seguros en local.", "⚠️");
+            } finally {
+                // Detener efecto visual de carga
+                setTimeout(() => {
+                    if (syncIcon) syncIcon.classList.remove('animate-spin-custom');
+                    if (syncButton) syncButton.disabled = false;
+                }, 800);
             }
         }
 
@@ -1211,6 +1281,12 @@
             document.getElementById('btn-new-project').addEventListener('click', () => openModal());
             document.getElementById('close-modal-btn').addEventListener('click', closeModal);
             document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+
+            // NUEVO: Evento para el botón de sincronización manual
+            const manualSyncBtn = document.getElementById('btn-manual-sync');
+            if (manualSyncBtn) {
+                manualSyncBtn.addEventListener('click', triggerManualSync);
+            }
 
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
