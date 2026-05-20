@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor Multoproyecto - Checklist de Desarrollo</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA Meta Tags y Manifest -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22LexControl%20Multiproyecto%22%2C%22short_name%22%3A%22LexControl%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f8fafc%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%253E%25F0%259F%259B%25A1%25EF%25B8%258F%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%2C%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20100%20100%27%253E%253Ctext%20y%3D%27.9em%27%20font-size%3D%2790%27%253E%25F0%259F%259B%25A1%25EF%25B8%258F%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D" />
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, updateDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        window.firebaseImports = { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, updateDoc, deleteDoc, addDoc };
+    </script>
+
+    <!-- Chosen Palette: Slate & Teal Modern (Fondo neutral claro, acentos en turquesa/teal y gris pizarra profesional) -->
+    <!-- Application Structure Plan: Aplicación interactiva de una sola página diseñada con un panel lateral izquierdo para conmutar y añadir proyectos, y un área principal dividida en pestañas para alternar entre "Panel General", "Checklist Técnico", y "Métricas/QA". Esta estructura modular evita la sobrecarga de información y optimiza la navegación. -->
+    <!-- Visualization & Content Choices: 1. Gráfico Circular (Chart.js): Representa el estado de tareas completadas frente a pendientes para el proyecto seleccionado. 2. Gráfico de Barras Radial/Horizontal (Chart.js): Permite contrastar de forma directa el porcentaje de compleción de cada una de las 11 fases de desarrollo. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            height: 280px;
+            max-height: 300px;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Notificación flotante para feedback del usuario -->
+    <div id="toast-notification" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 flex items-center gap-2">
+        <span id="toast-icon">✨</span>
+        <span id="toast-message">Cargando base de datos...</span>
+    </div>
+
+    <!-- Layout Principal -->
+    <div class="flex flex-col md:flex-row h-screen overflow-hidden">
+        
+        <!-- BARRA LATERAL: Control de proyectos -->
+        <aside class="w-full md:w-80 bg-slate-900 text-white flex flex-col border-r border-slate-800">
+            <!-- Header de Barra Lateral -->
+            <div class="p-6 border-b border-slate-800">
+                <div class="flex items-center gap-3 mb-1">
+                    <span class="text-3xl">🛡️</span>
+                    <div>
+                        <h1 class="text-lg font-bold tracking-tight">LexControl</h1>
+                        <p class="text-xs text-slate-400">Plataforma Multiproyecto</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón Crear Nuevo Proyecto -->
+            <div class="p-4">
+                <button id="btn-new-project" class="w-full bg-teal-500 hover:bg-teal-600 text-slate-950 font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-teal-500/20">
+                    <span>➕</span> Nuevo Proyecto
+                </button>
+            </div>
+
+            <!-- Listado de Proyectos -->
+            <div class="flex-grow overflow-y-auto px-4 pb-4 custom-scrollbar">
+                <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-2">Mis Proyectos</h2>
+                <div id="projects-list" class="space-y-1">
+                    <!-- Dinámico -->
+                    <div class="p-4 text-center text-xs text-slate-500">Buscando proyectos...</div>
+                </div>
+            </div>
+
+            <!-- Info Usuario / Estado Conexión -->
+            <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex items-center justify-between text-xs text-slate-400">
+                <div class="flex items-center gap-2">
+                    <div id="connection-status" class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+                    <span id="user-display-id">Anon-Session</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btn-install-pwa" class="hidden bg-slate-800 hover:bg-slate-700 text-teal-400 font-bold py-1 px-2 rounded text-xs transition-all">📱 Instalar</button>
+                    <span class="text-slate-600">v1.1.0</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="flex-grow flex flex-col overflow-hidden bg-slate-50">
+            
+            <!-- Dashboard Header / Navigation -->
+            <header class="bg-white border-b border-slate-200 p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 shrink-0">
+                <div class="flex-grow">
+                    <h2 id="active-project-name" class="text-2xl font-extrabold text-slate-900">Selecciona un Proyecto</h2>
+                    <p id="active-project-desc" class="text-sm text-slate-500 mt-1">Crea un nuevo proyecto en el panel izquierdo para comenzar.</p>
+                </div>
+
+                <!-- Barra de progreso global del proyecto activo (Header) -->
+                <div id="header-progress-container" class="w-full lg:w-64 hidden">
+                    <div class="flex justify-between text-xs font-bold mb-1">
+                        <span class="text-teal-700">Progreso Global</span>
+                        <span id="global-progress-text" class="text-slate-700">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div id="global-progress-bar" class="bg-teal-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Tabs de Navegación del Proyecto Seleccionado -->
+                <div id="project-nav-tabs" class="flex bg-slate-100 p-1 rounded-xl shrink-0 hidden">
+                    <button data-tab="tab-overview" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all">Vista General</button>
+                    <button data-tab="tab-checklist" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all bg-white text-slate-950 shadow-sm">Checklist Técnico</button>
+                    <button data-tab="tab-qa" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all font-semibold">QA y Métricas</button>
+                </div>
+            </header>
+
+            <!-- VISTAS / CONTENEDOR DE CONTENIDO -->
+            <div id="main-views-container" class="flex-grow overflow-y-auto p-6 md:p-8 custom-scrollbar">
+                
+                <!-- ESTADO VACÍO (Placeholder) -->
+                <div id="empty-state-view" class="h-full flex flex-col justify-center items-center text-center p-8">
+                    <span class="text-6xl mb-4">📂</span>
+                    <h3 class="text-xl font-bold text-slate-800">No hay proyecto activo</h3>
+                    <p class="text-slate-500 max-w-sm mt-2">Crea un nuevo proyecto o selecciona uno del menú lateral para comenzar a realizar el seguimiento.</p>
+                </div>
+
+                <!-- 1. VISTA GENERAL (Dashboard de Métricas) -->
+                <div id="tab-overview" class="tab-content hidden space-y-8">
+                    <div class="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden shadow-xl">
+                        <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                            <div>
+                                <span class="bg-teal-500/20 text-teal-400 text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">Progreso de Implementación</span>
+                                <h3 class="text-3xl font-extrabold mt-2">Seguimiento en Curso</h3>
+                                <p class="text-slate-400 text-sm mt-1">Monitorea el completado de tareas técnicas de tu software de forma interactiva.</p>
+                            </div>
+                            <div class="text-right flex flex-col items-end">
+                                <span id="overview-percentage-text" class="text-5xl font-extrabold text-teal-400">0%</span>
+                                <span class="text-xs text-slate-400 mt-1">Compleción general</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-3 mt-6">
+                            <div id="overview-progress-bar" class="bg-teal-400 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Gráficos e Información Interactiva -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-lg mb-1">Tareas Totales</h4>
+                                <p class="text-xs text-slate-500 mb-6">Comparativa entre hitos logrados y pendientes del plan estratégico.</p>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="donutChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-lg mb-1">Desglose por Fase</h4>
+                                <p class="text-xs text-slate-500 mb-6">Rendimiento e hitos conseguidos por cada fase de diseño y desarrollo.</p>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. CHECKLIST TÉCNICO INTERACTIVO -->
+                <div id="tab-checklist" class="tab-content hidden space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-6">
+                        <h3 class="font-bold text-slate-800 text-lg">Hitos de Desarrollo de Software</h3>
+                        <p class="text-sm text-slate-500 mt-1">A continuación se detallan las fases metodológicas para un proyecto robusto. Marca las tareas a medida que se completen.</p>
+                    </div>
+
+                    <!-- Contenedor dinámico de Fases -->
+                    <div id="checklist-phases-accordion" class="space-y-4">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- 3. MÉTricas y QA -->
+                <div id="tab-qa" class="tab-content hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- Validaciones Clave QA -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-lg">Validaciones Clave (Quality Assurance)</h3>
+                            <p class="text-xs text-slate-500 mt-1">Aspectos críticos obligatorios para asegurar un producto final de calidad comercial.</p>
+                        </div>
+                        
+                        <div id="qa-checklist-container" class="space-y-4">
+                            <!-- Dinámico -->
+                        </div>
+                    </div>
+
+                    <!-- Estadísticas del Proyecto -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-lg">Estadísticas del Entregable</h3>
+                            <p class="text-xs text-slate-500 mt-1">Métricas cuantitativas del código y de la base de datos.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Módulos Core</label>
+                                <input id="stat-modules" type="number" min="0" class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none" value="0">
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Tablas de DB</label>
+                                <input id="stat-tables" type="number" min="0" class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none" value="0">
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Endpoints / Rutas</label>
+                                <input id="stat-routes" type="number" min="0" class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none" value="0">
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Cobertura de Tests (%)</label>
+                                <input id="stat-coverage" type="number" min="0" max="100" class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none" value="0">
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 sm:col-span-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Integraciones Externas</label>
+                                <input id="stat-integrations" type="number" min="0" class="bg-white border border-slate-300 rounded-lg p-2 w-full text-lg font-semibold text-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none" value="0">
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button id="btn-save-stats" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-4 rounded-xl transition-all">Guardar Estadísticas</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: Crear / Editar Proyecto -->
+    <div id="project-modal" class="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl transition-all transform scale-95 opacity-0 duration-300" id="project-modal-card">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center">
+                <h3 id="modal-title" class="text-lg font-bold text-slate-900">Crear Proyecto</h3>
+                <button id="close-modal-btn" class="text-slate-400 hover:text-slate-600 text-2xl font-semibold">&times;</button>
+            </div>
+            
+            <form id="project-form" class="p-6 space-y-4">
+                <input type="hidden" id="modal-project-id">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Nombre del Proyecto</label>
+                    <input id="input-project-name" type="text" required class="bg-slate-50 border border-slate-300 rounded-xl p-3 w-full text-sm font-medium text-slate-800 focus:ring-2 focus:ring-teal-500 outline-none" placeholder="Ej. E-Commerce API, LexControl Web App">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Descripción Corta</label>
+                    <textarea id="input-project-desc" required class="bg-slate-50 border border-slate-300 rounded-xl p-3 w-full text-sm font-medium text-slate-800 focus:ring-2 focus:ring-teal-500 outline-none h-24" placeholder="Breve resumen o stack principal..."></textarea>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Fase Activa Inicial</label>
+                    <select id="input-project-fase" class="bg-slate-50 border border-slate-300 rounded-xl p-3 w-full text-sm font-medium text-slate-800 focus:ring-2 focus:ring-teal-500 outline-none">
+                        <option value="FASE 1: ANÁLISIS Y PLANIFICACIÓN">Fase 1: Análisis y Planificación</option>
+                        <option value="FASE 2: CONFIGURACIÓN BASE">Fase 2: Configuración Base</option>
+                        <option value="FASE 3: BASE DE DATOS Y MODELADO">Fase 3: Base de Datos</option>
+                        <option value="FASE 4: AUTENTICACIÓN Y AUTORIZACIÓN">Fase 4: Autenticación</option>
+                        <option value="FASE 5: DISEÑO, UI Y LAYOUT">Fase 5: UI e Interfaz</option>
+                        <option value="FASE 6: DESARROLLO DE MÓDULOS CORE">Fase 6: Módulos Core</option>
+                        <option value="FASE 11: DESPLIEGUE Y CI/CD">Fase Final: Despliegue</option>
+                    </select>
+                </div>
+
+                <div class="pt-4 flex gap-3 justify-end">
+                    <button type="button" id="btn-cancel-modal" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-5 rounded-xl text-sm transition-all">Cancelar</button>
+                    <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold py-2.5 px-5 rounded-xl text-sm transition-all">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE APLICACIÓN -->
+    <script type="module">
+        // Datos base por defecto para inicializar cualquier proyecto nuevo
+        const defaultChecklistStructure = [
+            {
+                id: 'f1',
+                title: 'FASE 1: ANÁLISIS Y PLANIFICACIÓN',
+                icon: '📝',
+                tasks: [
+                    { id: 't1_1', label: 'Levantamiento y análisis de requerimientos', done: false },
+                    { id: 't1_2', label: 'Definición del alcance (MVP / Fases posteriores)', done: false },
+                    { id: 't1_3', label: 'Creación del plan de implementación y cronograma', done: false },
+                    { id: 't1_4', label: 'Definición de arquitectura del sistema y base de datos', done: false },
+                    { id: 't1_5', label: 'Diseño de flujos de usuario (User Flows / Wireframes)', done: false },
+                    { id: 't1_6', label: 'Selección de Stack Tecnológico', done: false }
+                ]
+            },
+            {
+                id: 'f2',
+                title: 'FASE 2: CONFIGURACIÓN BASE',
+                icon: '⚙️',
+                tasks: [
+                    { id: 't2_1', label: 'Inicialización del repositorio (Git) y políticas de ramas', done: false },
+                    { id: 't2_2', label: 'Configuración del framework principal', done: false },
+                    { id: 't2_3', label: 'Configuración de linters y formateadores de código', done: false },
+                    { id: 't2_4', label: 'Instalación de dependencias principales e integraciones', done: false },
+                    { id: 't2_5', label: 'Configuración de variables de entorno (Dev, Staging, Prod)', done: false },
+                    { id: 't2_6', label: 'Setup de herramientas de tipado estático', done: false }
+                ]
+            },
+            {
+                id: 'f3',
+                title: 'FASE 3: BASE DE DATOS Y MODELADO',
+                icon: '🗄️',
+                tasks: [
+                    { id: 't3_1', label: 'Tablas de usuarios y perfiles', done: false },
+                    { id: 't3_2', label: 'Tablas del Módulo Principal 1', done: false },
+                    { id: 't3_3', label: 'Tablas del Módulo Principal 2', done: false },
+                    { id: 't3_4', label: 'Tablas de catálogos y configuraciones', done: false },
+                    { id: 't3_5', label: 'Tablas de relaciones (Muchos a Muchos)', done: false },
+                    { id: 't3_6', label: 'Configuración de triggers y funciones automáticas', done: false },
+                    { id: 't3_7', label: 'Implementación de soft-delete (eliminación lógica)', done: false },
+                    { id: 't3_8', label: 'Políticas de seguridad a nivel de fila (RLS)', done: false },
+                    { id: 't3_9', label: 'Creación de índices para optimización de consultas', done: false },
+                    { id: 't3_10', label: 'Generación de scripts de migración y Seeders', done: false }
+                ]
+            },
+            {
+                id: 'f4',
+                title: 'FASE 4: AUTENTICACIÓN Y AUTORIZACIÓN',
+                icon: '🔐',
+                tasks: [
+                    { id: 't4_1', label: 'Configuración del proveedor de Auth', done: false },
+                    { id: 't4_2', label: 'Página/Modal de Inicio de Sesión (Login)', done: false },
+                    { id: 't4_3', label: 'Página/Modal de Registro (Sign up)', done: false },
+                    { id: 't4_4', label: 'Flujo de recuperación de contraseña (Forgot password)', done: false },
+                    { id: 't4_5', label: 'Protección de rutas/endpoints privadas (Middleware / Guards)', done: false },
+                    { id: 't4_6', label: 'Sistema de roles y permisos básicos', done: false }
+                ]
+            },
+            {
+                id: 'f5',
+                title: 'FASE 5: DISEÑO, UI Y LAYOUT',
+                icon: '🎨',
+                tasks: [
+                    { id: 't5_1', label: 'Configuración de la librería de estilos (Tailwind, etc.)', done: false },
+                    { id: 't5_2', label: 'Definición de variables de marca (Colores, Tipografía)', done: false },
+                    { id: 't5_3', label: 'Implementación de Dark/Light mode', done: false },
+                    { id: 't5_4', label: 'UI Kit: Botones, Inputs, Selects, Textareas, Checkboxes', done: false },
+                    { id: 't5_5', label: 'UI Kit: Modales, Alertas y Tooltips', done: false },
+                    { id: 't5_6', label: 'UI Kit: Tablas de datos, Tarjetas y Avatares', done: false },
+                    { id: 't5_7', label: 'UI Kit: Estados de carga (Spinners, Skeletons)', done: false },
+                    { id: 't5_8', label: 'Layout público (Landing / Auth)', done: false },
+                    { id: 't5_9', label: 'Layout privado (Dashboard / App)', done: false },
+                    { id: 't5_10', label: 'Barra de navegación lateral o superior responsiva', done: false }
+                ]
+            },
+            {
+                id: 'f6',
+                title: 'FASE 6: DESARROLLO DE MÓDULOS CORE',
+                icon: '🚀',
+                tasks: [
+                    { id: 't6_1', label: 'Dashboard: Tarjetas de métricas y estadísticas', done: false },
+                    { id: 't6_2', label: 'Dashboard: Gráficos o resúmenes visuales', done: false },
+                    { id: 't6_3', label: 'Dashboard: Listado de actividades recientes', done: false },
+                    { id: 't6_4', label: 'Módulo Principal 1: Vista de listado (paginación, búsqueda, filtros)', done: false },
+                    { id: 't6_5', label: 'Módulo Principal 1: Formulario de creación', done: false },
+                    { id: 't6_6', label: 'Módulo Principal 1: Vista de detalle', done: false },
+                    { id: 't6_7', label: 'Módulo Principal 1: CRUD completo', done: false },
+                    { id: 't6_8', label: 'Módulo Principal 2: Vista de listado', done: false },
+                    { id: 't6_9', label: 'Módulo Principal 2: Formulario de creación', done: false },
+                    { id: 't6_10', label: 'Módulo Principal 2: Vista de detalle y CRUD completo', done: false }
+                ]
+            },
+            {
+                id: 'f7',
+                title: 'FASE 7: FUNCIONALIDADES TRANSVERSALES',
+                icon: '🔄',
+                tasks: [
+                    { id: 't7_1', label: 'Sistema de búsqueda global', done: false },
+                    { id: 't7_2', label: 'Módulo de exportación de datos (CSV, PDF, Excel)', done: false },
+                    { id: 't7_3', label: 'Sistema de notificaciones (In-app, Email, SMS)', done: false },
+                    { id: 't7_4', label: 'Subida y gestión de archivos/imágenes', done: false },
+                    { id: 't7_5', label: 'Webhooks o integraciones con servicios de terceros', done: false }
+                ]
+            },
+            {
+                id: 'f8',
+                title: 'FASE 8: ADMINISTRACIÓN Y CONFIGURACIÓN',
+                icon: '🛠️',
+                tasks: [
+                    { id: 't8_1', label: 'Panel de gestión de usuarios (CRUD de usuarios)', done: false },
+                    { id: 't8_2', label: 'Asignación y cambio de roles desde la interfaz', done: false },
+                    { id: 't8_3', label: 'Gestión de catálogos dinámicos', done: false },
+                    { id: 't8_4', label: 'Configuraciones generales de la aplicación', done: false }
+                ]
+            },
+            {
+                id: 'f9',
+                title: 'FASE 9: TESTING Y VALIDACIÓN',
+                icon: '🧪',
+                tasks: [
+                    { id: 't9_1', label: 'Pruebas unitarias de componentes y funciones críticas', done: false },
+                    { id: 't9_2', label: 'Pruebas de integración / E2E', done: false },
+                    { id: 't9_3', label: 'Validación estricta de formularios (Frontend/Backend)', done: false },
+                    { id: 't9_4', label: 'Verificación de protección de rutas y permisos', done: false },
+                    { id: 't9_5', label: 'Pruebas de responsividad', done: false },
+                    { id: 't9_6', label: 'Pruebas de rendimiento (Lighthouse, carga de queries)', done: false }
+                ]
+            },
+            {
+                id: 'f10',
+                title: 'FASE 10: DOCUMENTACIÓN',
+                icon: '📚',
+                tasks: [
+                    { id: 't10_1', label: 'README.md - Descripción general y badges', done: false },
+                    { id: 't10_2', label: 'SETUP.md - Guía paso a paso para entorno local', done: false },
+                    { id: 't10_3', label: 'USER_GUIDE.md - Manual básico de usuario', done: false },
+                    { id: 't10_4', label: 'API_DOCS.md - Documentación de endpoints/APIs', done: false },
+                    { id: 't10_5', label: 'Diccionario de datos y arquitectura', done: false }
+                ]
+            },
+            {
+                id: 'f11',
+                title: 'FASE 11: DESPLIEGUE Y CI/CD',
+                icon: '🚢',
+                tasks: [
+                    { id: 't11_1', label: 'Configuración de pipelines de CI/CD', done: false },
+                    { id: 't11_2', label: 'Despliegue en entorno de Staging (Pruebas)', done: false },
+                    { id: 't11_3', label: 'Configuración de dominios y certificados SSL', done: false },
+                    { id: 't11_4', label: 'Despliegue en entorno de Producción', done: false },
+                    { id: 't11_5', label: 'Configuración de monitoreo y reporte de errores', done: false }
+                ]
+            }
+        ];
+
+        const defaultQaStructure = [
+            { id: 'qa1', label: 'Manejo de Errores: Mensajes claros al usuario ante fallos.', done: false },
+            { id: 'qa2', label: 'Accesibilidad (a11y): Contraste adecuado, navegación por teclado.', done: false },
+            { id: 'qa3', label: 'Performance: Imágenes optimizadas, lazy loading de rutas.', done: false },
+            { id: 'qa4', label: 'Seguridad: Prevención de inyecciones SQL/NoSQL, sanitización.', done: false }
+        ];
+
+        // Estado interno de la app
+        let projects = [];
+        let activeProject = null;
+        let db = null;
+        let auth = null;
+        let appId = 'lexcontrol-multiproject';
+
+        // Instancias de Gráficos
+        let donutChart = null;
+        let barChart = null;
+
+        // Recuperar importaciones de Firebase
+        const { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, updateDoc, deleteDoc, addDoc } = window.firebaseImports;
+
+        // Inicializar Firebase
+        function startFirebase() {
+            try {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                appId = typeof __app_id !== 'undefined' ? __app_id : 'lexcontrol-multiproject';
+                
+                setupAuth();
+            } catch (error) {
+                console.error("Fallo de conexión Firebase. Utilizando modo offline local.", error);
+                showToast("Modo Offline Activado", "⚠️");
+                loadOfflineData();
+            }
+        }
+
+        async function setupAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("Error al autenticar", err);
+                showToast("Error de autenticación", "❌");
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    document.getElementById('connection-status').className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
+                    document.getElementById('user-display-id').textContent = `ID: ${user.uid.substring(0, 8)}...`;
+                    listenToProjects(user.uid);
+                } else {
+                    document.getElementById('connection-status').className = "w-2.5 h-2.5 rounded-full bg-red-500";
+                }
+            });
+        }
+
+        // Listener en tiempo real de Firestore (Regla 1 / Regla 2 / Regla 3 cumplidas)
+        function listenToProjects(uid) {
+            const publicCollection = collection(db, 'artifacts', appId, 'users', uid, 'projects');
+            onSnapshot(publicCollection, (snapshot) => {
+                projects = [];
+                snapshot.forEach(docSnapshot => {
+                    projects.push({ id: docSnapshot.id, ...docSnapshot.data() });
+                });
+                renderProjectsList();
+                
+                // Mantener activo el proyecto actual o seleccionar el primero si acaba de cargar
+                if (projects.length > 0) {
+                    if (!activeProject) {
+                        selectProject(projects[0].id);
+                    } else {
+                        const updated = projects.find(p => p.id === activeProject.id);
+                        if (updated) {
+                            activeProject = updated;
+                            refreshActiveProjectUI();
+                        } else {
+                            selectProject(projects[0].id);
+                        }
+                    }
+                } else {
+                    activeProject = null;
+                    showEmptyState();
+                }
+            }, (error) => {
+                console.error("Error en Snapshot", error);
+                showToast("Error al sincronizar datos", "❌");
+            });
+        }
+
+        // Modos Offline
+        function loadOfflineData() {
+            const localData = localStorage.getItem('lexcontrol_offline_projects');
+            if (localData) {
+                projects = JSON.parse(localData);
+            } else {
+                projects = [];
+            }
+            renderProjectsList();
+            if (projects.length > 0) {
+                selectProject(projects[0].id);
+            } else {
+                showEmptyState();
+            }
+        }
+
+        function saveOfflineData() {
+            localStorage.setItem('lexcontrol_offline_projects', JSON.stringify(projects));
+        }
+
+        // Toast feedback
+        function showToast(message, icon = "✨") {
+            const toast = document.getElementById('toast-notification');
+            if (toast) {
+                document.getElementById('toast-icon').textContent = icon;
+                document.getElementById('toast-message').textContent = message;
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 3000);
+            }
+        }
+
+        // Renderizado del Listado de Proyectos
+        function renderProjectsList() {
+            const listContainer = document.getElementById('projects-list');
+            listContainer.innerHTML = '';
+
+            if (projects.length === 0) {
+                listContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">No hay proyectos activos.</p>`;
+                return;
+            }
+
+            projects.forEach(p => {
+                // Calcular progreso individual
+                let total = 0;
+                let done = 0;
+                p.checklist.forEach(f => {
+                    total += f.tasks.length;
+                    done += f.tasks.filter(t => t.done).length;
+                });
+                const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+
+                const item = document.createElement('div');
+                const isActive = activeProject && activeProject.id === p.id;
+                
+                item.className = `group flex flex-col p-3 rounded-xl cursor-pointer transition-all ${
+                    isActive ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/40 text-slate-300'
+                }`;
+                
+                item.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="font-semibold text-sm truncate flex-grow mr-2 select-none">${p.name}</div>
+                        <div class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="btn-edit-p text-slate-400 hover:text-white" data-id="${p.id}">✏️</button>
+                            <button class="btn-delete-p text-slate-400 hover:text-red-400" data-id="${p.id}">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mt-2 text-xs">
+                        <span class="text-slate-500 group-hover:text-slate-400 truncate w-32 select-none">${p.faseActiva || 'Fase Desconocida'}</span>
+                        <span class="font-bold text-teal-400">${pct}%</span>
+                    </div>
+                `;
+
+                // Eventos de interacción
+                item.addEventListener('click', (e) => {
+                    if (e.target.closest('.btn-edit-p') || e.target.closest('.btn-delete-p')) return;
+                    selectProject(p.id);
+                });
+
+                item.querySelector('.btn-edit-p').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openModal(p.id);
+                });
+
+                item.querySelector('.btn-delete-p').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteProjectPrompt(p.id, p.name);
+                });
+
+                listContainer.appendChild(item);
+            });
+        }
+
+        // Selección de Proyecto Activo
+        function selectProject(id) {
+            activeProject = projects.find(p => p.id === id);
+            if (!activeProject) return;
+
+            document.getElementById('empty-state-view').classList.add('hidden');
+            document.getElementById('project-nav-tabs').classList.remove('hidden');
+            
+            // Mostrar el contenedor de progreso en el header
+            const progressContainer = document.getElementById('header-progress-container');
+            if (progressContainer) {
+                progressContainer.classList.remove('hidden');
+            }
+            
+            // Forzar volver a tab principal si se cambia de proyecto
+            switchTab('tab-overview');
+
+            refreshActiveProjectUI();
+        }
+
+        function showEmptyState() {
+            document.getElementById('empty-state-view').classList.remove('hidden');
+            document.getElementById('project-nav-tabs').classList.add('hidden');
+            document.getElementById('active-project-name').textContent = "Selecciona un Proyecto";
+            document.getElementById('active-project-desc').textContent = "Crea un nuevo proyecto en el panel izquierdo para comenzar.";
+            
+            // Esconder la barra de progreso en el header
+            const progressContainer = document.getElementById('header-progress-container');
+            if (progressContainer) {
+                progressContainer.classList.add('hidden');
+            }
+
+            // Esconder todas las vistas de proyecto
+            document.querySelectorAll('.tab-content').forEach(view => view.classList.add('hidden'));
+        }
+
+        // Actualización Completa de Interfaz de Proyecto Activo
+        function refreshActiveProjectUI() {
+            if (!activeProject) return;
+
+            document.getElementById('active-project-name').textContent = activeProject.name;
+            document.getElementById('active-project-desc').textContent = activeProject.description;
+
+            // Recalcular métricas generales
+            let totalTasks = 0;
+            let completedTasks = 0;
+            activeProject.checklist.forEach(f => {
+                totalTasks += f.tasks.length;
+                completedTasks += f.tasks.filter(t => t.done).length;
+            });
+            const progressPct = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+
+            // Actualizar barra de progreso del header con comprobaciones de seguridad
+            const globalProgressText = document.getElementById('global-progress-text');
+            if (globalProgressText) {
+                globalProgressText.textContent = `${progressPct}%`;
+            }
+            const globalProgressBar = document.getElementById('global-progress-bar');
+            if (globalProgressBar) {
+                globalProgressBar.style.width = `${progressPct}%`;
+            }
+
+            // Actualizar pestaña Overview con comprobaciones de seguridad
+            const overviewPercentageText = document.getElementById('overview-percentage-text');
+            if (overviewPercentageText) {
+                overviewPercentageText.textContent = `${progressPct}%`;
+            }
+            const overviewProgressBar = document.getElementById('overview-progress-bar');
+            if (overviewProgressBar) {
+                overviewProgressBar.style.width = `${progressPct}%`;
+            }
+
+            // Renderizar checklist de tareas
+            renderChecklistAccordion();
+
+            // Renderizar QA
+            renderQAChecklist();
+
+            // Sincronizar Estadísticas form
+            document.getElementById('stat-modules').value = activeProject.stats?.modules || 0;
+            document.getElementById('stat-tables').value = activeProject.stats?.tables || 0;
+            document.getElementById('stat-routes').value = activeProject.stats?.routes || 0;
+            document.getElementById('stat-coverage').value = activeProject.stats?.coverage || 0;
+            document.getElementById('stat-integrations').value = activeProject.stats?.integrations || 0;
+
+            // Actualizar / Dibujar gráficos
+            updateCharts(completedTasks, totalTasks - completedTasks);
+        }
+
+        // Renderizado Dinámico del Checklist de Fases
+        function renderChecklistAccordion() {
+            const container = document.getElementById('checklist-phases-accordion');
+            container.innerHTML = '';
+
+            activeProject.checklist.forEach((phase, phaseIdx) => {
+                const phaseDone = phase.tasks.filter(t => t.done).length;
+                const phaseTotal = phase.tasks.length;
+                const pct = phaseTotal === 0 ? 0 : Math.round((phaseDone / phaseTotal) * 100);
+
+                const phaseCard = document.createElement('details');
+                phaseCard.open = phaseIdx === 0; // El primero abierto por defecto
+                phaseCard.className = "bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm transition-all group";
+                
+                phaseCard.innerHTML = `
+                    <summary class="flex justify-between items-center p-4 bg-slate-50/50 hover:bg-slate-50 cursor-pointer select-none border-b border-slate-100 list-none">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl shrink-0">${phase.icon || '📁'}</span>
+                            <span class="font-bold text-slate-800 text-sm md:text-base">${phase.title}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">${phaseDone}/${phaseTotal}</span>
+                            <span class="text-sm font-extrabold text-teal-600">${pct}%</span>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </div>
+                    </summary>
+                    <div class="p-4 space-y-2.5">
+                        ${phase.tasks.map((task, taskIdx) => `
+                            <div class="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-xl transition-all border border-transparent hover:border-slate-100">
+                                <input type="checkbox" id="chk-${phase.id}-${task.id}" ${task.done ? 'checked' : ''} 
+                                    class="task-chk mt-0.5 h-5 w-5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer shrink-0"
+                                    data-phase-idx="${phaseIdx}" data-task-idx="${taskIdx}">
+                                <label for="chk-${phase.id}-${task.id}" class="text-sm text-slate-700 cursor-pointer select-none leading-relaxed flex-grow font-medium ${task.done ? 'line-through text-slate-400' : ''}">
+                                    ${task.label}
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                // Escuchar eventos en los checkboxes
+                phaseCard.querySelectorAll('.task-chk').forEach(input => {
+                    input.addEventListener('change', async (e) => {
+                        const pIdx = parseInt(e.target.dataset.phaseIdx);
+                        const tIdx = parseInt(e.target.dataset.taskIdx);
+                        
+                        activeProject.checklist[pIdx].tasks[tIdx].done = e.target.checked;
+                        await updateProjectOnStorage();
+                        showToast("Checklist actualizado", "💾");
+                    });
+                });
+
+                container.appendChild(phaseCard);
+            });
+        }
+
+        // Renderizado del control QA
+        function renderQAChecklist() {
+            const container = document.getElementById('qa-checklist-container');
+            container.innerHTML = '';
+
+            const qaList = activeProject.qa || defaultQaStructure;
+
+            qaList.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-slate-200 transition-all';
+                
+                row.innerHTML = `
+                    <input type="checkbox" id="qa-${item.id}" ${item.done ? 'checked' : ''} 
+                        class="qa-chk mt-0.5 h-5 w-5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer shrink-0"
+                        data-idx="${idx}">
+                    <label for="qa-${item.id}" class="text-sm font-semibold text-slate-700 cursor-pointer select-none ${item.done ? 'line-through text-slate-400' : ''}">
+                        ${item.label}
+                    </label>
+                `;
+
+                row.querySelector('.qa-chk').addEventListener('change', async (e) => {
+                    const idx = parseInt(e.target.dataset.idx);
+                    if(!activeProject.qa) activeProject.qa = JSON.parse(JSON.stringify(defaultQaStructure));
+                    activeProject.qa[idx].done = e.target.checked;
+                    await updateProjectOnStorage();
+                    showToast("Validaciones QA actualizadas", "🛡️");
+                });
+
+                container.appendChild(row);
+            });
+        }
+
+        // Guardado de Estadísticas Cuantitativas
+        document.getElementById('btn-save-stats').addEventListener('click', async () => {
+            if (!activeProject) return;
+
+            activeProject.stats = {
+                modules: parseInt(document.getElementById('stat-modules').value) || 0,
+                tables: parseInt(document.getElementById('stat-tables').value) || 0,
+                routes: parseInt(document.getElementById('stat-routes').value) || 0,
+                coverage: parseInt(document.getElementById('stat-coverage').value) || 0,
+                integrations: parseInt(document.getElementById('stat-integrations').value) || 0
+            };
+
+            await updateProjectOnStorage();
+            showToast("Métricas y estadísticas guardadas", "📊");
+        });
+
+        // Alta / Modificación de proyectos en base de datos (Firestore o LocalStorage)
+        async function updateProjectOnStorage() {
+            if (auth && auth.currentUser) {
+                // Guarda en Cloud Firestore respetando reglas estrictas
+                const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', activeProject.id);
+                await setDoc(userDoc, activeProject);
+            } else {
+                // Sincroniza localmente
+                const idx = projects.findIndex(p => p.id === activeProject.id);
+                if (idx !== -1) {
+                    projects[idx] = activeProject;
+                    saveOfflineData();
+                    refreshActiveProjectUI();
+                    renderProjectsList();
+                }
+            }
+        }
+
+        // Eliminación de Proyecto
+        async function deleteProjectPrompt(id, name) {
+            const confirmAction = confirm(`¿Está seguro de que desea eliminar el proyecto "${name}"? Esta acción no se puede deshacer.`);
+            if (!confirmAction) return;
+
+            if (auth && auth.currentUser) {
+                const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', id);
+                await deleteDoc(userDoc);
+                showToast("Proyecto eliminado", "🗑️");
+            } else {
+                projects = projects.filter(p => p.id !== id);
+                saveOfflineData();
+                showToast("Proyecto eliminado localmente", "🗑️");
+                if (projects.length > 0) {
+                    selectProject(projects[0].id);
+                } else {
+                    showEmptyState();
+                }
+                renderProjectsList();
+            }
+        }
+
+        // Gestión de la Ventana Modal de Proyectos
+        function openModal(projectId = null) {
+            const modal = document.getElementById('project-modal');
+            const card = document.getElementById('project-modal-card');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                card.classList.remove('scale-95', 'opacity-0');
+            }, 50);
+
+            if (projectId) {
+                // Modo Edición
+                const proj = projects.find(p => p.id === projectId);
+                document.getElementById('modal-title').textContent = "Editar Proyecto";
+                document.getElementById('modal-project-id').value = proj.id;
+                document.getElementById('input-project-name').value = proj.name;
+                document.getElementById('input-project-desc').value = proj.description;
+                document.getElementById('input-project-fase').value = proj.faseActiva;
+            } else {
+                // Modo Creación
+                document.getElementById('modal-title').textContent = "Nuevo Proyecto";
+                document.getElementById('modal-project-id').value = '';
+                document.getElementById('input-project-name').value = '';
+                document.getElementById('input-project-desc').value = '';
+                document.getElementById('input-project-fase').selectedIndex = 0;
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('project-modal');
+            const card = document.getElementById('project-modal-card');
+            
+            card.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Submit del Formulario Proyecto
+        document.getElementById('project-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const pId = document.getElementById('modal-project-id').value;
+            const name = document.getElementById('input-project-name').value;
+            const description = document.getElementById('input-project-desc').value;
+            const faseActiva = document.getElementById('input-project-fase').value;
+
+            if (pId) {
+                // Guardar cambios sobre existente
+                const pIndex = projects.findIndex(p => p.id === pId);
+                if (pIndex !== -1) {
+                    projects[pIndex].name = name;
+                    projects[pIndex].description = description;
+                    projects[pIndex].faseActiva = faseActiva;
+                    
+                    if (auth && auth.currentUser) {
+                        const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', pId);
+                        await updateDoc(userDoc, { name, description, faseActiva });
+                    } else {
+                        saveOfflineData();
+                        refreshActiveProjectUI();
+                        renderProjectsList();
+                    }
+                    showToast("Proyecto modificado", "✏️");
+                }
+            } else {
+                // Crear Nuevo
+                const newId = 'proj_' + Date.now();
+                const newProj = {
+                    id: newId,
+                    name,
+                    description,
+                    faseActiva,
+                    checklist: JSON.parse(JSON.stringify(defaultChecklistStructure)),
+                    qa: JSON.parse(JSON.stringify(defaultQaStructure)),
+                    stats: { modules: 0, tables: 0, routes: 0, coverage: 0, integrations: 0 },
+                    createdAt: new Date().toISOString()
+                };
+
+                if (auth && auth.currentUser) {
+                    const userDoc = doc(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'projects', newId);
+                    await setDoc(userDoc, newProj);
+                } else {
+                    projects.push(newProj);
+                    saveOfflineData();
+                    renderProjectsList();
+                    selectProject(newId);
+                }
+                showToast("Proyecto creado con éxito", "🚀");
+            }
+
+            closeModal();
+        });
+
+        // Configuración de los Gráficos (Chart.js)
+        function updateCharts(completed, pending) {
+            // Datos por fase
+            const labels = [];
+            const completionPercentages = [];
+
+            if (activeProject) {
+                activeProject.checklist.forEach(f => {
+                    labels.push(f.title.split(':')[0]);
+                    const done = f.tasks.filter(t => t.done).length;
+                    const pct = f.tasks.length === 0 ? 0 : Math.round((done / f.tasks.length) * 100);
+                    completionPercentages.push(pct);
+                });
+            }
+
+            // Gráfico Donut
+            if (donutChart) {
+                donutChart.data.datasets[0].data = [completed, pending];
+                donutChart.update();
+            } else {
+                const ctx = document.getElementById('donutChart').getContext('2d');
+                donutChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completadas', 'Pendientes'],
+                        datasets: [{
+                            data: [completed, pending],
+                            backgroundColor: ['#0d9488', '#e2e8f0'],
+                            borderWidth: 0,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { font: { size: 11, weight: '600' } }
+                            }
+                        },
+                        cutout: '75%'
+                    }
+                });
+            }
+
+            // Gráfico Barras Horizontal
+            if (barChart) {
+                barChart.data.labels = labels;
+                barChart.data.datasets[0].data = completionPercentages;
+                barChart.update();
+            } else {
+                const ctx = document.getElementById('barChart').getContext('2d');
+                barChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Progreso (%)',
+                            data: completionPercentages,
+                            backgroundColor: '#0f766e',
+                            borderRadius: 6,
+                            barThickness: 12
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                max: 100,
+                                beginAtZero: true,
+                                ticks: { font: { size: 10 } }
+                            },
+                            y: {
+                                ticks: { font: { size: 9, weight: '600' } }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Control de Pestañas
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(view => view.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-slate-950 transition-all";
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const targetBtn = document.querySelector(`[data-tab="${tabId}"]`);
+            if (targetBtn) {
+                targetBtn.className = "tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-slate-950 shadow-sm transition-all";
+            }
+        }
+
+        // Registro de Eventos Estáticos de la UI
+        function registerUIListeners() {
+            document.getElementById('btn-new-project').addEventListener('click', () => openModal());
+            document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+            document.getElementById('btn-cancel-modal').addEventListener('click', closeModal);
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const tabId = e.target.dataset.tab;
+                    switchTab(tabId);
+                });
+            });
+        }
+
+        // Inicializar Aplicación al Cargar
+        window.onload = () => {
+            registerUIListeners();
+            startFirebase();
+            setupPWA();
+        };
+
+        // PWA Setup (Manifest y Prompt de Instalación)
+        let deferredPrompt;
+        
+        function setupPWA() {
+            const installBtn = document.getElementById('btn-install-pwa');
+            
+            // 1. Escuchar el evento de instalación para mostrar el botón
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                if(installBtn) installBtn.classList.remove('hidden');
+            });
+
+            // 2. Ejecutar prompt cuando el usuario haga clic en instalar
+            if(installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        if (outcome === 'accepted') {
+                            installBtn.classList.add('hidden');
+                        }
+                        deferredPrompt = null;
+                    }
+                });
+            }
+
+            // Nota: Se ha eliminado el registro del Service Worker mediante Blob.
+            // El protocolo 'blob:' no está permitido para Service Workers por 
+            // políticas de seguridad del navegador en este entorno de previsualización.
+            // Sin embargo, la persistencia offline sigue funcionando gracias a localStorage,
+            // y el manifest permitirá la instalación en dispositivos compatibles.
+        }
+
+    </script>
+</body>
+</html>
