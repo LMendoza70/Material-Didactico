@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprende Propiedades en C# - Guía Interactiva</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="../../../index.html" class="text-slate-400 hover:text-white mr-2 flex items-center gap-1.5 transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline font-semibold text-sm">Inicio</span>
+                </a>
+                <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-xl tracking-tight shadow-lg shadow-indigo-500/20">
+                    C#
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Propiedades en POO</h1>
+                    <p class="text-xs text-slate-500 hidden sm:block">Guía de Aprendizaje & Autoevaluación</p>
+                </div>
+            </div>
+            
+            <!-- Selector de sección para móvil / Desktop Tabs -->
+            <nav class="flex space-x-1 sm:space-x-2 bg-slate-900 p-1 rounded-lg border border-slate-800">
+                <button onclick="switchTab('guia')" id="tab-guia" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 bg-indigo-600 text-white shadow">
+                    <i class="fa-solid fa-book-open mr-1.5"></i>Guía
+                </button>
+                <button onclick="switchTab('simulador')" id="tab-simulador" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-gears mr-1.5"></i>Simulador
+                </button>
+                <button onclick="switchTab('quiz')" id="tab-quiz" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-graduation-cap mr-1.5"></i>Quiz
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- ================= SECCIÓN 1: GUÍA TEÓRICA INTERACTIVA ================= -->
+        <section id="content-guia" class="space-y-12 transition-all duration-300">
+            
+            <!-- Hero banner para estudiantes -->
+            <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-950 rounded-2xl p-6 sm:p-10 border border-indigo-500/20 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                <div class="max-w-3xl">
+                    <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs px-3 py-1 rounded-full font-semibold uppercase tracking-wider">Concepto Clave de POO</span>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white mt-4 tracking-tight">El Guardián del Estado: Propiedades en C#</h2>
+                    <p class="text-slate-400 mt-3 text-base sm:text-lg leading-relaxed">
+                        ¿Tienes dudas sobre los bloques <code class="text-indigo-300">get</code> y <code class="text-indigo-300">set</code>? No te preocupes. Esta guía interactiva te enseñará a proteger los datos de tus objetos usando encapsulamiento profesional paso a paso.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Contenido de la Guía -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Navegación interna (Sidebar) -->
+                <aside class="lg:col-span-1 space-y-2 hidden lg:block sticky top-24 self-start">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest px-3 mb-3">Índice de la Guía</h3>
+                    <a href="#problema" class="flex items-center space-x-2.5 px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition group">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 group-hover:scale-125 transition"></span>
+                        <span>1. El Gran Problema</span>
+                    </a>
+                    <a href="#que-es" class="flex items-center space-x-2.5 px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition group">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:scale-125 transition"></span>
+                        <span>2. ¿Qué es una Propiedad?</span>
+                    </a>
+                    <a href="#sintaxis" class="flex items-center space-x-2.5 px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition group">
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 group-hover:scale-125 transition"></span>
+                        <span>3. Sintaxis y Tipos</span>
+                    </a>
+                    <a href="#casos" class="flex items-center space-x-2.5 px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition group">
+                        <span class="w-1.5 h-1.5 rounded-full bg-sky-500 group-hover:scale-125 transition"></span>
+                        <span>4. Casos del Mundo Real</span>
+                    </a>
+                    <a href="#trampa" class="flex items-center space-x-2.5 px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition group">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 group-hover:scale-125 transition"></span>
+                        <span>5. Trampa de Recursión</span>
+                    </a>
+                    <a href="#reto" class="flex items-center space-x-2.5 px-3 py-2 text-sm rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition group">
+                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500 group-hover:scale-125 transition"></span>
+                        <span>6. Reto Práctico</span>
+                    </a>
+                </aside>
+
+                <!-- Cuerpo del Artículo -->
+                <div class="lg:col-span-3 space-y-12">
+                    
+                    <!-- Sección 1 -->
+                    <article id="problema" class="scroll-mt-20 border-b border-slate-800 pb-10">
+                        <div class="flex items-center space-x-2 text-red-400 mb-3">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span class="text-xs font-semibold tracking-wider uppercase">Sección 1</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">El Gran Problema: ¿Por qué no usar campos públicos?</h3>
+                        <p class="text-slate-400 mt-3 leading-relaxed">
+                            El pilar de la Programación Orientada a Objetos (POO) llamado <strong>Encapsulamiento</strong> dicta que el estado interno de un objeto (sus variables o campos) debe estar protegido del acceso directo del exterior. Si permitimos que cualquiera modifique directamente los datos de un objeto, corremos el riesgo de romper la integridad de nuestra aplicación.
+                        </p>
+                        
+                        <div class="mt-6 bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+                            <div class="bg-slate-900 px-4 py-2 flex justify-between items-center border-b border-slate-800">
+                                <span class="text-xs font-mono text-slate-400">Ejemplo de código peligroso (sin encapsulamiento)</span>
+                                <button onclick="copyCode('code-danger')" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center space-x-1">
+                                    <i class="fa-solid fa-copy"></i> <span>Copiar</span>
+                                </button>
+                            </div>
+                            <pre class="p-4 overflow-x-auto text-sm text-red-300/90" id="code-danger"><code>public class CuentaBancaria
+{
+    // Campo público: ¡Muy peligroso!
+    public decimal Saldo; 
+}
+
+// En el programa principal:
+CuentaBancaria miCuenta = new CuentaBancaria();
+miCuenta.Saldo = 5000; // Hasta aquí todo bien...
+miCuenta.Saldo = -1000000; // ¡Grave! El saldo es negativo y nadie lo validó.</code></pre>
+                        </div>
+                        <div class="mt-4 p-4 bg-red-950/20 border border-red-500/20 rounded-xl flex items-start space-x-3">
+                            <i class="fa-solid fa-circle-info text-red-400 mt-1"></i>
+                            <p class="text-sm text-slate-400">
+                                <strong class="text-slate-200">¿Qué falló aquí?</strong> Cualquiera puede alterar el saldo sin pasar por ninguna regla de negocio o autorización. El saldo de una cuenta real nunca debería admitir números negativos arbitrarios.
+                            </p>
+                        </div>
+                    </article>
+
+                    <!-- Sección 2 -->
+                    <article id="que-es" class="scroll-mt-20 border-b border-slate-800 pb-10">
+                        <div class="flex items-center space-x-2 text-emerald-400 mb-3">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span class="text-xs font-semibold tracking-wider uppercase">Sección 2</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">¿Qué es una Propiedad en C#?</h3>
+                        <p class="text-slate-400 mt-3 leading-relaxed">
+                            Una <strong>propiedad</strong> es un miembro que proporciona un mecanismo flexible para leer, escribir o calcular el valor de un campo privado. 
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                            <div class="p-5 bg-slate-950 border border-slate-800 rounded-xl">
+                                <h4 class="text-indigo-400 font-bold text-sm mb-2"><i class="fa-solid fa-user-gear mr-2"></i>Perspectiva de Uso</h4>
+                                <p class="text-xs text-slate-400 leading-relaxed">Para quien consume el objeto, se ve y se comporta exactamente como un campo público con la sintaxis familiar del operador punto (<code class="bg-slate-900 px-1 py-0.5 rounded">objeto.Propiedad</code>).</p>
+                            </div>
+                            <div class="p-5 bg-slate-950 border border-slate-800 rounded-xl">
+                                <h4 class="text-emerald-400 font-bold text-sm mb-2"><i class="fa-solid fa-code mr-2"></i>Perspectiva de Diseño</h4>
+                                <p class="text-xs text-slate-400 leading-relaxed">Para quien escribe la clase, es una pareja de métodos ocultos (<code class="bg-slate-900 px-1 py-0.5 rounded">get</code> y <code class="bg-slate-900 px-1 py-0.5 rounded">set</code>) idónea para inyectar validaciones y control.</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Sección 3 -->
+                    <article id="sintaxis" class="scroll-mt-20 border-b border-slate-800 pb-10">
+                        <div class="flex items-center space-x-2 text-indigo-400 mb-3">
+                            <i class="fa-solid fa-file-code"></i>
+                            <span class="text-xs font-semibold tracking-wider uppercase">Sección 3</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Anatomía y Sintaxis de las Propiedades</h3>
+                        <p class="text-slate-400 mt-3 leading-relaxed">
+                            C# provee múltiples sabores sintácticos según el nivel de control requerido.
+                        </p>
+
+                        <!-- Pestaña interna para tipos de sintaxis -->
+                        <div class="mt-6">
+                            <div class="flex space-x-2 border-b border-slate-800">
+                                <button onclick="showSintaxis('tradicional')" id="btn-s-tradicional" class="px-4 py-2 text-xs font-bold border-b-2 border-indigo-500 text-white">Tradicional</button>
+                                <button onclick="showSintaxis('auto')" id="btn-s-auto" class="px-4 py-2 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-white">Autoimplementada</button>
+                                <button onclick="showSintaxis('lectura')" id="btn-s-lectura" class="px-4 py-2 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-white">Solo Lectura</button>
+                            </div>
+
+                            <!-- Sintaxis Tradicional -->
+                            <div id="sin-tradicional" class="mt-4 space-y-4">
+                                <p class="text-xs text-slate-400">Usa un campo de respaldo privado explicitamente para poder evaluar reglas antes de guardar.</p>
+                                <div class="bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+                                    <div class="bg-slate-900 px-4 py-2 flex justify-between items-center border-b border-slate-800">
+                                        <span class="text-xs font-mono text-slate-400">C# Tradicional</span>
+                                        <button onclick="copyCode('code-trad')" class="text-xs text-indigo-400 hover:text-indigo-300"><i class="fa-solid fa-copy"></i></button>
+                                    </div>
+                                    <pre class="p-4 overflow-x-auto text-sm text-slate-300" id="code-trad"><code>public class Persona
+{
+    private int _edad; // Campo de respaldo (Backing Field)
+
+    public int Edad 
+    {
+        get { return _edad; }
+        set 
+        { 
+            if (value >= 0 && value <= 120)
+                _edad = value; 
+            else
+                throw new ArgumentOutOfRangeException("Edad inválida");
+        }
+    }
+}</code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Sintaxis Auto -->
+                            <div id="sin-auto" class="mt-4 space-y-4 hidden">
+                                <p class="text-xs text-slate-400">Cuando no necesitas código adicional en get/set. C# crea el campo privado ocultamente en memoria por ti.</p>
+                                <div class="bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+                                    <div class="bg-slate-900 px-4 py-2 flex justify-between items-center border-b border-slate-800">
+                                        <span class="text-xs font-mono text-slate-400">C# Autoimplementada</span>
+                                        <button onclick="copyCode('code-auto')" class="text-xs text-indigo-400 hover:text-indigo-300"><i class="fa-solid fa-copy"></i></button>
+                                    </div>
+                                    <pre class="p-4 overflow-x-auto text-sm text-slate-300" id="code-auto"><code>public class Producto
+{
+    // Limpio, rápido y seguro
+    public string Nombre { get; set; }
+    public decimal Precio { get; set; }
+}</code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Sintaxis Lectura -->
+                            <div id="sin-lectura" class="mt-4 space-y-4 hidden">
+                                <p class="text-xs text-slate-400">Ideal para campos que no deben mutar tras la construcción de la instancia.</p>
+                                <div class="bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+                                    <div class="bg-slate-900 px-4 py-2 flex justify-between items-center border-b border-slate-800">
+                                        <span class="text-xs font-mono text-slate-400">C# Solo Lectura</span>
+                                        <button onclick="copyCode('code-read')" class="text-xs text-indigo-400 hover:text-indigo-300"><i class="fa-solid fa-copy"></i></button>
+                                    </div>
+                                    <pre class="p-4 overflow-x-auto text-sm text-slate-300" id="code-read"><code>public class Cliente
+{
+    // Solo tiene get. Solo se puede asignar en el constructor.
+    public string Rfc { get; } 
+
+    public Cliente(string rfc)
+    {
+        Rfc = rfc; 
+    }
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Sección 4 -->
+                    <article id="casos" class="scroll-mt-20 border-b border-slate-800 pb-10">
+                        <div class="flex items-center space-x-2 text-sky-400 mb-3">
+                            <i class="fa-solid fa-briefcase"></i>
+                            <span class="text-xs font-semibold tracking-wider uppercase">Sección 4</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Casos de Uso del Mundo Real</h3>
+                        
+                        <div class="space-y-6 mt-4 text-slate-400">
+                            <div>
+                                <h4 class="text-slate-200 font-bold text-base">Caso 1: Validación Física</h4>
+                                <p class="text-sm mt-1">Impedir que un objeto adopte estados físicamente imposibles. Ejemplo: La temperatura no puede ser menor al cero absoluto ($-273.15$ °C).</p>
+                                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 mt-2 font-mono text-sm text-indigo-300">
+                                    if (value < -273.15) throw new ArgumentOutOfRangeException();
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-slate-200 font-bold text-base">Caso 2: Datos Dinámicos / Calculados</h4>
+                                <p class="text-sm mt-1">No almacenes variables redundantes. Si puedes calcularlas a partir de otras, utiliza propiedades de expresión de flecha (<code class="text-slate-200">=></code>).</p>
+                                <p class="text-sm mt-2 text-slate-300 bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono">
+                                    public double Fahrenheit => Celsius * 9.0 / 5.0 + 32.0;
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Sección 5 -->
+                    <article id="trampa" class="scroll-mt-20 border-b border-slate-800 pb-10">
+                        <div class="flex items-center space-x-2 text-amber-400 mb-3">
+                            <i class="fa-solid fa-bug"></i>
+                            <span class="text-xs font-semibold tracking-wider uppercase">Sección 5</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">La Trampa de la Recursión Infinita</h3>
+                        <p class="text-slate-400 mt-3 leading-relaxed">
+                            Este es el error número uno de los estudiantes en sus primeros exámenes. Consiste en llamar a la propiedad pública dentro de sus mismos bloques de acceso en lugar de utilizar el campo privado.
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                            <div class="p-5 border border-red-500/20 bg-red-950/10 rounded-xl">
+                                <span class="bg-red-500/20 text-red-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded">Código Incorrecto</span>
+                                <pre class="text-xs font-mono mt-3 text-red-300"><code>public string Nombre
+{
+    get { return Nombre; } // ¡Recursión!
+    set { Nombre = value; } // ¡Recursión!
+}</code></pre>
+                                <p class="text-[11px] text-red-400/80 mt-2"><i class="fa-solid fa-circle-exclamation mr-1"></i>Esto produce <strong class="font-semibold text-red-400">StackOverflowException</strong> (Desbordamiento de Memoria).</p>
+                            </div>
+                            <div class="p-5 border border-emerald-500/20 bg-emerald-950/10 rounded-xl">
+                                <span class="bg-emerald-500/20 text-emerald-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded">Código Correcto</span>
+                                <pre class="text-xs font-mono mt-3 text-emerald-300"><code>private string _nombre; // Campo
+public string Nombre
+{
+    get { return _nombre; } // Correcto
+    set { _nombre = value; } // Correcto
+}</code></pre>
+                                <p class="text-[11px] text-emerald-400/80 mt-2"><i class="fa-solid fa-circle-check mr-1"></i>Funciona perfectamente accediendo al campo de respaldo.</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Sección 6 -->
+                    <article id="reto" class="scroll-mt-20">
+                        <div class="flex items-center space-x-2 text-purple-400 mb-3">
+                            <i class="fa-solid fa-trophy"></i>
+                            <span class="text-xs font-semibold tracking-wider uppercase">Sección 6</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Reto Práctico: ¡Pruébate a ti mismo!</h3>
+                        <p class="text-slate-400 mt-3 leading-relaxed">
+                            Crea una clase <code class="bg-slate-950 px-1.5 py-0.5 rounded text-indigo-300">Rectangulo</code> en tu IDE que reciba ancho y alto, impida valores de $0$ o negativos usando validaciones en el <code class="text-indigo-300">set</code>, y que posea una propiedad de solo lectura llamada <code class="text-indigo-300">Area</code> para realizar la multiplicación dinámicamente.
+                        </p>
+                    </article>
+
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= SECCIÓN 2: SIMULADOR INTERACTIVO ================= -->
+        <section id="content-simulador" class="hidden space-y-8 transition-all duration-300">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center space-y-3 mb-8">
+                    <h2 class="text-3xl font-extrabold text-white">Simulador "Detrás de Escena"</h2>
+                    <p class="text-slate-400 max-w-xl mx-auto">Ingresa un valor para ver cómo reacciona la propiedad y su campo privado en tiempo real en la memoria del programa.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                    <!-- Controladores -->
+                    <div class="md:col-span-5 bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-200 mb-4"><i class="fa-solid fa-sliders text-indigo-400 mr-2"></i>Consola de Entrada</h3>
+                            
+                            <!-- Selector del ejemplo en ejecución -->
+                            <div class="mb-4">
+                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-2">Selecciona la Propiedad a Simular</label>
+                                <select id="simulator-type" onchange="changeSimType()" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    <option value="edad">Persona.Edad (Validación 0 a 120)</option>
+                                    <option value="celsius">Temperatura.Celsius (Validación >= -273.15)</option>
+                                </select>
+                            </div>
+
+                            <!-- Input del valor -->
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-slate-500 mb-2">Ingresa un valor numérico</label>
+                                <div class="relative rounded-lg shadow-sm">
+                                    <input type="number" id="sim-input-value" value="25" step="any" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none text-lg font-bold font-mono">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-500 font-bold" id="sim-unit-label">
+                                        años
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="runSimulation()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold p-4 rounded-xl transition duration-150 flex items-center justify-center space-x-2 shadow-lg shadow-indigo-500/20 mt-4">
+                            <i class="fa-solid fa-play"></i> <span>Ejecutar Asignación (set)</span>
+                        </button>
+                    </div>
+
+                    <!-- Representación Visual de Memoria -->
+                    <div class="md:col-span-7 bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between min-h-[350px]">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-200 mb-4"><i class="fa-solid fa-microchip text-emerald-400 mr-2"></i>Estado de la Memoria</h3>
+                            
+                            <div class="space-y-4">
+                                <!-- Propiedad (Pública) -->
+                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex justify-between items-center relative overflow-hidden transition-all duration-300" id="visual-property-card">
+                                    <div class="z-10">
+                                        <span class="text-xs uppercase font-bold text-indigo-400">Propiedad Pública</span>
+                                        <h4 class="font-bold text-lg text-white font-mono" id="sim-prop-name">Edad</h4>
+                                    </div>
+                                    <div class="text-right z-10">
+                                        <span class="text-xs text-slate-500 block">Último intento</span>
+                                        <span class="font-mono font-bold text-xl text-white" id="sim-prop-val">?</span>
+                                    </div>
+                                    <!-- Capa decorativa de flujo -->
+                                    <div class="absolute left-0 top-0 h-full w-2 bg-indigo-500"></div>
+                                </div>
+
+                                <!-- Validador Visual -->
+                                <div class="flex justify-center my-2">
+                                    <div class="bg-slate-900 px-4 py-2 rounded-full border border-slate-800 flex items-center space-x-2 text-xs font-mono" id="sim-validation-badge">
+                                        <i class="fa-solid fa-spinner animate-spin text-slate-500"></i>
+                                        <span class="text-slate-400">Esperando ejecución...</span>
+                                    </div>
+                                </div>
+
+                                <!-- Campo de Respaldo (Privado) -->
+                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 flex justify-between items-center relative overflow-hidden transition-all duration-300" id="visual-field-card">
+                                    <div class="z-10">
+                                        <span class="text-xs uppercase font-bold text-emerald-400">Campo de Respaldo Privado</span>
+                                        <h4 class="font-bold text-lg text-white font-mono" id="sim-field-name">_edad</h4>
+                                    </div>
+                                    <div class="text-right z-10">
+                                        <span class="text-xs text-slate-500 block">Guardado en Memoria</span>
+                                        <span class="font-mono font-bold text-xl text-emerald-400" id="sim-field-val">0</span>
+                                    </div>
+                                    <!-- Capa decorativa de flujo -->
+                                    <div class="absolute left-0 top-0 h-full w-2 bg-emerald-500"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel de logs educativos -->
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 mt-6 font-mono text-xs text-slate-400 space-y-1 transition-all duration-200" id="sim-log">
+                            <span class="text-slate-500">// Consola de Depuración</span>
+                            <p id="sim-log-text">Presiona "Ejecutar Asignación" para disparar el evento 'set'.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECCIÓN 3: QUIZ INTERACTIVO ================= -->
+        <section id="content-quiz" class="hidden space-y-8 transition-all duration-300">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center space-y-3 mb-8">
+                    <h2 class="text-3xl font-extrabold text-white">Autoevaluación: Propiedades C#</h2>
+                    <p class="text-slate-400">Pon a prueba tu conocimiento y domina el tema para tus exámenes. Al menos 5 preguntas completas con feedback.</p>
+                </div>
+
+                <!-- Tarjeta del Quiz -->
+                <div class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl relative" id="quiz-card">
+                    <!-- Progreso -->
+                    <div class="bg-slate-900 px-6 py-3 border-b border-slate-800 flex justify-between items-center">
+                        <span class="text-xs font-bold text-indigo-400" id="quiz-progress-lbl">Pregunta 1 de 5</span>
+                        <!-- Barra de progreso -->
+                        <div class="w-1/2 bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div id="quiz-progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 20%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Enunciado de Pregunta -->
+                    <div class="p-6 sm:p-8 space-y-6">
+                        <h3 class="text-xl font-bold text-white leading-snug" id="quiz-question-text">
+                            ¿Pregunta aquí?
+                        </h3>
+
+                        <!-- Opciones (Contenedor dinámico) -->
+                        <div class="space-y-3" id="quiz-options-container">
+                            <!-- Inyectado por JS -->
+                        </div>
+                    </div>
+
+                    <!-- Panel de Feedback (Inicialmente oculto) -->
+                    <div id="quiz-feedback-panel" class="hidden p-6 border-t border-slate-800 transition-all duration-200">
+                        <!-- Estilo dinámico según respuesta -->
+                    </div>
+
+                    <!-- Botón de Siguiente -->
+                    <div class="px-6 py-4 bg-slate-900 border-t border-slate-800 flex justify-end">
+                        <button id="quiz-next-btn" onclick="nextQuestion()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-2.5 rounded-lg transition duration-150 disabled:opacity-50 disabled:pointer-events-none flex items-center space-x-2" disabled>
+                            <span>Siguiente</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Resultados (Oculta al inicio) -->
+                <div id="quiz-results-card" class="hidden bg-slate-950 rounded-2xl border border-slate-800 p-8 text-center space-y-6 shadow-2xl">
+                    <div class="inline-flex p-4 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-4xl mb-2">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="text-3xl font-extrabold text-white">¡Evaluación Completada!</h3>
+                    <p class="text-slate-400 max-w-sm mx-auto">Has respondido todas las preguntas referentes al funcionamiento de propiedades en C#.</p>
+                    
+                    <div class="bg-slate-900 max-w-xs mx-auto p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs uppercase text-slate-500 font-bold tracking-wider">Tu Puntaje</span>
+                        <div class="text-4xl font-extrabold text-white mt-1" id="quiz-score-val">0 / 5</div>
+                        <span class="text-xs text-indigo-400 block mt-1" id="quiz-score-feedback">¡Sigue practicando!</span>
+                    </div>
+
+                    <button onclick="resetQuiz()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-lg transition duration-150 inline-flex items-center space-x-2">
+                        <i class="fa-solid fa-rotate-left"></i> <span>Reintentar Quiz</span>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p>© 2026 Plataforma Interactiva de POO. Diseñada para soporte académico y excelencia estudiantil.</p>
+            <p>Soporta estándares .NET 8.0+ y C# 12+</p>
+            <p class="text-slate-600 mt-2 font-medium">Material de apoyo docente - MTI. Luis Alberto Mendoza San Juan</p>
+        </div>
+    </footer>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        // --- 1. NAVEGACIÓN Y TABS ---
+        function switchTab(tabId) {
+            const tabs = ['guia', 'simulador', 'quiz'];
+            tabs.forEach(t => {
+                const element = document.getElementById(`content-${t}`);
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tabId) {
+                    element.classList.remove('hidden');
+                    btn.classList.add('bg-indigo-600', 'text-white', 'shadow');
+                    btn.classList.remove('text-slate-400', 'hover:text-white');
+                } else {
+                    element.classList.add('hidden');
+                    btn.classList.remove('bg-indigo-600', 'text-white', 'shadow');
+                    btn.classList.add('text-slate-400', 'hover:text-white');
+                }
+            });
+            
+            // Inicializar simulador o quiz si es requerido
+            if (tabId === 'quiz') {
+                initQuiz();
+            }
+        }
+
+        function showSintaxis(type) {
+            const types = ['tradicional', 'auto', 'lectura'];
+            types.forEach(t => {
+                const element = document.getElementById(`sin-${t}`);
+                const btn = document.getElementById(`btn-s-${t}`);
+                if (t === type) {
+                    element.classList.remove('hidden');
+                    btn.classList.add('border-indigo-500', 'text-white');
+                    btn.classList.remove('border-transparent', 'text-slate-400');
+                } else {
+                    element.classList.add('hidden');
+                    btn.classList.remove('border-indigo-500', 'text-white');
+                    btn.classList.add('border-transparent', 'text-slate-400');
+                }
+            });
+        }
+
+        // --- 2. COPIAR CÓDIGO ---
+        function copyCode(elementId) {
+            const codeText = document.getElementById(elementId).innerText;
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = codeText;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            // Toast de éxito temporal
+            const toast = document.createElement("div");
+            toast.className = "fixed bottom-5 right-5 bg-emerald-600 text-white px-4 py-2.5 rounded-lg shadow-lg text-sm font-semibold z-50 flex items-center space-x-2 animate-bounce";
+            toast.innerHTML = '<i class="fa-solid fa-circle-check"></i> <span>¡Código copiado al portapapeles!</span>';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        // --- 3. MOTOR DEL SIMULADOR ---
+        let currentSimType = 'edad';
+
+        function changeSimType() {
+            currentSimType = document.getElementById('simulator-type').value;
+            const inputVal = document.getElementById('sim-input-value');
+            const unitLabel = document.getElementById('sim-unit-label');
+            const fieldName = document.getElementById('sim-field-name');
+            const propName = document.getElementById('sim-prop-name');
+            const fieldVal = document.getElementById('sim-field-val');
+
+            if (currentSimType === 'edad') {
+                inputVal.value = "25";
+                unitLabel.innerText = "años";
+                fieldName.innerText = "_edad";
+                propName.innerText = "Edad";
+                fieldVal.innerText = "0";
+            } else {
+                inputVal.value = "20";
+                unitLabel.innerText = "°C";
+                fieldName.innerText = "_celsius";
+                propName.innerText = "Celsius";
+                fieldVal.innerText = "0";
+            }
+            
+            // Reiniciar estados visuales
+            document.getElementById('sim-prop-val').innerText = "?";
+            document.getElementById('sim-log-text').innerHTML = "Presiona 'Ejecutar Asignación' para disparar el evento 'set'.";
+            document.getElementById('sim-validation-badge').className = "bg-slate-900 px-4 py-2 rounded-full border border-slate-800 flex items-center space-x-2 text-xs font-mono text-slate-400";
+            document.getElementById('sim-validation-badge').innerHTML = '<i class="fa-solid fa-spinner animate-spin text-slate-500"></i> <span>Esperando ejecución...</span>';
+            document.getElementById('visual-property-card').className = "bg-slate-900 p-4 rounded-xl border border-slate-800 flex justify-between items-center relative overflow-hidden transition-all duration-300";
+            document.getElementById('visual-field-card').className = "bg-slate-900 p-4 rounded-xl border border-slate-800 flex justify-between items-center relative overflow-hidden transition-all duration-300";
+        }
+
+        function runSimulation() {
+            const inputVal = parseFloat(document.getElementById('sim-input-value').value);
+            const propValEl = document.getElementById('sim-prop-val');
+            const fieldValEl = document.getElementById('sim-field-val');
+            const logTextEl = document.getElementById('sim-log-text');
+            const badge = document.getElementById('sim-validation-badge');
+            const propCard = document.getElementById('visual-property-card');
+            const fieldCard = document.getElementById('visual-field-card');
+
+            if (isNaN(inputVal)) {
+                logTextEl.innerText = "Error: Por favor ingresa un número válido.";
+                return;
+            }
+
+            propValEl.innerText = inputVal;
+
+            // Transición del get/set (Destello azul en la propiedad)
+            propCard.classList.add('ring-2', 'ring-indigo-500', 'scale-[1.02]');
+            setTimeout(() => {
+                propCard.classList.remove('ring-2', 'ring-indigo-500', 'scale-[1.02]');
+            }, 500);
+
+            let isValid = false;
+            let logMsg = "";
+            let errorMsg = "";
+
+            if (currentSimType === 'edad') {
+                isValid = inputVal >= 0 && inputVal <= 120;
+                if (isValid) {
+                    logMsg = `set => El valor ${inputVal} cumple con 'value >= 0 && value <= 120'. Asignando a _edad.`;
+                } else {
+                    errorMsg = `ArgumentOutOfRangeException: El valor ${inputVal} no está en el rango de 0 a 120 años.`;
+                }
+            } else {
+                isValid = inputVal >= -273.15;
+                if (isValid) {
+                    logMsg = `set => El valor ${inputVal} cumple con 'value >= -273.15' (cero absoluto). Asignando a _celsius.`;
+                } else {
+                    errorMsg = `ArgumentOutOfRangeException: La temperatura ${inputVal}°C viola el límite de la física (-273.15°C).`;
+                }
+            }
+
+            // Animación de validación
+            setTimeout(() => {
+                if (isValid) {
+                    badge.className = "bg-emerald-950/40 px-4 py-2 rounded-full border border-emerald-500/20 flex items-center space-x-2 text-xs font-mono text-emerald-400 shadow-md shadow-emerald-500/10";
+                    badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> <span>Validación Exitosa (Pasa el Set)</span>';
+                    
+                    // Actualizar memoria
+                    fieldValEl.innerText = inputVal;
+                    fieldCard.classList.add('ring-2', 'ring-emerald-500', 'scale-[1.02]');
+                    setTimeout(() => {
+                        fieldCard.classList.remove('ring-2', 'ring-emerald-500', 'scale-[1.02]');
+                    }, 500);
+
+                    logTextEl.innerHTML = `<span class="text-emerald-400">// ÉXITO</span><br>${logMsg}`;
+                } else {
+                    badge.className = "bg-red-950/40 px-4 py-2 rounded-full border border-red-500/20 flex items-center space-x-2 text-xs font-mono text-red-400 shadow-md shadow-red-500/10";
+                    badge.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> <span>Validación Fallida (Bloqueado)</span>';
+                    
+                    logTextEl.innerHTML = `<span class="text-red-400">// ERROR DETECTADO</span><br>${errorMsg}`;
+
+                    // Vibrar visual de error
+                    fieldCard.classList.add('border-red-500/40');
+                    setTimeout(() => {
+                        fieldCard.classList.remove('border-red-500/40');
+                    }, 1000);
+                }
+            }, 400);
+        }
+
+        // --- 4. MOTOR DEL QUIZ DE AUTOEVALUACIÓN ---
+        const quizQuestions = [
+            {
+                q: "¿Cuál es el propósito principal del encapsulamiento en Programación Orientada a Objetos?",
+                options: [
+                    { t: "Hacer que el compilador ejecute el código el doble de rápido.", c: false },
+                    { t: "Proteger el estado interno de un objeto de manipulaciones externas incontroladas o dañinas.", c: true },
+                    { t: "Permitir heredar clases complejas sin declarar constructores.", c: false },
+                    { t: "Ahorrar memoria RAM guardando todas las variables como globales.", c: false }
+                ],
+                explanation: "El encapsulamiento actúa como un filtro o guardia de seguridad para la clase, impidiendo que el exterior asigne valores corruptos directamente a los campos. Las propiedades son la herramienta de C# para lograr esto de manera elegante."
+            },
+            {
+                q: "¿Qué representa la palabra clave reservada 'value' dentro del bloque 'set' de una propiedad en C#?",
+                options: [
+                    { t: "Una variable que guarda la dirección de memoria física del objeto.", c: false },
+                    { t: "Un tipo de dato especial utilizado solo en variables de tipo string.", c: false },
+                    { t: "El valor implícito que el código exterior está intentando asignar a la propiedad.", c: true },
+                    { t: "El valor por defecto que hereda la clase de su estructura base.", c: false }
+                ],
+                explanation: "'value' es un parámetro implícito provisto por C# en el bloque de escritura 'set' que contiene el dato que el código exterior asignó usando el operador igual (ej: 'objeto.Edad = 10', donde value vale 10)."
+            },
+            {
+                q: "¿Qué sucede si se escribe: public string Nombre { get { return Nombre; } } ?",
+                options: [
+                    { t: "El código compila normalmente y retorna un valor vacío.", c: false },
+                    { t: "Se produce una excepción 'StackOverflowException' al intentar leer el valor en tiempo de ejecución.", c: true },
+                    { t: "La propiedad se vuelve automáticamente de solo escritura.", c: false },
+                    { t: "Visual Studio marca error de sintaxis y no permite la compilación.", c: false }
+                ],
+                explanation: "¡Recursión Infinita! Al no usar un campo privado (como '_nombre'), la propiedad 'Nombre' se llama a sí misma de manera interminable al intentar resolver el 'get', agotando la memoria de la pila (Stack)."
+            },
+            {
+                q: "¿Cuándo es ideal utilizar una propiedad autoimplementada como: public decimal Precio { get; set; } ?",
+                options: [
+                    { t: "Cuando necesitas obligatoriamente validar que el precio nunca sea negativo.", c: false },
+                    { t: "Cuando necesitas formatear el precio agregando el símbolo de divisa ($) al leerlo.", c: false },
+                    { t: "Cuando no se requiere ninguna validación intermedia ni cálculo dinámico sobre el dato.", c: true },
+                    { t: "Únicamente cuando la variable se almacena en una base de datos Dapper.", c: false }
+                ],
+                explanation: "Las propiedades autoimplementadas son excelentes atajos de código para cuando no necesitas lógica de validación o transformación en get/set, dejando que el compilador cree el campo privado en memoria por ti."
+            },
+            {
+                q: "Si tienes la propiedad: public double Fahrenheit => Celsius * 9.0 / 5.0 + 32.0; , ¿cómo se clasifica?",
+                options: [
+                    { t: "Una propiedad de solo escritura con asignación tardía.", c: false },
+                    { t: "Una propiedad calculada de solo lectura escrita en formato abreviado de flecha.", c: true },
+                    { t: "Un campo público normal que se almacena directamente en el disco duro.", c: false },
+                    { t: "Un método constructor estático con parámetros implícitos.", c: false }
+                ],
+                explanation: "El operador '=>' (cuerpo de expresión) en una declaración de propiedad simplifica un bloque 'get' de solo lectura. No almacena el valor en un campo fijo, sino que lo recalcula dinámicamente cada vez que se le consulta."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        function initQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('quiz-results-card').classList.add('hidden');
+            document.getElementById('quiz-card').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            answered = false;
+            document.getElementById('quiz-next-btn').disabled = true;
+            document.getElementById('quiz-feedback-panel').classList.add('hidden');
+
+            const qData = quizQuestions[currentQuestionIndex];
+            
+            // Actualizar etiqueta progreso
+            document.getElementById('quiz-progress-lbl').innerText = `Pregunta ${currentQuestionIndex + 1} de ${quizQuestions.length}`;
+            const progPercent = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progPercent}%`;
+
+            // Cargar Enunciado
+            document.getElementById('quiz-question-text').innerText = qData.q;
+
+            // Cargar Opciones
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            qData.options.forEach((opt, idx) => {
+                const optBtn = document.createElement('button');
+                optBtn.className = "w-full text-left p-4 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-900 hover:border-indigo-500/50 transition-all duration-150 flex justify-between items-center group";
+                optBtn.onclick = () => selectOption(idx, optBtn);
+                optBtn.innerHTML = `
+                    <span class="text-sm text-slate-300 font-medium group-hover:text-white leading-relaxed">${opt.t}</span>
+                    <div class="w-5 h-5 rounded-full border border-slate-700 flex items-center justify-center group-hover:border-indigo-500 transition-all" id="circle-${idx}"></div>
+                `;
+                container.appendChild(optBtn);
+            });
+        }
+
+        function selectOption(index, buttonElement) {
+            if (answered) return; // Impedir responder dos veces
+            answered = true;
+
+            const qData = quizQuestions[currentQuestionIndex];
+            const isCorrect = qData.options[index].c;
+            
+            if (isCorrect) score++;
+
+            // Resaltar opciones visualmente
+            const container = document.getElementById('quiz-options-container');
+            const buttons = container.querySelectorAll('button');
+
+            qData.options.forEach((opt, idx) => {
+                const btn = buttons[idx];
+                const circle = document.getElementById(`circle-${idx}`);
+
+                if (opt.c) {
+                    // La respuesta correcta se pinta de verde
+                    btn.className = "w-full text-left p-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 text-emerald-200 flex justify-between items-center font-medium pointer-events-none";
+                    circle.className = "w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs";
+                    circle.innerHTML = '<i class="fa-solid fa-check"></i>';
+                } else if (idx === index) {
+                    // Si el estudiante eligió esta y está mal, se pinta de rojo
+                    btn.className = "w-full text-left p-4 rounded-xl border border-red-500/30 bg-red-950/20 text-red-200 flex justify-between items-center font-medium pointer-events-none";
+                    circle.className = "w-5 h-5 rounded-full bg-red-500 flex items-center justify-center text-white text-xs";
+                    circle.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                } else {
+                    // El resto se desactiva
+                    btn.className = "w-full text-left p-4 rounded-xl border border-slate-800 bg-slate-900/20 text-slate-500 flex justify-between items-center font-medium pointer-events-none";
+                }
+            });
+
+            // Mostrar Panel de Retroalimentación en tiempo real
+            const feedbackPanel = document.getElementById('quiz-feedback-panel');
+            feedbackPanel.classList.remove('hidden');
+
+            if (isCorrect) {
+                feedbackPanel.className = "p-5 border-t border-slate-800 bg-emerald-950/20 text-emerald-400 text-sm rounded-b-xl flex items-start space-x-3";
+                feedbackPanel.innerHTML = `
+                    <div class="p-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 mt-0.5">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <strong class="font-bold block text-emerald-300">¡Excelente respuesta!</strong>
+                        <p class="text-slate-400 mt-1 leading-relaxed">${qData.explanation}</p>
+                    </div>
+                `;
+            } else {
+                feedbackPanel.className = "p-5 border-t border-slate-800 bg-red-950/20 text-red-400 text-sm rounded-b-xl flex items-start space-x-3";
+                feedbackPanel.innerHTML = `
+                    <div class="p-1.5 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 mt-0.5">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div>
+                        <strong class="font-bold block text-red-300">Retroalimentación Correctiva:</strong>
+                        <p class="text-slate-400 mt-1 leading-relaxed">${qData.explanation}</p>
+                    </div>
+                `;
+            }
+
+            // Habilitar botón Siguiente
+            document.getElementById('quiz-next-btn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                // Mostrar pantalla de resultados
+                document.getElementById('quiz-card').classList.add('hidden');
+                
+                const resultsCard = document.getElementById('quiz-results-card');
+                resultsCard.classList.remove('hidden');
+
+                const scoreVal = document.getElementById('quiz-score-val');
+                scoreVal.innerText = `${score} / ${quizQuestions.length}`;
+
+                const scoreFeedback = document.getElementById('quiz-score-feedback');
+                if (score === quizQuestions.length) {
+                    scoreFeedback.innerText = "¡Excelente! Has dominado por completo el uso de propiedades en C#.";
+                    scoreFeedback.className = "text-xs text-emerald-400 block mt-1 font-bold";
+                } else if (score >= 3) {
+                    scoreFeedback.innerText = "¡Buen trabajo! Tienes bases sólidas pero te recomiendo repasar los fallos.";
+                    scoreFeedback.className = "text-xs text-indigo-400 block mt-1 font-bold";
+                } else {
+                    scoreFeedback.innerText = "Necesitas repasar el material. Utiliza el Simulador interactivo para comprender los flujos.";
+                    scoreFeedback.className = "text-xs text-red-400 block mt-1 font-bold";
+                }
+            }
+        }
+
+        function resetQuiz() {
+            initQuiz();
+        }
+
+        // Ejecutar funciones de carga inicial
+        window.onload = function() {
+            changeSimType();
+        }
+    </script>
+</body>
+</html>
