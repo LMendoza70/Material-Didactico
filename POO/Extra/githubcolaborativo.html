@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Colaboración: C# & GitHub Flow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        .nav-link.active {
+            border-left: 4px solid #4f46e5;
+            background-color: #eef2ff;
+            font-weight: 600;
+        }
+
+        code {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: #1a202c;
+            color: #edf2f7;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .step-bubble {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #4f46e5;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md z-50 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../../index.html"
+                    class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
+                    <span
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                    <span class="truncate">Material Didáctico</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-start sm:items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl" aria-hidden="true">🔀</span>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 leading-tight">Guía de Colaboración: GitHub Flow</h1>
+                    <p class="text-xs text-slate-500 font-medium tracking-wide uppercase">MTI. Luis Alberto Mendoza San Juan</p>
+                </div>
+            </div>
+            <div class="hidden sm:block">
+                <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full border border-indigo-200">Git &amp; GitHub</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-col md:flex-row flex-1">
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 bg-white border-r border-gray-200 p-6">
+            <div class="mb-8">
+                <h1 class="text-xl font-bold text-slate-800">C# & Git Guide</h1>
+                <p class="text-xs text-slate-500 uppercase tracking-widest mt-1">Colaboración Pro</p>
+            </div>
+            <nav class="space-y-2" id="main-nav">
+                <button onclick="showSection('leader')"
+                    class="nav-link w-full text-left px-4 py-2 rounded-lg transition-all active"
+                    data-section="leader">👑 Rol del Líder</button>
+                <button onclick="showSection('developer')"
+                    class="nav-link w-full text-left px-4 py-2 rounded-lg transition-all" data-section="developer">👨‍💻
+                    Desarrolladores</button>
+                <button onclick="showSection('pr')"
+                    class="nav-link w-full text-left px-4 py-2 rounded-lg transition-all" data-section="pr">🔍 Pull
+                    Requests</button>
+                <button onclick="showSection('sync')"
+                    class="nav-link w-full text-left px-4 py-2 rounded-lg transition-all" data-section="sync">⚡
+                    Sincronización</button>
+                <button onclick="showSection('vs-gui')"
+                    class="nav-link w-full text-left px-4 py-2 rounded-lg transition-all text-indigo-600 font-semibold"
+                    data-section="vs-gui">🎨 Visual Studio UI</button>
+                <button onclick="showSection('example')"
+                    class="nav-link w-full text-left px-4 py-2 rounded-lg transition-all text-indigo-600 font-semibold mt-4 border border-indigo-200 bg-indigo-50"
+                    data-section="example">🚀 Ejemplo Práctico</button>
+            </nav>
+
+            <div class="mt-12 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                <p class="text-xs font-semibold text-indigo-800 uppercase mb-2">Tip de POO</p>
+                <p class="text-xs text-indigo-700 italic">"Programa para interfaces, no para implementaciones." Facilita
+                    el merge al reducir dependencias rígidas.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-4 md:p-10 max-w-5xl mx-auto w-full">
+
+            <!-- Section: Leader -->
+            <section id="section-leader" class="content-section">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4">👑 El Líder de Equipo: Arquitecto del Repositorio
+                    </h2>
+                    <p class="text-lg text-slate-600 mb-6">Esta sección explica cómo el líder establece las bases
+                        técnicas del proyecto para asegurar que el equipo trabaje en un entorno limpio y seguro en C#.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div class="glass-card p-6 rounded-2xl shadow-sm">
+                        <h3 class="font-bold text-xl mb-4 text-slate-700 italic">Tareas Críticas</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <span class="step-bubble">1</span>
+                                <div>
+                                    <p class="font-semibold">Crear .sln y .gitignore</p>
+                                    <p class="text-sm text-slate-500">Evita subir carpetas <code>bin/</code> y
+                                        <code>obj/</code>.
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="step-bubble">2</span>
+                                <div>
+                                    <p class="font-semibold">Añadir Colaboradores</p>
+                                    <p class="text-sm text-slate-500">Permisos directos en GitHub Settings.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="step-bubble">3</span>
+                                <div>
+                                    <p class="font-semibold">Proteger 'main'</p>
+                                    <p class="text-sm text-slate-500">Obliga el uso de Pull Requests.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="chart-container glass-card p-4 rounded-2xl shadow-sm flex flex-col justify-center">
+                        <canvas id="leaderTasksChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 text-white p-6 rounded-2xl">
+                    <h4 class="font-bold mb-2">Comandos de Inicialización:</h4>
+                    <pre>git init
+git add .
+git commit -m "initial: Estructura base C# y .gitignore"
+git branch -M main
+git remote add origin [URL]
+git push -u origin main</pre>
+                </div>
+            </section>
+
+            <!-- Section: Developer -->
+            <section id="section-developer" class="content-section hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4">👨‍💻 Flujo de Trabajo: Desarrolladores</h2>
+                    <p class="text-lg text-slate-600 mb-6">Aprende el ciclo de vida de una funcionalidad (feature).
+                        Desde la clonación hasta el push de tu módulo específico.</p>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex-1 glass-card p-6 rounded-2xl border-l-4 border-indigo-500">
+                            <h3 class="font-bold mb-2">1. Clonar y Ramificar</h3>
+                            <p class="text-sm text-slate-600 mb-4">Obtén el código y crea tu propio espacio de trabajo
+                                aislado.</p>
+                            <pre>git clone [URL]
+git checkout -b feature/login</pre>
+                        </div>
+                        <div class="flex-1 glass-card p-6 rounded-2xl border-l-4 border-green-500">
+                            <h3 class="font-bold mb-2">2. Codificar y Commitear</h3>
+                            <p class="text-sm text-slate-600 mb-4">Aplica principios de POO y guarda tus cambios
+                                frecuentemente.</p>
+                            <pre>git add .
+git commit -m "feat: clase Auth"</pre>
+                        </div>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border-l-4 border-purple-500">
+                        <h3 class="font-bold mb-2">3. Publicar Feature</h3>
+                        <p class="text-sm text-slate-600 mb-4">Envía tu rama al servidor remoto para que otros la vean.
+                        </p>
+                        <pre>git push -u origin feature/login</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: PR -->
+            <section id="section-pr" class="content-section hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4">🔍 El Pull Request: Calidad de Código</h2>
+                    <p class="text-lg text-slate-600 mb-6">El PR no es solo una entrega; es una conversación sobre la
+                        arquitectura y la calidad de tu código C#.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
+                        <h3 class="font-bold text-slate-700 mb-4">Lista de Revisión para el PR</h3>
+                        <div id="pr-checklist" class="space-y-2">
+                            <!-- JS will populate -->
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                        <h3 class="font-bold text-indigo-900 mb-2">¿Por qué revisar?</h3>
+                        <p class="text-sm text-indigo-800 mb-4">Aseguramos que el código sea mantenible. Revisamos:</p>
+                        <ul class="list-disc list-inside text-sm text-indigo-700 space-y-1">
+                            <li>Nombres de variables significativos.</li>
+                            <li>Uso correcto de modificadores de acceso.</li>
+                            <li>Ausencia de código redundante.</li>
+                            <li>Manejo adecuado de excepciones.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Sync -->
+            <section id="section-sync" class="content-section hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4">⚡ Sincronización y Conflictos</h2>
+                    <p class="text-lg text-slate-600 mb-6">Mantener el ritmo del equipo requiere integrar los cambios de
+                        otros frecuentemente para evitar "infiernos de integración".</p>
+                </div>
+
+                <div class="mb-8">
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mb-6">
+                        <p class="text-amber-800 font-semibold">⚠️ El Conflicto de Solución (.sln)</p>
+                        <p class="text-sm text-amber-700">Ocurre cuando dos personas añaden proyectos. Git marcará las
+                            líneas en conflicto dentro del archivo de texto de la solución.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div class="p-4 bg-gray-100 rounded-xl">
+                            <p class="font-bold text-sm">1. Fetch & Pull</p>
+                            <p class="text-xs text-gray-500">Traer lo nuevo de main</p>
+                        </div>
+                        <div class="p-4 bg-indigo-100 rounded-xl">
+                            <p class="font-bold text-sm">2. Local Merge</p>
+                            <p class="text-xs text-indigo-500">Fusionar main a tu feature</p>
+                        </div>
+                        <div class="p-4 bg-green-100 rounded-xl">
+                            <p class="font-bold text-sm">3. Resolve</p>
+                            <p class="text-xs text-green-500">Eliminar marcas de conflicto</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container glass-card p-6 rounded-2xl shadow-sm">
+                    <canvas id="conflictChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Section: VS GUI -->
+            <section id="section-vs-gui" class="content-section hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-4">🎨 Visual Studio: "Cambios de Git"</h2>
+                    <p class="text-lg text-slate-600 mb-6">Guía visual para gestionar Git directamente desde el IDE sin
+                        escribir una sola línea de comando.</p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-8">
+                    <!-- Feature: Visual Sync -->
+                    <div class="glass-card overflow-hidden rounded-2xl shadow-sm flex flex-col md:flex-row">
+                        <div class="bg-indigo-600 text-white p-8 md:w-1/3 flex flex-col justify-center">
+                            <h3 class="text-2xl font-bold mb-2">Panel de Cambios</h3>
+                            <p class="text-indigo-100 text-sm">El centro neurálgico de Git en Visual Studio (Ver > Cambios
+                                de Git).</p>
+                        </div>
+                        <div class="p-8 md:w-2/3">
+                            <div class="space-y-4">
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                    <div
+                                        class="w-8 h-8 bg-indigo-500 text-white rounded flex items-center justify-center mr-3">
+                                        1</div>
+                                    <p class="text-sm font-medium"><b>Commit & Push:</b> Escribe el mensaje y usa el
+                                        botón "Confirmar todo e insertar".</p>
+                                </div>
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                    <div
+                                        class="w-8 h-8 bg-indigo-500 text-white rounded flex items-center justify-center mr-3">
+                                        2</div>
+                                    <p class="text-sm font-medium"><b>Fetch/Pull:</b> Usa las flechas en la esquina
+                                        superior derecha del panel.</p>
+                                </div>
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                    <div
+                                        class="w-8 h-8 bg-purple-500 text-white rounded flex items-center justify-center mr-3">
+                                        3</div>
+                                    <p class="text-sm font-medium"><b>Ramas:</b> Cambia de rama haciendo clic en el
+                                        nombre actual abajo a la derecha.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Conflict Resolver Mockup -->
+                    <div class="bg-slate-900 rounded-2xl p-6 text-slate-300">
+                        <h3 class="text-xl font-bold text-white mb-4">Editor de Combinación (Merge Editor)</h3>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="border border-red-900/50 p-4 rounded bg-red-950/20">
+                                <p class="text-xs font-bold text-red-400 mb-2 uppercase">Entrante (Compañero)</p>
+                                <code class="text-red-300">public void Guardar() { ... }</code>
+                            </div>
+                            <div class="border border-indigo-900/50 p-4 rounded bg-indigo-950/20">
+                                <p class="text-xs font-bold text-indigo-400 mb-2 uppercase">Local (Tú)</p>
+                                <code class="text-indigo-300">public async Task Save() { ... }</code>
+                            </div>
+                        </div>
+                        <div class="bg-green-950/20 border border-green-900/50 p-4 rounded text-center">
+                            <p class="text-xs font-bold text-green-400 mb-2 uppercase">Resultado Final</p>
+                            <p class="text-sm">Selecciona las casillas para decidir qué código vive.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Practical Example -->
+            <section id="section-example" class="content-section hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-emerald-800 mb-4">🚀 Escenario Real: El Conflicto de la Clase
+                        Usuario</h2>
+                    <p class="text-lg text-slate-600 mb-6">Veamos cómo Ana y Carlos, dos desarrolladores del equipo,
+                        enfrentan y resuelven un conflicto de Git mientras aplican conceptos de POO en C#.</p>
+                </div>
+
+                <!-- Step 1: The Setup -->
+                <div class="mb-8 relative border-l-4 border-emerald-500 pl-6 py-2">
+                    <div
+                        class="absolute -left-[18px] top-4 w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center font-bold border-4 border-white shadow-sm">
+                        1</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">El Contexto</h3>
+                    <p class="text-slate-600 mb-4">La rama <code>main</code> tiene una clase <code
+                            class="bg-slate-100 text-emerald-700">Usuario.cs</code> muy básica creada por el Líder.</p>
+                    <div class="bg-slate-800 rounded-lg p-4 font-mono text-sm text-slate-300">
+                        <pre class="m-0 p-0 bg-transparent text-slate-300"><span class="text-blue-400">public class</span> <span class="text-yellow-300">Usuario</span>
+{
+    <span class="text-blue-400">public int</span> Id { <span class="text-blue-400">get</span>; <span class="text-blue-400">set</span>; }
+    <span class="text-blue-400">public string</span> Nombre { <span class="text-blue-400">get</span>; <span class="text-blue-400">set</span>; }
+}</pre>
+                    </div>
+                </div>
+
+                <!-- Step 2: Parallel Work -->
+                <div class="mb-8 relative border-l-4 border-indigo-500 pl-6 py-2">
+                    <div
+                        class="absolute -left-[18px] top-4 w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold border-4 border-white shadow-sm">
+                        2</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Trabajo en Paralelo (El problema)</h3>
+                    <p class="text-slate-600 mb-4">Ambos desarrollan en sus propias ramas, pero modifican el
+                        <strong>mismo archivo</strong> y las <strong>mismas líneas</strong>.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Ana's Work -->
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <span
+                                    class="bg-indigo-500 text-white text-xs px-2 py-1 rounded font-bold mr-2">Ana</span>
+                                <span class="text-sm font-mono text-indigo-800">rama: feature/autenticacion</span>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-2">Añade encapsulamiento para la contraseña.</p>
+                            <pre class="m-0 p-3 bg-slate-900 rounded text-xs text-slate-300"><span class="text-blue-400">public class</span> <span class="text-yellow-300">Usuario</span>
+{
+    <span class="text-blue-400">public int</span> Id { <span class="text-blue-400">get</span>; <span class="text-blue-400">set</span>; }
+    <span class="text-blue-400">public string</span> Nombre { <span class="text-blue-400">get</span>; <span class="text-blue-400">set</span>; }
+    
+    <span class="text-green-400">// Cambio de Ana</span>
+    <span class="text-blue-400">private string</span> _password;
+    <span class="text-blue-400">public void</span> SetPassword(<span class="text-blue-400">string</span> pwd) { 
+        _password = pwd; 
+    }
+}</pre>
+                        </div>
+
+                        <!-- Carlos' Work -->
+                        <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <span
+                                    class="bg-orange-500 text-white text-xs px-2 py-1 rounded font-bold mr-2">Carlos</span>
+                                <span class="text-sm font-mono text-orange-800">rama: feature/roles-usuario</span>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-2">Añade un enum para los permisos.</p>
+                            <pre class="m-0 p-3 bg-slate-900 rounded text-xs text-slate-300"><span class="text-blue-400">public class</span> <span class="text-yellow-300">Usuario</span>
+{
+    <span class="text-blue-400">public int</span> Id { <span class="text-blue-400">get</span>; <span class="text-blue-400">set</span>; }
+    <span class="text-blue-400">public string</span> Nombre { <span class="text-blue-400">get</span>; <span class="text-blue-400">set</span>; }
+    
+    <span class="text-orange-400">// Cambio de Carlos</span>
+    <span class="text-blue-400">public</span> TipoRol Rol { <span class="text-blue-400">get</span>; <span class="text-blue-400">set</span>; }
+    <span class="text-blue-400">public enum</span> TipoRol { Admin, Cliente }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: The Collision -->
+                <div class="mb-8 relative border-l-4 border-red-500 pl-6 py-2">
+                    <div
+                        class="absolute -left-[18px] top-4 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold border-4 border-white shadow-sm">
+                        3</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">La Colisión</h3>
+                    <p class="text-slate-600 mb-2">Ana termina primero y hace su Pull Request. Se aprueba y su código
+                        entra a <code>main</code>.</p>
+                    <p class="text-slate-600 mb-4">Días después, Carlos intenta hacer Pull Request, pero GitHub le dice:
+                        <strong class="text-red-600">"Can't automatically merge"</strong>. Carlos debe resolver el
+                        conflicto localmente.
+                    </p>
+
+                    <div class="bg-red-50 border border-red-200 p-4 rounded-lg flex items-start">
+                        <span class="text-2xl mr-3">⚠️</span>
+                        <div>
+                            <p class="font-bold text-red-800">Pasos de Carlos en Visual Studio:</p>
+                            <ol class="list-decimal list-inside text-sm text-red-700 mt-2 space-y-1">
+                                <li>Va a la pestaña <strong>Cambios de Git</strong>.</li>
+                                <li>Hace clic en la flecha de <strong>Extraer (Pull)</strong> en <code>main</code> y
+                                    luego intenta fusionar con su rama.</li>
+                                <li>Visual Studio muestra un aviso de <strong>Conflictos de combinación</strong>.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: The Resolution -->
+                <div class="mb-8 relative border-l-4 border-green-500 pl-6 py-2">
+                    <div
+                        class="absolute -left-[18px] top-4 w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold border-4 border-white shadow-sm">
+                        4</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">La Resolución (Visual Studio Merge Editor)</h3>
+                    <p class="text-slate-600 mb-4">Carlos abre <code>Usuario.cs</code>. El IDE divide la pantalla.
+                        Carlos se da cuenta de que <strong>ambos códigos son necesarios</strong> (la contraseña de Ana y
+                        los roles de Carlos).</p>
+
+                    <div class="glass-card p-6 rounded-2xl shadow-sm border border-green-200 bg-green-50/30">
+                        <p class="text-sm font-bold text-green-700 mb-3 uppercase tracking-wider">Resultado final
+                            seleccionado por Carlos:</p>
+                        <div class="bg-slate-900 rounded-lg p-4 font-mono text-sm text-slate-300">
+                            <pre class="m-0 p-0 bg-transparent text-slate-300"><span class="text-blue-400">public class</span> <span class="text-yellow-300">Usuario</span>
+{
+    <span class="text-blue-400">public int</span> Id { <span class="text-blue-400">get</span>; <span class="text-blue-400">set</span>; }
+    <span class="text-blue-400">public string</span> Nombre { <span class="text-blue-400">get</span>; <span class="text-blue-400">set</span>; }
+    
+    <span class="text-slate-500">/* --- CHECKBOX DE ANA MARCADO --- */</span>
+    <span class="text-blue-400">private string</span> _password;
+    <span class="text-blue-400">public void</span> SetPassword(<span class="text-blue-400">string</span> pwd) { 
+        _password = pwd; 
+    }
+
+    <span class="text-slate-500">/* --- CHECKBOX DE CARLOS MARCADO --- */</span>
+    <span class="text-blue-400">public</span> TipoRol Rol { <span class="text-blue-400">get</span>; <span class="text-blue-400">set</span>; }
+    <span class="text-blue-400">public enum</span> TipoRol { Admin, Cliente }
+}</pre>
+                        </div>
+                        <p class="text-sm text-slate-600 mt-4 font-medium flex items-center">
+                            <span
+                                class="bg-green-500 text-white w-5 h-5 rounded-full inline-flex items-center justify-center text-xs mr-2">✓</span>
+                            Carlos hace clic en "Aceptar combinación", hace el Commit de resolución, y ahora puede subir
+                            su PR sin problemas. ¡La POO sigue intacta!
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-400 text-sm font-medium">Material de apoyo docente - MTI. Luis Alberto Mendoza San Juan</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Navigation Logic
+        function showSection(sectionId) {
+            // Hide all
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            // Remove active from all nav
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            // Show target
+            document.getElementById(`section-${sectionId}`).classList.remove('hidden');
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Checklist Data
+        const prItems = [
+            "¿El código compila sin advertencias?",
+            "¿Se han aplicado los nombres correctos (PascalCase)?",
+            "¿Hay comentarios en lógica compleja?",
+            "¿Las dependencias están inyectadas correctamente?",
+            "¿Se ha probado el flujo principal?"
+        ];
+
+        const checklistContainer = document.getElementById('pr-checklist');
+        prItems.forEach(item => {
+            const div = document.createElement('div');
+            div.className = "flex items-center space-x-3 p-2 hover:bg-slate-50 rounded transition-colors";
+            div.innerHTML = `
+                <input type="checkbox" class="w-4 h-4 text-slate-600 rounded focus:ring-slate-500">
+                <span class="text-sm text-slate-600">${item}</span>
+            `;
+            checklistContainer.appendChild(div);
+        });
+
+        // Charts
+        const ctxLeader = document.getElementById('leaderTasksChart').getContext('2d');
+        new Chart(ctxLeader, {
+            type: 'doughnut',
+            data: {
+                labels: ['Configuración', 'Revisión PR', 'Gestión Ramas'],
+                datasets: [{
+                    data: [40, 40, 20],
+                    backgroundColor: ['#4a5568', '#718096', '#a0aec0'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
+                    title: { display: true, text: 'Distribución de Esfuerzo Líder', font: { size: 14 } }
+                }
+            }
+        });
+
+        const ctxConflict = document.getElementById('conflictChart').getContext('2d');
+        new Chart(ctxConflict, {
+            type: 'bar',
+            data: {
+                labels: ['.sln', '.csproj', 'Código (.cs)', 'Config (appsettings)'],
+                datasets: [{
+                    label: 'Probabilidad de Conflicto (%)',
+                    data: [75, 40, 90, 20],
+                    backgroundColor: 'rgba(74, 85, 104, 0.7)',
+                    borderColor: '#2d3748',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100 }
+                },
+                plugins: {
+                    title: { display: true, text: 'Riesgos de Fusión en Proyectos C#', font: { size: 14 } }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
