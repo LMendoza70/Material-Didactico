@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering GitHub Flow: Checklist Interactivo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 220px;
+        }
+        .task-card {
+            transition: all 0.2s ease;
+        }
+        .task-card:hover {
+            border-color: #3b82f6;
+            background-color: #f8fafc;
+        }
+        .checked-text {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+        .step-badge {
+            font-size: 0.65rem;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md z-50 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../../index.html"
+                    class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
+                    <span
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                    <span class="truncate">Material Didáctico</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Encabezado de la página -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl" aria-hidden="true">🔀</span>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 leading-tight">Mastering GitHub Flow: Checklist Interactivo</h1>
+                    <p class="text-xs text-slate-500 font-medium tracking-wide uppercase">MTI. Luis Alberto Mendoza San Juan</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div id="progress-indicator" class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full border border-indigo-200">
+                    PROGRESO: 0%
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto py-8 px-4 max-w-4xl w-full">
+        
+        <header class="mb-8">
+            <h2 class="text-2xl font-extrabold text-slate-900 mb-1">Flujo de Trabajo Colaborativo</h2>
+            <p class="text-slate-500 text-sm">Sigue el estándar GitHub Flow para integrar tu código en C# sin conflictos de versión.</p>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center">
+                <h3 class="text-xs font-bold text-slate-400 uppercase mb-4">Avance de la Práctica</h3>
+                <div class="chart-container">
+                    <canvas id="flowChart"></canvas>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold mb-2 flex items-center text-slate-800">
+                        <span class="w-2.5 h-2.5 bg-indigo-600 rounded-full mr-2"></span>
+                        Configuración de Visualización
+                    </h3>
+                    <p class="text-slate-500 text-sm mb-4">Filtra las tareas para ver solo lo que te corresponde según tu rol en el equipo.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button onclick="updateFilter('all')" id="f-all" class="filter-btn bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all">Ver Todo</button>
+                        <button onclick="updateFilter('E1')" id="f-E1" class="filter-btn bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-xl text-xs font-semibold hover:border-indigo-400 transition-all">Estudiante 1 (Propietario)</button>
+                        <button onclick="updateFilter('E2')" id="f-E2" class="filter-btn bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-xl text-xs font-semibold hover:border-indigo-400 transition-all">Estudiante 2 (Colaborador)</button>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50 border-l-4 border-indigo-600 p-4 rounded-r-lg">
+                    <p class="text-indigo-900 text-xs leading-relaxed">
+                        <strong>REGLA DE ORO:</strong> El flujo GitHub Flow dicta que nada se toca en la rama principal <code class="bg-indigo-100 px-1.5 py-0.5 rounded font-bold">main</code> o <code class="bg-indigo-100 px-1.5 py-0.5 rounded font-bold">master</code> directamente. Siempre se crea una rama nueva para cada cambio.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tasks Container -->
+        <div id="phases-root" class="space-y-6">
+            <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="mt-12 border-t border-slate-200 pt-8 flex flex-col items-center">
+            <button onclick="resetApp()" class="group flex items-center space-x-2 text-slate-400 hover:text-red-500 transition-colors">
+                <span class="text-sm font-medium">Reiniciar todo el progreso de la práctica</span>
+                <div class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-red-200">
+                    <span class="text-xs">↺</span>
+                </div>
+            </button>
+        </div>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-400 text-sm font-medium">Material de apoyo docente - MTI. Luis Alberto Mendoza San Juan</p>
+        </div>
+    </footer>
+
+    <script>
+        const workflowData = [
+            {
+                phase: "1. Inicialización y Permisos",
+                intro: "El Propietario (E1) establece el repositorio central y autoriza al equipo.",
+                tasks: [
+                    { id: 1, role: "E1", title: "Crear Repositorio Privado", detail: "En GitHub.com, crea un nuevo repo. Marca 'Private' y 'Add a README'. Esto genera el entorno seguro para tu código." },
+                    { id: 2, role: "E1", title: "Vincular Proyecto Visual Studio", detail: "Abre tu proyecto local. En 'Cambios de Git' elige 'Crear repositorio Git' -> 'Remoto existente'. Pega la URL .git de tu repositorio web." },
+                    { id: 3, role: "E1", title: "Añadir Colaborador", detail: "En GitHub -> Settings -> Collaborators. Busca el usuario del Estudiante 2 y envíale la invitación formal." },
+                    { id: 4, role: "E2", title: "Aceptar Invitación", detail: "Revisa tu correo o las notificaciones en GitHub para aceptar el acceso. Sin esto, no podrás subir cambios." }
+                ]
+            },
+            {
+                phase: "2. Clonación y Rama Nueva (Branch)",
+                intro: "Comienza el GitHub Flow: el colaborador prepara su espacio y crea una línea de tiempo paralela.",
+                tasks: [
+                    { id: 5, role: "E2", title: "Clonar el Proyecto", detail: "En Visual Studio -> Clonar repositorio. Usa la URL .git. Asegúrate de que los archivos carguen en el Explorador de Soluciones." },
+                    { id: 6, role: "E2", title: "Crear Rama Nueva", detail: "Haz clic en 'master' o 'main' (abajo a la derecha) -> 'Nueva rama'. Nómbrala como 'mejora-estudiante-2'. Esto protege el código principal." },
+                    { id: 7, role: "all", title: "Extraer (Pull) antes de iniciar", detail: "Presiona la flecha hacia abajo en Visual Studio. Esto sincroniza tu base con cualquier cambio que el dueño haya hecho recientemente." }
+                ]
+            },
+            {
+                phase: "3. Desarrollo y Confirmación (Commits)",
+                intro: "Se realizan los cambios técnicos y se registran en el historial local.",
+                tasks: [
+                    { id: 8, role: "all", title: "Programar Cambios", detail: "Modifica el diseño del formulario o el código C#. Guarda todo antes de proceder al siguiente paso." },
+                    { id: 9, role: "all", title: "Escribir Commit Descriptivo", detail: "En 'Cambios de Git', escribe qué hiciste. Ejemplo: 'Se añadió validación al botón calcular'. Evita mensajes genéricos como 'cambios'." },
+                    { id: 10, role: "all", title: "Confirmar todo e Insertar (Push)", detail: "Haz clic en el botón combinado. Esto sube tu rama específica a la nube para que otros la vean." }
+                ]
+            },
+            {
+                phase: "4. Pull Request y Revisión",
+                intro: "El momento de la verdad: se solicita permiso para unir el código a la rama principal.",
+                tasks: [
+                    { id: 11, role: "E2", title: "Abrir Pull Request", detail: "En la web de GitHub, verás un botón amarillo 'Compare & Pull Request'. Presiónalo y explica brevemente tus cambios." },
+                    { id: 12, role: "E1", title: "Revisión de Código", detail: "El dueño entra al PR en la pestaña 'Files changed'. Revisa que el código sea correcto y no tenga errores críticos." },
+                    { id: 13, role: "E1", title: "Merge (Fusión)", detail: "Si todo está bien, presiona 'Merge Pull Request' y 'Confirm Merge'. Tu rama principal ahora tiene las mejoras del equipo." }
+                ]
+            },
+            {
+                phase: "5. Sincronización Final",
+                intro: "Cierre del ciclo: todos los miembros regresan a la rama master/main actualizada.",
+                tasks: [
+                    { id: 14, role: "all", title: "Volver a Master/Main", detail: "En Visual Studio, cambia tu rama activa de regreso a 'master' o 'main'." },
+                    { id: 15, role: "all", title: "Pull Final", detail: "Presiona 'Extraer'. Verás cómo los archivos de tu compañero aparecen en tu versión local de master/main." }
+                ]
+            }
+        ];
+
+        let chart;
+        let activeFilter = 'all';
+        let checkedTasks = JSON.parse(localStorage.getItem('gh_flow_progress')) || [];
+
+        function init() {
+            renderPhases();
+            initChart();
+            updateStats();
+        }
+
+        function renderPhases() {
+            const container = document.getElementById('phases-root');
+            container.innerHTML = '';
+
+            workflowData.forEach(p => {
+                const filteredTasks = p.tasks.filter(t => activeFilter === 'all' || t.role === activeFilter || t.role === 'all');
+                if (filteredTasks.length === 0) return;
+
+                const phaseEl = document.createElement('section');
+                phaseEl.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden';
+                
+                let tasksHtml = filteredTasks.map(t => {
+                    const isChecked = checkedTasks.includes(t.id);
+                    const roleLabel = t.role === 'all' ? 'AMBOS ROL' : (t.role === 'E1' ? 'ESTUDIANTE 1' : 'ESTUDIANTE 2');
+                    const roleColor = t.role === 'all' ? 'bg-slate-100 text-slate-600' : (t.role === 'E1' ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700');
+
+                    return `
+                        <div class="task-card p-5 border-b border-slate-100 last:border-b-0">
+                            <div class="flex items-start space-x-4">
+                                <input type="checkbox" ${isChecked ? 'checked' : ''} 
+                                       onchange="toggleTask(${t.id})"
+                                       class="mt-1 w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="step-badge ${roleColor} px-2 py-0.5 rounded font-bold">${roleLabel}</span>
+                                    </div>
+                                    <h4 class="font-bold text-slate-800 text-sm sm:text-base ${isChecked ? 'checked-text' : ''}">${t.title}</h4>
+                                    <p class="text-xs sm:text-sm text-slate-500 mt-1.5 leading-relaxed">${t.detail}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                phaseEl.innerHTML = `
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-800">${p.phase}</h3>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1">${p.intro}</p>
+                    </div>
+                    <div>${tasksHtml}</div>
+                `;
+                container.appendChild(phaseEl);
+            });
+        }
+
+        function toggleTask(id) {
+            if (checkedTasks.includes(id)) {
+                checkedTasks = checkedTasks.filter(item => item !== id);
+            } else {
+                checkedTasks.push(id);
+            }
+            localStorage.setItem('gh_flow_progress', JSON.stringify(checkedTasks));
+            updateStats();
+            renderPhases();
+        }
+
+        function updateFilter(role) {
+            activeFilter = role;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-xl text-xs font-semibold hover:border-indigo-400 transition-all";
+            });
+            const activeBtn = document.getElementById(`f-${role}`);
+            activeBtn.className = "filter-btn bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all";
+            renderPhases();
+        }
+
+        function updateStats() {
+            const total = workflowData.reduce((acc, p) => acc + p.tasks.length, 0);
+            const done = checkedTasks.length;
+            const perc = Math.round((done / total) * 100);
+            
+            document.getElementById('progress-indicator').innerText = `PROGRESO: ${perc}%`;
+            
+            if(chart) {
+                chart.data.datasets[0].data = [done, total - done];
+                chart.update();
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('flowChart').getContext('2d');
+            const total = workflowData.reduce((acc, p) => acc + p.tasks.length, 0);
+            const done = checkedTasks.length;
+
+            chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completado', 'Pendiente'],
+                    datasets: [{
+                        data: [done, total - done],
+                        backgroundColor: ['#4338ca', '#f1f5f9'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    cutout: '80%',
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function resetApp() {
+            if (confirm('¿Deseas borrar todo el progreso y reiniciar la práctica desde cero?')) {
+                checkedTasks = [];
+                localStorage.removeItem('gh_flow_progress');
+                updateStats();
+                renderPhases();
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>
