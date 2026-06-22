@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Práctica C# & MySQL: RentAuto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        pre,
+        code {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .step-checkbox:checked+label {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../../index.html"
+                    class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
+                    <span
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                    <span class="truncate">Material Didáctico</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Header / Navbar -->
+    <header class="border-b border-slate-200 bg-white/80 backdrop-blur relative px-4 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2.5 rounded-lg text-white shadow-lg shadow-indigo-500/20">
+                    <i class="fa-solid fa-car-side text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900">Guía Práctica: RentAuto</h1>
+                    <p class="text-xs text-slate-500">C# WinForms + MySQL + POO para Principiantes</p>
+                </div>
+            </div>
+            <!-- Progress Tracker -->
+            <div
+                class="flex items-center gap-4 bg-slate-50 px-4 py-2 rounded-full border border-slate-200 w-full md:w-auto justify-between">
+                <div class="text-xs font-semibold text-slate-500">Progreso de la Práctica:</div>
+                <div class="flex items-center gap-2">
+                    <div class="w-32 bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                        <div id="progressBar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                    <span id="progressPercent" class="text-xs font-bold text-emerald-400">0%</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Sidebar Navigation (3 Cols) -->
+        <aside class="lg:col-span-3 space-y-6">
+            <div class="bg-white border border-slate-200 rounded-xl p-4 sticky top-4">
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-4 px-2">Pasos de la Guía
+                </h3>
+                <nav class="space-y-1">
+                    <button onclick="scrollToSection('vision')"
+                        class="w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors bg-slate-50 hover:bg-slate-100 font-medium text-indigo-600 flex items-center gap-2"
+                        id="nav-vision">
+                        <i class="fa-solid fa-compass w-5"></i> 1. Visión del Proyecto
+                    </button>
+                    <button onclick="scrollToSection('db')"
+                        class="w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors hover:bg-slate-100 font-medium text-slate-600 flex items-center gap-2"
+                        id="nav-db">
+                        <i class="fa-solid fa-database w-5"></i> 2. Base de Datos (MySQL)
+                    </button>
+                    <button onclick="scrollToSection('conexion')"
+                        class="w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors hover:bg-slate-100 font-medium text-slate-600 flex items-center gap-2"
+                        id="nav-conexion">
+                        <i class="fa-solid fa-plug w-5"></i> 3. Conexión C# (ADO.NET)
+                    </button>
+                    <button onclick="scrollToSection('login')"
+                        class="w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors hover:bg-slate-100 font-medium text-slate-600 flex items-center gap-2"
+                        id="nav-login">
+                        <i class="fa-solid fa-key w-5"></i> 4. Login Seguro con BCrypt
+                    </button>
+                    <button onclick="scrollToSection('crud')"
+                        class="w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors hover:bg-slate-100 font-medium text-slate-600 flex items-center gap-2"
+                        id="nav-crud">
+                        <i class="fa-solid fa-table w-5"></i> 5. CRUD de Vehículos
+                    </button>
+                    <button onclick="scrollToSection('poo')"
+                        class="w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors hover:bg-slate-100 font-medium text-slate-600 flex items-center gap-2"
+                        id="nav-poo">
+                        <i class="fa-solid fa-shapes w-5"></i> 6. POO en Memoria
+                    </button>
+                    <button onclick="scrollToSection('mdi')"
+                        class="w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors hover:bg-slate-100 font-medium text-slate-600 flex items-center gap-2"
+                        id="nav-mdi">
+                        <i class="fa-solid fa-window-restore w-5"></i> 7. Ventana MDI Principal
+                    </button>
+                    <button onclick="scrollToSection('evaluacion')"
+                        class="w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors hover:bg-slate-100 font-medium text-slate-600 flex items-center gap-2"
+                        id="nav-evaluacion">
+                        <i class="fa-solid fa-graduation-cap w-5"></i> Cuestionario de Control
+                    </button>
+                </nav>
+
+                <div class="mt-6 pt-6 border-t border-slate-200 space-y-3">
+                    <div class="text-xs text-slate-500">Checklist de Control:</div>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk1" onchange="updateProgress()"
+                                class="step-checkbox rounded bg-slate-50 border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <label for="chk1" class="text-xs text-slate-600 cursor-pointer">BD Creada</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk2" onchange="updateProgress()"
+                                class="step-checkbox rounded bg-slate-50 border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <label for="chk2" class="text-xs text-slate-600 cursor-pointer">Conexión Probada</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk3" onchange="updateProgress()"
+                                class="step-checkbox rounded bg-slate-50 border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <label for="chk3" class="text-xs text-slate-600 cursor-pointer">Login Funcional</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk4" onchange="updateProgress()"
+                                class="step-checkbox rounded bg-slate-50 border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <label for="chk4" class="text-xs text-slate-600 cursor-pointer">CRUD Vehículos OK</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk5" onchange="updateProgress()"
+                                class="step-checkbox rounded bg-slate-50 border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                            <label for="chk5" class="text-xs text-slate-600 cursor-pointer">Clases POO Hechas</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content (9 Cols) -->
+        <main class="lg:col-span-9 space-y-12">
+
+            <!-- Toast notification for copied text -->
+            <div id="toast"
+                class="fixed bottom-5 right-5 bg-emerald-600 text-slate-900 px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+                <i class="fa-solid fa-circle-check"></i>
+                <span id="toast-msg">¡Código copiado al portapapeles!</span>
+            </div>
+
+            <!-- SECTION 1: VISION GENERAL -->
+            <section id="vision" class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 space-y-6">
+                <div class="flex items-center gap-3">
+                    <span class="bg-indigo-50 text-indigo-600 p-2.5 rounded-xl border border-indigo-100">
+                        <i class="fa-solid fa-compass text-xl"></i>
+                    </span>
+                    <h2 class="text-2xl font-bold text-slate-900">1. Visión general del proyecto "RentAuto"</h2>
+                </div>
+                <p class="text-slate-600 leading-relaxed">
+                    <strong>RentAuto</strong> es una alternativa didáctica al proyecto ATMC. El objetivo es construir un
+                    sistema de escritorio para Windows utilizando <span class="text-indigo-600 font-semibold">C# Windows
+                        Forms</span> y una base de datos <span class="text-teal-400 font-semibold">MySQL</span>. Al
+                    igual que el cajero original, este proyecto mezcla dos dinámicas indispensables en la formación de
+                    un programador:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                        <div class="flex items-center gap-2 text-indigo-600 font-bold">
+                            <i class="fa-solid fa-database"></i> Capa con Base de Datos
+                        </div>
+                        <p class="text-sm text-slate-600">
+                            Un Login seguro con roles y contraseña encriptada (BCrypt) y una ventana de administración
+                            (CRUD) para agregar, buscar, editar y borrar <strong>vehículos</strong> del inventario.
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                        <div class="flex items-center gap-2 text-purple-400 font-bold">
+                            <i class="fa-solid fa-cube"></i> POO Pura (En Memoria)
+                        </div>
+                        <p class="text-sm text-slate-600">
+                            Una simulación de renta de vehículos que utiliza herencia y polimorfismo para calcular
+                            tarifas según el tipo de auto (Compacto, Camioneta, Deportivo) sin persistencia física.
+                        </p>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-semibold text-slate-900 mt-4">Arquitectura del Proyecto de Práctica</h3>
+                <div
+                    class="bg-slate-50 p-4 rounded-xl border border-slate-200 overflow-x-auto text-xs text-slate-600 leading-relaxed font-mono">
+                    [Program.cs (Main)] ──▶ [frmLogin] (Valida credenciales en MySQL)<br>
+                    │<br>
+                    ▼ (Acceso Correcto)<br>
+                    [frmPrincipal] (Contenedor MDI Principal con Menú)<br>
+                    │<br>
+                    ┌──────┴────────────────────────┐<br>
+                    ▼ ▼<br>
+                    [frmVehiculos] [frmRentaSimulador]<br>
+                    (CRUD MySQL de autos) (POO en Memoria: Tarifas de renta)
+                </div>
+            </section>
+
+            <!-- SECTION 2: BASE DE DATOS -->
+            <section id="db" class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 space-y-6">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-teal-500/10 text-teal-400 p-2.5 rounded-xl border border-teal-500/20">
+                            <i class="fa-solid fa-database text-xl"></i>
+                        </span>
+                        <h2 class="text-2xl font-bold text-slate-900">2. Base de Datos (MySQL)</h2>
+                    </div>
+                    <button onclick="copyToClipboard('sql-script')"
+                        class="bg-slate-100 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-slate-700 transition-colors">
+                        <i class="fa-regular fa-copy"></i> Copiar SQL
+                    </button>
+                </div>
+                <p class="text-slate-600">
+                    Abre tu manejador de bases de datos preferido (MySQL Workbench, phpMyAdmin, DBeaver) y ejecuta el
+                    siguiente script. Creamos la base de datos <code class="text-amber-400">rentauto_db</code>, una
+                    tabla de roles, una tabla de usuarios que usará encriptación, y la tabla de vehículos para el CRUD.
+                </p>
+
+                <!-- Code Block -->
+                <div class="relative rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
+                    <div
+                        class="bg-white px-4 py-2 border-b border-slate-200 text-xs text-slate-500 font-mono flex justify-between items-center">
+                        <span>Script_BaseDatos.sql</span>
+                        <span class="text-teal-400">MySQL</span>
+                    </div>
+                    <pre class="p-4 text-sm text-slate-600 overflow-x-auto"><code id="sql-script" class="language-sql">-- 1. Crear base de datos
+CREATE DATABASE rentauto_db;
+USE rentauto_db;
+
+-- 2. Crear tabla de roles
+CREATE TABLE rol (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+-- 3. Crear tabla de usuarios
+CREATE TABLE usuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL, -- Almacenará el Hash de BCrypt
+    rol_id INT NOT NULL,
+    FOREIGN KEY (rol_id) REFERENCES rol(id)
+);
+
+-- 4. Crear tabla de vehículos (Para el CRUD)
+CREATE TABLE vehiculo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    marca VARCHAR(50) NOT NULL,
+    modelo VARCHAR(50) NOT NULL,
+    placa VARCHAR(15) NOT NULL UNIQUE,
+    precio_dia DECIMAL(10,2) NOT NULL,
+    disponible TINYINT(1) DEFAULT 1
+);
+
+-- 5. Insertar roles requeridos
+INSERT INTO rol (nombre) VALUES ('Administrador'), ('Operador');
+
+-- 6. Insertar usuario base (Contraseña en texto plano: "admin123")
+-- El hash que ves abajo corresponde a la encriptación BCrypt de "admin123"
+INSERT INTO usuario (nombre, password, rol_id) 
+VALUES ('admin', '$2a$11$R9h/lS.U964l1y3Yf3sM3O8v0Gg0Yh9S76Q.6X8mC038a3q86Z1uO', 1);</code></pre>
+                </div>
+
+                <div class="bg-amber-500/10 border border-amber-500/20 text-amber-300 p-4 rounded-xl text-sm space-y-2">
+                    <div class="font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Nota sobre el usuario inicial:
+                    </div>
+                    <p>
+                        Para hacer login por primera vez, utiliza el usuario <strong>admin</strong> y la contraseña
+                        <strong>admin123</strong>. La contraseña ya fue pre-encriptada con el algoritmo BCrypt para que
+                        encaje con la verificación que escribiremos en C#.
+                    </p>
+                </div>
+            </section>
+
+            <!-- SECTION 3: CONEXION C# -->
+            <section id="conexion" class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 space-y-6">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-indigo-50 text-indigo-600 p-2.5 rounded-xl border border-indigo-100">
+                            <i class="fa-solid fa-plug text-xl"></i>
+                        </span>
+                        <h2 class="text-2xl font-bold text-slate-900">3. Conexión C# (Explicada a fondo)</h2>
+                    </div>
+                </div>
+                <p class="text-slate-600">
+                    Para interactuar con MySQL en C#, es indispensable instalar el paquete NuGet
+                    <strong>MySql.Data</strong>. A continuación, crearemos la clase <code
+                        class="text-indigo-600">clsConexion.cs</code> que gestionará de forma segura el acceso a la base
+                    de datos.
+                </p>
+
+                <!-- Interactive Connection String Builder -->
+                <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl space-y-4">
+                    <h4 class="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-sliders text-indigo-600"></i> Generador Dinámico de Cadena de Conexión (C#)
+                    </h4>
+                    <p class="text-xs text-slate-500">Cambia los parámetros para ver cómo se modifica la conexión en
+                        tiempo real.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Servidor (Server)</label>
+                            <input type="text" id="conn-server" value="127.0.0.1" oninput="generateConnString()"
+                                class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Base de Datos
+                                (Database)</label>
+                            <input type="text" id="conn-db" value="rentauto_db" oninput="generateConnString()"
+                                class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Usuario (UID)</label>
+                            <input type="text" id="conn-uid" value="root" oninput="generateConnString()"
+                                class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Contraseña (PWD)</label>
+                            <input type="text" id="conn-pwd" value="" oninput="generateConnString()" placeholder="Vacio"
+                                class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-slate-200 font-mono text-xs text-amber-400 overflow-x-auto select-all"
+                        id="conn-string-output">
+                        Server=127.0.0.1; Database=rentauto_db; Uid=root; Pwd=; Port=3306;
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-sm font-semibold text-slate-600">Código de <code
+                            class="text-indigo-600">clsConexion.cs</code>:</span>
+                    <button onclick="copyToClipboard('code-conexion')"
+                        class="bg-slate-100 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-slate-700 transition-colors">
+                        <i class="fa-regular fa-copy"></i> Copiar Código
+                    </button>
+                </div>
+
+                <div class="relative rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
+                    <div
+                        class="bg-white px-4 py-2 border-b border-slate-200 text-xs text-slate-500 font-mono flex justify-between items-center">
+                        <span>clsConexion.cs</span>
+                        <span class="text-indigo-600">C#</span>
+                    </div>
+                    <pre class="p-4 text-sm text-slate-600 overflow-x-auto"><code id="code-conexion" class="language-csharp">using System;
+using MySql.Data.MySqlClient; // Requerido: Driver de conexión de MySQL
+
+namespace RentAuto
+{
+    public class clsConexion
+    {
+        // Almacena la ruta de acceso a la Base de Datos
+        private readonly string cadenaConexion;
+
+        public clsConexion()
+        {
+            // Constructor: Inicializa la cadena de conexión
+            // En un entorno real se recomienda cargarlo desde el archivo App.config
+            cadenaConexion = "Server=127.0.0.1; Database=rentauto_db; Uid=root; Pwd=; Port=3306;";
+        }
+
+        // Método que intenta abrir la conexión y retornarla lista para usar
+        public MySqlConnection ObtenerConexion()
+        {
+            try
+            {
+                MySqlConnection conexion = new MySqlConnection(cadenaConexion);
+                conexion.Open(); // Intenta abrir la conexión física
+                return conexion;
+            }
+            catch (Exception ex)
+            {
+                // Si falla (ejemplo: mysql apagado), retorna null para validar después
+                Console.WriteLine("Error de conexión: " + ex.Message);
+                return null;
+            }
+        }
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 4: LOGIN CON BCRYPT -->
+            <section id="login" class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 space-y-6">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-purple-500/10 text-purple-400 p-2.5 rounded-xl border border-purple-500/20">
+                            <i class="fa-solid fa-key text-xl"></i>
+                        </span>
+                        <h2 class="text-2xl font-bold text-slate-900">4. Módulo de Login Seguro (BCrypt)</h2>
+                    </div>
+                    <button onclick="copyToClipboard('code-login')"
+                        class="bg-slate-100 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-slate-700 transition-colors">
+                        <i class="fa-regular fa-copy"></i> Copiar Código
+                    </button>
+                </div>
+                <p class="text-slate-600">
+                    Para el login, usaremos el paquete NuGet <strong>BCrypt.Net-Next</strong>. Esto evita que guardemos
+                    contraseñas visibles en la BD. En lugar de eso, comparamos el "Hash" de seguridad con la contraseña
+                    en texto plano introducida por el usuario usando <code class="text-purple-400">BCrypt.Verify</code>.
+                </p>
+
+                <div class="relative rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
+                    <div
+                        class="bg-white px-4 py-2 border-b border-slate-200 text-xs text-slate-500 font-mono flex justify-between items-center">
+                        <span>frmLogin.cs (Lógica del Botón Iniciar Sesión)</span>
+                        <span class="text-indigo-600">C#</span>
+                    </div>
+                    <pre class="p-4 text-sm text-slate-600 overflow-x-auto"><code id="code-login" class="language-csharp">using System;
+using System.Windows.Forms;
+using MySql.Data.MySqlClient;
+using BCrypt.Net; // Requerido: Librería para hashing de seguridad de contraseñas
+
+namespace RentAuto
+{
+    public partial class frmLogin : Form
+    {
+        public frmLogin()
+        {
+            InitializeComponent();
+        }
+
+        private void btnIniciar_Click(object sender, EventArgs e)
+        {
+            string usuario = txtUser.Text.Trim();
+            string contrasena = txtPassword.Text.Trim();
+
+            if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(contrasena))
+            {
+                MessageBox.Show("Por favor, llena todos los campos.", "Campos vacíos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            clsConexion conClase = new clsConexion();
+            MySqlConnection dbConn = conClase.ObtenerConexion();
+
+            if (dbConn == null)
+            {
+                MessageBox.Show("No se pudo conectar a la Base de Datos. Verifica que MySQL esté activo.", "Error de Red", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Usamos consulta parametrizada para prevenir Inyección SQL
+            string query = "SELECT password, rol_id FROM usuario WHERE nombre = @nombre";
+            MySqlCommand cmd = new MySqlCommand(query, dbConn);
+            cmd.Parameters.AddWithValue("@nombre", usuario);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                string hashAlmacenado = reader["password"].ToString();
+                int rolId = Convert.ToInt32(reader["rol_id"]);
+
+                // Comparamos de forma segura la contraseña escrita con el Hash de la BD
+                bool credencialValida = BCrypt.Net.BCrypt.Verify(contrasena, hashAlmacenado);
+
+                if (credencialValida)
+                {
+                    MessageBox.Show("¡Bienvenido al sistema!", "Acceso Autorizado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    dbConn.Close();
+
+                    this.Hide(); // Ocultar el login actual
+                    frmPrincipal pantallaMdi = new frmPrincipal(usuario, rolId);
+                    pantallaMdi.Show(); // Abrir el panel principal
+                }
+                else
+                {
+                    MessageBox.Show("Contraseña incorrecta.", "Error de autenticación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("El usuario no existe.", "Error de autenticación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            dbConn.Close(); // Siempre cerrar las conexiones abiertas
+        }
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 5: CRUD DE VEHICULOS -->
+            <section id="crud" class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 space-y-6">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-emerald-500/10 text-emerald-400 p-2.5 rounded-xl border border-emerald-500/20">
+                            <i class="fa-solid fa-table text-xl"></i>
+                        </span>
+                        <h2 class="text-2xl font-bold text-slate-900">5. Módulo CRUD de Vehículos (<code
+                                class="text-xs">frmVehiculos.cs</code>)</h2>
+                    </div>
+                    <button onclick="copyToClipboard('code-crud')"
+                        class="bg-slate-100 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-slate-700 transition-colors">
+                        <i class="fa-regular fa-copy"></i> Copiar Código
+                    </button>
+                </div>
+                <p class="text-slate-600">
+                    Este es el núcleo de tu interacción con los datos. Contiene los métodos para <strong>Leer
+                        (Read)</strong> usando un adaptador para llenar una tabla visual (<code
+                        class="text-indigo-600">DataGridView</code>), y <strong>Crear, Actualizar y Eliminar</strong> con
+                    consultas directas parametrizadas.
+                </p>
+
+                <div class="relative rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
+                    <div
+                        class="bg-white px-4 py-2 border-b border-slate-200 text-xs text-slate-500 font-mono flex justify-between items-center">
+                        <span>frmVehiculos.cs</span>
+                        <span class="text-indigo-600">C#</span>
+                    </div>
+                    <pre class="p-4 text-sm text-slate-600 overflow-x-auto"><code id="code-crud" class="language-csharp">using System;
+using System.Data;
+using System.Windows.Forms;
+using MySql.Data.MySqlClient;
+
+namespace RentAuto
+{
+    public partial class frmVehiculos : Form
+    {
+        private clsConexion dbHelper = new clsConexion();
+
+        public frmVehiculos()
+        {
+            InitializeComponent();
+            CargarTabla(); // Cargar datos al abrir la ventana
+        }
+
+        // READ: Llena el DataGridView con los vehículos de la base de datos
+        private void CargarTabla()
+        {
+            MySqlConnection conn = dbHelper.ObtenerConexion();
+            if (conn != null)
+            {
+                string sql = "SELECT id, marca, modelo, placa, precio_dia, disponible FROM vehiculo";
+                MySqlDataAdapter adapter = new MySqlDataAdapter(sql, conn);
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable); // Llena el contenedor en memoria
+                dgvVehiculos.DataSource = dataTable; // Vincula los datos a la tabla visual
+                conn.Close();
+            }
+        }
+
+        // CREATE: Registra un nuevo vehículo
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+            MySqlConnection conn = dbHelper.ObtenerConexion();
+            if (conn == null) return;
+
+            string sql = "INSERT INTO vehiculo (marca, modelo, placa, precio_dia) VALUES (@marca, @modelo, @placa, @precio)";
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@marca", txtMarca.Text);
+            cmd.Parameters.AddWithValue("@modelo", txtModelo.Text);
+            cmd.Parameters.AddWithValue("@placa", txtPlaca.Text);
+            cmd.Parameters.AddWithValue("@precio", Convert.ToDecimal(txtPrecio.Text));
+
+            int filas = cmd.ExecuteNonQuery(); // Devuelve las filas afectadas
+            conn.Close();
+
+            if (filas > 0)
+            {
+                MessageBox.Show("Vehículo registrado con éxito.", "Guardar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CargarTabla(); // Actualizar la tabla visual
+            }
+        }
+
+        // DELETE: Elimina un vehículo por su ID
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (dgvVehiculos.SelectedRows.Count == 0) return;
+
+            int idSeleccionado = Convert.ToInt32(dgvVehiculos.SelectedRows[0].Cells["id"].Value);
+
+            DialogResult confirm = MessageBox.Show("¿Seguro que deseas eliminar este vehículo?", "Confirmación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirm == DialogResult.No) return;
+
+            MySqlConnection conn = dbHelper.ObtenerConexion();
+            if (conn == null) return;
+
+            string sql = "DELETE FROM vehiculo WHERE id = @id";
+            MySqlCommand cmd = new MySqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@id", idSeleccionado);
+
+            cmd.ExecuteNonQuery();
+            conn.Close();
+            CargarTabla();
+        }
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 6: POO EN MEMORIA -->
+            <section id="poo" class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 space-y-6">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-indigo-50 text-indigo-600 p-2.5 rounded-xl border border-indigo-100">
+                            <i class="fa-solid fa-shapes text-xl"></i>
+                        </span>
+                        <h2 class="text-2xl font-bold text-slate-900">6. Clases POO de Renta (Polimorfismo en Memoria)</h2>
+                    </div>
+                    <button onclick="copyToClipboard('code-poo')"
+                        class="bg-slate-100 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-slate-700 transition-colors">
+                        <i class="fa-regular fa-copy"></i> Copiar Clases POO
+                    </button>
+                </div>
+                <p class="text-slate-600">
+                    A diferencia del CRUD de vehículos, para la parte práctica de Programación Orientada a Objetos
+                    (POO), simularemos el cálculo de costos de renta en memoria con un diseño robusto utilizando una
+                    <span class="text-purple-400">Clase Abstracta</span> y clases derivadas (herencia) que implementan
+                    reglas de cálculo dinámicas (polimorfismo).
+                </p>
+
+                <div class="relative rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
+                    <div
+                        class="bg-white px-4 py-2 border-b border-slate-200 text-xs text-slate-500 font-mono flex justify-between items-center">
+                        <span>VehiculoRenta.cs (Estructura POO de clases)</span>
+                        <span class="text-indigo-600">C#</span>
+                    </div>
+                    <pre class="p-4 text-sm text-slate-600 overflow-x-auto"><code id="code-poo" class="language-csharp">using System;
+
+namespace RentAuto
+{
+    // Clase Abstracta Base (No se puede instanciar directamente, funciona como plantilla)
+    public abstract class VehiculoRenta
+    {
+        protected string placa;
+        protected float costoBaseDia;
+
+        public string Placa { get { return placa; } set { placa = value; } }
+        public float CostoBaseDia { get { return costoBaseDia; } }
+
+        public VehiculoRenta(string placa, float costoBaseDia)
+        {
+            this.placa = placa;
+            this.costoBaseDia = costoBaseDia;
+        }
+
+        // Método abstracto: Las clases hijas DEBEN implementar su propio cálculo de costos
+        public abstract float CalcularCostoRenta(int dias);
+    }
+
+    // Clase Hija 1: Auto Compacto (Mantiene costo base)
+    public class AutoCompacto : VehiculoRenta
+    {
+        public AutoCompacto(string placa, float costoBase) : base(placa, costoBase) { }
+
+        public override float CalcularCostoRenta(int dias)
+        {
+            return costoBaseDia * dias; // Costo directo sin cargos adicionales
+        }
+    }
+
+    // Clase Hija 2: Camioneta SUV (Tiene un cargo adicional fijo por seguro contra todo terreno)
+    public class CamionetaSUV : VehiculoRenta
+    {
+        private float cargoSeguroFijo = 150.00f; // Atributo exclusivo de la camioneta
+
+        public CamionetaSUV(string placa, float costoBase, float seguro) : base(placa, costoBase)
+        {
+            this.cargoSeguroFijo = seguro;
+        }
+
+        // Sobrecarga / Polimorfismo: Calcula el costo sumando el seguro obligatorio
+        public override float CalcularCostoRenta(int dias)
+        {
+            return (costoBaseDia * dias) + cargoSeguroFijo;
+        }
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 7: VENTANA MDI -->
+            <section id="mdi" class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 space-y-6">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-indigo-500/10 text-indigo-400 p-2.5 rounded-xl border border-indigo-500/20">
+                            <i class="fa-solid fa-window-restore text-xl"></i>
+                        </span>
+                        <h2 class="text-2xl font-bold text-slate-900">7. Configuración del Formulario Principal MDI</h2>
+                    </div>
+                </div>
+                <p class="text-slate-600">
+                    Para darle un aspecto profesional a la aplicación, configuramos el formulario principal (<code
+                        class="text-indigo-400">frmPrincipal.cs</code>) como un contenedor MDI (Multiple Document
+                    Interface). Esto permite incrustar los subformularios dentro de su espacio de trabajo utilizando la
+                    propiedad <code class="text-amber-400">MdiParent</code>, evitando ventanas flotantes caóticas.
+                </p>
+
+                <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl space-y-3">
+                    <h4 class="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-info text-indigo-600"></i> Pasos previos en el Diseñador de Visual
+                        Studio:
+                    </h4>
+                    <ol class="list-decimal list-inside text-sm text-slate-600 space-y-2">
+                        <li>Crea un nuevo formulario y llámalo <strong class="text-slate-800">frmPrincipal</strong>.
+                        </li>
+                        <li>En su panel de propiedades, busca <strong class="text-amber-400">IsMdiContainer</strong> y
+                            configúralo en <strong class="text-emerald-400">True</strong>.</li>
+                        <li>Agrega un control <strong class="text-slate-800">MenuStrip</strong> en la parte superior
+                            para organizar los botones de acceso ("Gestión de autos", "Simulador Renta").</li>
+                    </ol>
+                </div>
+
+                <div class="relative rounded-xl overflow-hidden bg-slate-50 border border-slate-200">
+                    <div
+                        class="bg-white px-4 py-2 border-b border-slate-200 text-xs text-slate-500 font-mono flex justify-between items-center">
+                        <span>frmPrincipal.cs (Control de Navegación del Sistema)</span>
+                        <span class="text-indigo-600">C#</span>
+                    </div>
+                    <pre class="p-4 text-sm text-slate-600 overflow-x-auto"><code class="language-csharp">using System;
+using System.Windows.Forms;
+
+namespace RentAuto
+{
+    public partial class frmPrincipal : Form
+    {
+        // Instancias para evitar que se abran copias duplicadas de la misma ventana
+        private frmVehiculos ventanaCrud;
+
+        private string usuarioActivo;
+        private int rolId;
+
+        public frmPrincipal(string usuario, int rol)
+        {
+            InitializeComponent();
+            usuarioActivo = usuario;
+            this.rolId = rol;
+
+            // Personalizar el título de la ventana con el usuario que inició sesión
+            this.Text = "Panel de Control RentAuto - Usuario: " + usuarioActivo;
+        }
+
+        // Evento que se dispara al pulsar la opción de "Gestión de autos" en el menú superior
+        private void tsmVehiculos_Click(object sender, EventArgs e)
+        {
+            // Patrón para verificar si el formulario ya está activo o fue cerrado (Disposed)
+            if (ventanaCrud == null || ventanaCrud.IsDisposed)
+            {
+                ventanaCrud = new frmVehiculos();
+                ventanaCrud.MdiParent = this; // Indicamos que debe vivir DENTRO de frmPrincipal
+                ventanaCrud.Show();
+            }
+            else
+            {
+                ventanaCrud.BringToFront(); // Si ya existe, lo trae al frente en vez de duplicarlo
+            }
+        }
+    }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- SECTION 8: CUESTIONARIO -->
+            <section id="evaluacion" class="bg-white border border-slate-200 rounded-2xl p-6 lg:p-8 space-y-6">
+                <div class="flex items-center gap-3">
+                    <span class="bg-amber-500/10 text-amber-400 p-2.5 rounded-xl border border-amber-500/20">
+                        <i class="fa-solid fa-graduation-cap text-xl"></i>
+                    </span>
+                    <h2 class="text-2xl font-bold text-slate-900">Comprobación de Aprendizaje (Cuestionario)</h2>
+                </div>
+                <p class="text-slate-600">
+                    Completa este breve cuestionario para validar tus conocimientos adquiridos sobre ADO.NET, conexiones
+                    de bases de datos y encriptación.
+                </p>
+
+                <!-- Interactive Quiz Container -->
+                <div class="space-y-6">
+                    <!-- Q1 -->
+                    <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl space-y-3">
+                        <div class="font-semibold text-sm text-slate-700">1. ¿Cuál es el rol de un objeto <code
+                                class="text-amber-400">MySqlConnection</code> en ADO.NET?</div>
+                        <div class="grid grid-cols-1 gap-2 text-xs">
+                            <label
+                                class="flex items-center gap-3 p-2.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg cursor-pointer">
+                                <input type="radio" name="q1" value="a" class="text-indigo-500 focus:ring-indigo-500">
+                                <span>Ejecutar consultas directas de INSERT o UPDATE.</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-3 p-2.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg cursor-pointer">
+                                <input type="radio" name="q1" value="b" class="text-indigo-500 focus:ring-indigo-500">
+                                <span>Representar la conexión física o de red abierta contra el servidor de base de
+                                    datos.</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-3 p-2.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg cursor-pointer">
+                                <input type="radio" name="q1" value="c" class="text-indigo-500 focus:ring-indigo-500">
+                                <span>Llenar tablas visuales como un DataGridView de forma automática.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl space-y-3">
+                        <div class="font-semibold text-sm text-slate-700">2. ¿Por qué usamos consultas parametrizadas
+                            como <code class="text-amber-400">@nombre</code> en vez de concatenar texto plano en el SQL?
+                        </div>
+                        <div class="grid grid-cols-1 gap-2 text-xs">
+                            <label
+                                class="flex items-center gap-3 p-2.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg cursor-pointer">
+                                <input type="radio" name="q2" value="a" class="text-indigo-500 focus:ring-indigo-500">
+                                <span>Para acelerar la conexión a Internet.</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-3 p-2.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg cursor-pointer">
+                                <input type="radio" name="q2" value="b" class="text-indigo-500 focus:ring-indigo-500">
+                                <span>Porque C# lo exige obligatoriamente, de lo contrario no compila.</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-3 p-2.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg cursor-pointer">
+                                <input type="radio" name="q2" value="c" class="text-indigo-500 focus:ring-indigo-500">
+                                <span>Para proteger la aplicación de ataques graves de Inyección SQL.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl space-y-3">
+                        <div class="font-semibold text-sm text-slate-700">3. ¿Qué hace la función <code
+                                class="text-amber-400">BCrypt.Verify(pass, hash)</code>?</div>
+                        <div class="grid grid-cols-1 gap-2 text-xs">
+                            <label
+                                class="flex items-center gap-3 p-2.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg cursor-pointer">
+                                <input type="radio" name="q3" value="a" class="text-indigo-500 focus:ring-indigo-500">
+                                <span>Desencripta el hash para poder leer la contraseña original en texto claro.</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-3 p-2.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg cursor-pointer">
+                                <input type="radio" name="q3" value="b" class="text-indigo-500 focus:ring-indigo-500">
+                                <span>Aplica un proceso matemático seguro para validar si la contraseña en texto plano
+                                    corresponde al hash sin revelar la clave real.</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-3 p-2.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg cursor-pointer">
+                                <input type="radio" name="q3" value="c" class="text-indigo-500 focus:ring-indigo-500">
+                                <span>Registra un nuevo usuario directamente en la base de datos MySQL.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button onclick="evaluateQuiz()"
+                        class="w-full bg-indigo-600 hover:bg-blue-500 text-slate-900 font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-500/20 transition-all text-sm">
+                        Evaluar Respuestas
+                    </button>
+
+                    <div id="quiz-result" class="hidden p-4 rounded-xl text-sm font-semibold"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-8 text-center text-slate-500 text-xs mt-12 space-y-2">
+        <p>Desarrollado para estudiantes y educadores de Programación Orientada a Objetos.</p>
+        <p>RentAuto Guía Interactiva - C# y MySQL. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Interactive JS Logic -->
+    <script>
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+
+            // Highlight sidebar item
+            const navItems = ['nav-vision', 'nav-db', 'nav-conexion', 'nav-login', 'nav-crud', 'nav-poo', 'nav-mdi', 'nav-evaluacion'];
+            navItems.forEach(item => {
+                const element = document.getElementById(item);
+                if (element) {
+                    if (item === `nav-${id}`) {
+                        element.classList.add('bg-slate-50', 'text-indigo-600');
+                        element.classList.remove('text-slate-600');
+                    } else {
+                        element.classList.remove('bg-slate-50', 'text-indigo-600');
+                        element.classList.add('text-slate-600');
+                    }
+                }
+            });
+        }
+
+        // Progress bar logic
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.step-checkbox');
+            let checkedCount = 0;
+            checkboxes.forEach(chk => {
+                if (chk.checked) checkedCount++;
+            });
+            const percent = Math.round((checkedCount / checkboxes.length) * 100);
+
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+
+            progressBar.style.width = percent + '%';
+            progressPercent.innerText = percent + '%';
+        }
+
+        // Connection string generator
+        function generateConnString() {
+            const server = document.getElementById('conn-server').value || '127.0.0.1';
+            const db = document.getElementById('conn-db').value || 'rentauto_db';
+            const uid = document.getElementById('conn-uid').value || 'root';
+            const pwd = document.getElementById('conn-pwd').value;
+
+            const output = `Server=${server}; Database=${db}; Uid=${uid}; Pwd=${pwd}; Port=3306;`;
+            document.getElementById('conn-string-output').innerText = output;
+        }
+
+        // Copy code helper (Using standard document.execCommand as safety fallback in Canvas)
+        function copyToClipboard(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+
+            // Create dummy input for secure copy
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = textToCopy;
+            dummy.select();
+
+            try {
+                document.execCommand("copy");
+                showToast("¡Código copiado al portapapeles con éxito!");
+            } catch (err) {
+                showToast("Error al copiar. Intenta seleccionando manualmente.");
+            }
+
+            document.body.removeChild(dummy);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgSpan = document.getElementById('toast-msg');
+            msgSpan.innerText = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // Quiz Evaluation
+        function evaluateQuiz() {
+            const r1 = document.querySelector('input[name="q1"]:checked');
+            const r2 = document.querySelector('input[name="q2"]:checked');
+            const r3 = document.querySelector('input[name="q3"]:checked');
+
+            const resultBox = document.getElementById('quiz-result');
+
+            if (!r1 || !r2 || !r3) {
+                resultBox.className = "p-4 rounded-xl text-sm font-semibold bg-amber-500/10 border border-amber-500/20 text-amber-300";
+                resultBox.innerText = "Por favor responde todas las preguntas del cuestionario.";
+                resultBox.classList.remove('hidden');
+                return;
+            }
+
+            let score = 0;
+            if (r1.value === 'b') score++;
+            if (r2.value === 'c') score++;
+            if (r3.value === 'b') score++;
+
+            resultBox.classList.remove('hidden');
+
+            if (score === 3) {
+                resultBox.className = "p-4 rounded-xl text-sm font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
+                resultBox.innerHTML = `🌟 ¡Felicidades! Obtuviste un puntaje perfecto (3/3). Tienes claro cómo funciona ADO.NET y el hashing seguro.`;
+            } else {
+                resultBox.className = "p-4 rounded-xl text-sm font-semibold bg-red-500/10 border border-red-500/20 text-red-400";
+                resultBox.innerHTML = `⚠️ Obtuviste ${score}/3 respuestas correctas. Revisa las explicaciones de conexión C# y Login para reforzar tus conocimientos.`;
+            }
+        }
+    </script>
+</body>
+
+</html>
