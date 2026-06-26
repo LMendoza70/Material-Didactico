@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Digital de Salud en la Huasteca — Anteproyecto</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --vino: #6e1f3a;
+            --vino-oscuro: #4a1428;
+            --vino-claro: #9c3a5c;
+            --oro: #b08d3f;
+            --oro-claro: #d4b876;
+            --carbon: #1f2329;
+            --crema: #faf7f2;
+            --hueso: #f1ece3;
+            --tinta: #2b2622;
+            --gris: #6b6358;
+            --linea: #e3dccc;
+            --ok: #3d6b4f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--crema);
+            color: var(--tinta);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .serif {
+            font-family: 'Fraunces', serif;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* ===== Barra de progreso de documento ===== */
+        .doc-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--oro), var(--vino));
+            z-index: 999;
+            width: 0%;
+            transition: width .1s linear;
+        }
+
+        /* ===== Navegación de secciones ===== */
+        .nav-rail {
+            position: fixed;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: rgba(110, 31, 58, .25);
+            cursor: pointer;
+            transition: all .25s ease;
+            position: relative;
+        }
+
+        .nav-dot.active {
+            background: var(--vino);
+            transform: scale(1.3);
+        }
+
+        .nav-dot .tip {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--carbon);
+            color: var(--crema);
+            font-size: .7rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: .02em;
+        }
+
+        .nav-dot:hover .tip {
+            opacity: 1;
+        }
+
+        @media (max-width: 900px) {
+            .nav-rail {
+                display: none;
+            }
+        }
+
+        /* ===== Sello / membrete ===== */
+        .membrete {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--carbon);
+            color: var(--hueso);
+            font-family: 'Inter', sans-serif;
+            font-size: .72rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            padding: 9px 6%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 600;
+            border-bottom: 1px solid rgba(176, 141, 63, .4);
+        }
+
+        .membrete span:last-child {
+            color: var(--oro-claro);
+        }
+
+        /* ===================== HERO ===================== */
+        .hero {
+            min-height: 100vh;
+            background:
+                radial-gradient(ellipse at 75% 15%, rgba(176, 141, 63, .18), transparent 50%),
+                linear-gradient(160deg, var(--vino-oscuro) 0%, var(--vino) 55%, #5c1830 100%);
+            color: var(--crema);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 120px 9% 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                repeating-linear-gradient(115deg, transparent 0 70px, rgba(255, 255, 255, .025) 70px 71px);
+            pointer-events: none;
+        }
+
+        .hero-mark {
+            position: absolute;
+            right: 6%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 340px;
+            opacity: .14;
+            pointer-events: none;
+        }
+
+        @media (max-width:900px) {
+            .hero-mark {
+                display: none;
+            }
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .78rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--oro-claro);
+            margin-bottom: 28px;
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 28px;
+            height: 1px;
+            background: var(--oro-claro);
+        }
+
+        .hero h1 {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: clamp(2.6rem, 5.4vw, 4.6rem);
+            line-height: 1.05;
+            max-width: 880px;
+            letter-spacing: -.01em;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            font-weight: 400;
+            color: var(--oro-claro);
+        }
+
+        .hero-sub {
+            margin-top: 28px;
+            font-size: 1.15rem;
+            max-width: 620px;
+            color: rgba(250, 247, 242, .85);
+            font-weight: 300;
+        }
+
+        .hero-meta {
+            margin-top: 60px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 48px;
+            border-top: 1px solid rgba(250, 247, 242, .18);
+            padding-top: 28px;
+            max-width: 880px;
+        }
+
+        .hero-meta div {
+            font-size: .85rem;
+        }
+
+        .hero-meta .k {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--oro-claro);
+            font-size: .7rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .hero-meta .v {
+            color: var(--crema);
+            font-weight: 500;
+        }
+
+        .scroll-cue {
+            position: absolute;
+            bottom: 38px;
+            left: 9%;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .72rem;
+            color: rgba(250, 247, 242, .55);
+            letter-spacing: .08em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scroll-cue .line {
+            width: 1px;
+            height: 34px;
+            background: rgba(250, 247, 242, .4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: .3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* ===================== SECCIÓN GENÉRICA ===================== */
+        .section {
+            padding: 110px 9%;
+            position: relative;
+        }
+
+        .section.alt {
+            background: var(--hueso);
+        }
+
+        .section.dark {
+            background: var(--carbon);
+            color: var(--hueso);
+        }
+
+        .section.dark .section-num,
+        .section.dark .section-title {
+            color: var(--crema);
+        }
+
+        .section.vino {
+            background: linear-gradient(165deg, var(--vino-oscuro), var(--vino));
+            color: var(--crema);
+        }
+
+        .section.vino .section-title {
+            color: var(--crema);
+        }
+
+        .section.vino .section-num {
+            color: var(--oro-claro);
+        }
+
+        .section-head {
+            max-width: 780px;
+            margin-bottom: 56px;
+        }
+
+        .section-num {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--oro);
+            font-size: .8rem;
+            letter-spacing: .1em;
+            display: block;
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+            color: var(--vino-oscuro);
+            letter-spacing: -.01em;
+        }
+
+        .section-title em {
+            font-style: italic;
+            font-weight: 400;
+            color: var(--vino);
+        }
+
+        .section-lead {
+            margin-top: 18px;
+            font-size: 1.05rem;
+            color: var(--gris);
+            max-width: 680px;
+        }
+
+        .max-w {
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        /* ===================== PORTADA / AUTORIDADES ===================== */
+        .auth-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+        }
+
+        .auth-card {
+            background: var(--crema);
+            border: 1px solid var(--linea);
+            border-top: 3px solid var(--vino);
+            padding: 32px 28px;
+            position: relative;
+        }
+
+        .auth-card .org {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .68rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--oro);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .auth-card h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--vino-oscuro);
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .auth-card p {
+            font-size: .88rem;
+            color: var(--gris);
+        }
+
+        /* ===================== MISION VISION POLITICAS ===================== */
+        .mvp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border: 1px solid var(--linea);
+        }
+
+        @media(max-width:800px) {
+            .mvp-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mvp-cell {
+            padding: 44px 38px;
+            border-bottom: 1px solid var(--linea);
+        }
+
+        .mvp-cell:nth-child(odd) {
+            border-right: 1px solid var(--linea);
+        }
+
+        @media(max-width:800px) {
+            .mvp-cell:nth-child(odd) {
+                border-right: none;
+            }
+        }
+
+        .mvp-cell .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .7rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--oro);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .mvp-cell h3 {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            font-size: 1.5rem;
+            color: var(--vino);
+            margin-bottom: 16px;
+        }
+
+        .mvp-cell p {
+            color: var(--tinta);
+            font-size: .97rem;
+        }
+
+        .mvp-cell ul {
+            margin-top: 6px;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .mvp-cell li {
+            font-size: .92rem;
+            padding: 10px 0 10px 22px;
+            border-top: 1px solid var(--linea);
+            position: relative;
+        }
+
+        .mvp-cell li:first-child {
+            border-top: none;
+        }
+
+        .mvp-cell li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 18px;
+            width: 7px;
+            height: 7px;
+            background: var(--oro);
+        }
+
+        /* Valores chips */
+        .valores-wrap {
+            margin-top: 50px;
+        }
+
+        .valores-wrap .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .7rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--oro);
+            margin-bottom: 18px;
+            display: block;
+        }
+
+        .valores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .valor-chip {
+            font-family: 'Fraunces', serif;
+            font-size: .95rem;
+            padding: 10px 20px;
+            border: 1px solid var(--oro);
+            color: var(--vino-oscuro);
+            border-radius: 999px;
+            background: rgba(176, 141, 63, .06);
+        }
+
+        /* ===================== PRESENTACION / INTRO ===================== */
+        .intro-block {
+            display: grid;
+            grid-template-columns: 1.3fr .9fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        @media(max-width:860px) {
+            .intro-block {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .intro-block p {
+            font-size: 1.02rem;
+            color: var(--tinta);
+        }
+
+        .intro-block p+p {
+            margin-top: 18px;
+        }
+
+        .stat-card {
+            background: var(--carbon);
+            color: var(--crema);
+            padding: 34px 30px;
+            border-left: 4px solid var(--oro);
+        }
+
+        .stat-card .num {
+            font-family: 'Fraunces', serif;
+            font-size: 3.2rem;
+            font-weight: 600;
+            color: var(--oro-claro);
+            line-height: 1;
+        }
+
+        .stat-card .label {
+            margin-top: 8px;
+            font-size: .88rem;
+            color: rgba(250, 247, 242, .75);
+        }
+
+        .stat-card .src {
+            margin-top: 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .68rem;
+            letter-spacing: .04em;
+            color: rgba(250, 247, 242, .45);
+        }
+
+        /* ===================== OBJETIVO (grande, vino) ===================== */
+        .objetivo-text {
+            font-family: 'Fraunces', serif;
+            font-weight: 500;
+            font-size: clamp(1.5rem, 2.7vw, 2.15rem);
+            line-height: 1.4;
+            max-width: 980px;
+            letter-spacing: -.005em;
+        }
+
+        .objetivo-text em {
+            font-style: italic;
+            color: var(--oro-claro);
+            font-weight: 400;
+        }
+
+        /* ===================== HISTORIA (lista de hitos) ===================== */
+        .hist-list {
+            border-top: 1px solid var(--linea);
+        }
+
+        .hist-item {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            gap: 30px;
+            padding: 26px 0;
+            border-bottom: 1px solid var(--linea);
+        }
+
+        .hist-item .n {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--oro);
+            font-size: .85rem;
+            padding-top: 3px;
+        }
+
+        .hist-item h4 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.15rem;
+            color: var(--vino-oscuro);
+            margin-bottom: 6px;
+        }
+
+        .hist-item p {
+            font-size: .92rem;
+            color: var(--gris);
+        }
+
+        /* ===================== LINEA DE TIEMPO EPIDEMIOLOGICA ===================== */
+        .timeline-wrap {
+            position: relative;
+            padding-top: 10px;
+        }
+
+        .timeline-track {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+        }
+
+        @media(max-width:900px) {
+            .timeline-track {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:520px) {
+            .timeline-track {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tl-item {
+            background: var(--crema);
+            border: 1px solid var(--linea);
+            border-top: 4px solid var(--vino);
+            padding: 22px 18px;
+            position: relative;
+        }
+
+        .tl-item .year {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            color: var(--vino);
+            display: block;
+        }
+
+        .tl-item .disease {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .72rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--oro);
+            margin: 8px 0 10px;
+            display: block;
+        }
+
+        .tl-item p {
+            font-size: .85rem;
+            color: var(--gris);
+        }
+
+        /* ===================== 17 TEMAS ===================== */
+        .temas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 0;
+            border: 1px solid var(--linea);
+        }
+
+        .tema-cell {
+            padding: 20px 22px;
+            border-right: 1px solid var(--linea);
+            border-bottom: 1px solid var(--linea);
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .tema-cell .tnum {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .75rem;
+            color: var(--oro);
+            flex-shrink: 0;
+        }
+
+        .tema-cell span.name {
+            font-size: .93rem;
+        }
+
+        /* ===================== PROMOCION (5 ejes) ===================== */
+        .ejes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .eje-row {
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            gap: 24px;
+            padding: 24px 0;
+            border-bottom: 1px solid rgba(250, 247, 242, .15);
+            align-items: center;
+        }
+
+        .eje-row .ei {
+            font-family: 'Fraunces', serif;
+            font-size: 1.6rem;
+            color: var(--oro-claro);
+        }
+
+        .eje-row .et {
+            font-size: 1.05rem;
+            color: var(--crema);
+        }
+
+        /* ===================== SALUD MENTAL ===================== */
+        .sm-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+
+        @media(max-width:860px) {
+            .sm-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sm-grid p {
+            font-size: .98rem;
+            color: var(--tinta);
+        }
+
+        .accion-card {
+            border-left: 3px solid var(--vino);
+            padding: 6px 0 6px 20px;
+            margin-bottom: 22px;
+        }
+
+        .accion-card h4 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.02rem;
+            color: var(--vino-oscuro);
+            margin-bottom: 5px;
+        }
+
+        .accion-card p {
+            font-size: .88rem;
+            color: var(--gris);
+        }
+
+        /* ===================== HERRAMIENTAS / CANALES ===================== */
+        .canales-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 14px;
+            margin-bottom: 50px;
+        }
+
+        .canal-pill {
+            background: var(--crema);
+            border: 1px solid var(--linea);
+            padding: 18px 20px;
+            font-family: 'Fraunces', serif;
+            font-size: 1rem;
+            color: var(--vino-oscuro);
+            text-align: center;
+        }
+
+        /* ===================== ANEXO: PROPUESTA DE PLATAFORMA ===================== */
+        .anexo-banner {
+            background: var(--oro);
+            color: var(--vino-oscuro);
+            text-align: center;
+            padding: 14px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .78rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .anexo-frame {
+            background: var(--carbon);
+            padding: 50px 9% 90px;
+        }
+
+        .anexo-head {
+            max-width: 780px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+
+        .anexo-head .section-num {
+            color: var(--oro);
+        }
+
+        .anexo-head h2 {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            color: var(--crema);
+            font-size: clamp(1.7rem, 3vw, 2.3rem);
+        }
+
+        .anexo-head p {
+            color: rgba(250, 247, 242, .7);
+            margin-top: 14px;
+            font-size: .98rem;
+        }
+
+        .browser-chrome {
+            max-width: 1180px;
+            margin: 0 auto;
+            background: #0d0f12;
+            border-radius: 14px;
+            padding: 14px 14px 0;
+            box-shadow: 0 40px 90px -20px rgba(0, 0, 0, .6);
+        }
+
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0 6px 14px;
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 7px;
+        }
+
+        .browser-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #444;
+        }
+
+        .browser-url {
+            flex: 1;
+            background: #1a1d22;
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .72rem;
+            color: #8a8f98;
+        }
+
+        .browser-screen {
+            background: #fff;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+
+        .mock-iframe {
+            width: 100%;
+            height: 780px;
+            border: none;
+            display: block;
+        }
+
+        @media(max-width:700px) {
+            .mock-iframe {
+                height: 620px;
+            }
+        }
+
+        .anexo-foot {
+            max-width: 1180px;
+            margin: 34px auto 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: space-between;
+            font-size: .85rem;
+            color: rgba(250, 247, 242, .55);
+        }
+
+        .anexo-foot .tagnote {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .anexo-foot .tagnote::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--oro);
+        }
+
+        /* ===================== FASES (si se requieren del HTML original, fusionado en plataforma) ===================== */
+
+        /* ===================== BENEFICIARIOS ===================== */
+        .benef-highlight {
+            background: var(--crema);
+            border-left: 6px solid var(--vino);
+            padding: 40px 38px;
+            max-width: 980px;
+        }
+
+        .benef-highlight .big {
+            font-family: 'Fraunces', serif;
+            font-size: 2.6rem;
+            font-weight: 600;
+            color: var(--vino);
+            display: block;
+        }
+
+        .benef-highlight p {
+            margin-top: 14px;
+            font-size: 1rem;
+            color: var(--tinta);
+        }
+
+        /* ===================== CREDITOS / GRACIAS ===================== */
+        .gracias-section {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(165deg, var(--vino-oscuro), #3c0f20);
+            color: var(--crema);
+            flex-direction: column;
+            padding: 80px 9%;
+        }
+
+        .gracias-section h2 {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            font-weight: 500;
+            font-size: clamp(2.4rem, 6vw, 4.5rem);
+            color: var(--oro-claro);
+        }
+
+        .gracias-sub {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: rgba(250, 247, 242, .65);
+            max-width: 520px;
+        }
+
+        .creditos-list {
+            margin-top: 50px;
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .credito-item {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .78rem;
+            color: rgba(250, 247, 242, .7);
+            text-align: left;
+        }
+
+        .credito-item .role {
+            display: block;
+            color: var(--oro-claro);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            font-size: .68rem;
+        }
+
+        footer {
+            background: var(--carbon);
+            color: rgba(250, 247, 242, .5);
+            text-align: center;
+            padding: 34px 20px;
+            font-size: .78rem;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: .03em;
+        }
+
+        /* fade-in on scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity .7s ease, transform .7s ease;
+        }
+
+        .reveal.in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+
+            .scroll-cue .line {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="doc-progress" id="progress"></div>
+
+    <div class="membrete">
+        <span>Secretaría de Salud de Hidalgo · Jurisdicción Sanitaria No. 4 Huejutla</span>
+        <span>Anteproyecto · Junio 2026</span>
+    </div>
+
+    <nav class="nav-rail" id="navRail"></nav>
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="s-portada">
+        <svg class="hero-mark" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g fill="#d4b876">
+                <polygon points="100,20 115,80 100,100 85,80" />
+                <polygon points="180,100 120,115 100,100 120,85" />
+                <polygon points="100,180 85,120 100,100 115,120" />
+                <polygon points="20,100 80,85 100,100 80,115" />
+                <polygon points="155,45 122,92 100,100 108,78" />
+                <polygon points="155,155 108,122 100,100 122,108" />
+                <polygon points="45,155 78,108 100,100 92,122" />
+                <polygon points="45,45 92,78 100,100 78,92" />
+            </g>
+        </svg>
+
+        <span class="eyebrow">Anteproyecto institucional · Junio 2026</span>
+        <h1>Plataforma Digital de <em>Salud</em> en la Huasteca</h1>
+        <p class="hero-sub">
+            Una propuesta para integrar la memoria epidemiológica, la educación en salud y la
+            promoción del autocuidado de la región huasteca hidalguense en un solo espacio digital.
+        </p>
+
+        <div class="hero-meta">
+            <div><span class="k">Promueve</span><span class="v">Secretaría de Salud de Hidalgo</span></div>
+            <div><span class="k">Ejecuta</span><span class="v">Jurisdicción Sanitaria No. 4 · Huejutla</span></div>
+            <div><span class="k">Colabora</span><span class="v">Universidad Tecnológica de la Huasteca
+                    Hidalguense</span></div>
+            <div><span class="k">Estado</span><span class="v">Para revisión y aprobación institucional</span></div>
+        </div>
+
+        <div class="scroll-cue">
+            <div class="line"></div>Desplázate para revisar el anteproyecto
+        </div>
+    </section>
+
+    <!-- ============ AUTORIDADES ============ -->
+    <section class="section" id="s-autoridades">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">00 — Autoridades y responsables</span>
+                <h2 class="section-title">Instituciones y personas a cargo</h2>
+                <p class="section-lead">El anteproyecto se presenta de manera conjunta entre las autoridades estatales
+                    de salud, la jurisdicción sanitaria local y la institución académica colaboradora.</p>
+            </div>
+
+            <div class="auth-grid reveal">
+                <div class="auth-card">
+                    <span class="org">Secretaría de Salud de Hidalgo</span>
+                    <h3>Dra. Juana Vanesa Escalante Arroyo</h3>
+                    <p>Secretaria de Salud de Hidalgo y Directora de los Servicios de Salud de Hidalgo (SSH)</p>
+                </div>
+                <div class="auth-card">
+                    <span class="org">Jurisdicción Sanitaria No. 4 · Huejutla</span>
+                    <h3>Dr. Jesús Rodríguez Ortega</h3>
+                    <p>Jefe de la Jurisdicción Sanitaria No. 4, Huejutla</p>
+                </div>
+                <div class="auth-card">
+                    <span class="org">Universidad Tecnológica de la Huasteca Hidalguense</span>
+                    <h3>C.P. Miguel Ángel Acosta Salazar</h3>
+                    <p>Rector de la Universidad Tecnológica de la Huasteca Hidalguense</p>
+                </div>
+                <div class="auth-card">
+                    <span class="org">Equipo técnico — UTHH</span>
+                    <h3>Mtro. Cesar Adrián Ortega Crespo</h3>
+                    <p>MGA. Hermes Salazar Casanova · MTI. Luis Alberto Mendoza San Juan</p>
+                </div>
+                <div class="auth-card">
+                    <span class="org">Equipo clínico y de salud — Jurisdicción No. 4</span>
+                    <h3>Dr. Esteban Quevedo Moraila</h3>
+                    <p>Enf. Salustia Brígido Gómez · Enf. Elidad Hernández Amador · Enf. Griselda Hernández Ramos · Lic.
+                        en T.S. Flora Hernández Amador</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ MISION / VISION / POLITICAS / VALORES ============ -->
+    <section class="section alt" id="s-identidad">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">01 — Quiénes somos, qué hacemos y a dónde vamos</span>
+                <h2 class="section-title">Identidad <em>institucional</em></h2>
+            </div>
+
+            <div class="mvp-grid reveal">
+                <div class="mvp-cell">
+                    <span class="tag">Misión</span>
+                    <h3>Qué hacemos</h3>
+                    <p>Institución de salud pública responsable de establecer coordinación institucional,
+                        interinstitucional y sectorial mediante la aplicación de guías de práctica clínica y normas
+                        oficiales mexicanas, que garanticen el fomento, la promoción, prevención y atención a la salud
+                        de calidad para la población de la huasteca hidalguense.</p>
+                </div>
+                <div class="mvp-cell">
+                    <span class="tag">Visión</span>
+                    <h3>Dónde vamos</h3>
+                    <p>Ser una institución líder y vanguardista que, a través de la salud pública y la atención primaria
+                        a la salud, lleve a la población de la huasteca hidalguense hacia una cultura del autocuidado,
+                        logrando una mejora en su calidad de vida.</p>
+                </div>
+                <div class="mvp-cell" style="grid-column:1 / -1;">
+                    <span class="tag">Políticas institucionales</span>
+                    <ul>
+                        <li>Garantizar la protección de la salud colectiva.</li>
+                        <li>Garantizar el bienestar de la población mediante la salud pública y enfrentar los brotes
+                            epidemiológicos.</li>
+                        <li>Fomentar la práctica de guías clínicas en la atención y normas oficiales en salud.</li>
+                        <li>Establecer estrategias en el autocuidado de la salud.</li>
+                        <li>Priorizar la atención primaria a la salud (APS) con un enfoque en la promoción,
+                            anticipándonos a la enfermedad.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="valores-wrap reveal">
+                <span class="tag">Valores</span>
+                <div class="valores">
+                    <span class="valor-chip">Compromiso</span>
+                    <span class="valor-chip">Responsabilidad</span>
+                    <span class="valor-chip">Disciplina</span>
+                    <span class="valor-chip">Eficiencia</span>
+                    <span class="valor-chip">Solidaridad</span>
+                    <span class="valor-chip">Calidad</span>
+                    <span class="valor-chip">Puntualidad</span>
+                    <span class="valor-chip">Honestidad</span>
+                    <span class="valor-chip">Respeto</span>
+                    <span class="valor-chip">Empatía</span>
+                    <span class="valor-chip">Confianza</span>
+                    <span class="valor-chip">Eficacia</span>
+                    <span class="valor-chip">Igualdad</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ PRESENTACION ============ -->
+    <section class="section" id="s-presentacion">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">02 — Presentación</span>
+                <h2 class="section-title">Por qué nace este <em>proyecto</em></h2>
+            </div>
+
+            <div class="intro-block reveal">
+                <p>
+                    La Secretaría de Salud de Hidalgo, a través de la Jurisdicción Sanitaria No. 4 de Huejutla,
+                    identifica la necesidad de hacer llegar a la población información actualizada sobre la salud de la
+                    región. Ante la preocupación de la Dra. Juana Vanesa Escalante Arroyo, Secretaria de Salud de
+                    Hidalgo y Directora de los Servicios de Salud de Hidalgo, por resolver la problemática de salud de
+                    los hidalguenses, se elabora esta propuesta.
+                </p>
+                <p>
+                    El objetivo es informar de forma inmediata, con interés genuino, los programas, estrategias,
+                    actividades y acciones que se realizan para otorgar herramientas que ayuden a disminuir y controlar
+                    los riesgos en salud. Así se da origen a este proyecto, con el cual la población tendrá la
+                    oportunidad de mantenerse actualizada en el conocimiento de la salud personal, familiar y colectiva.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ INTRODUCCION ============ -->
+    <section class="section alt" id="s-introduccion">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">03 — Introducción</span>
+                <h2 class="section-title">Un espacio pensado para <em>el usuario</em></h2>
+            </div>
+
+            <div class="intro-block reveal">
+                <p>
+                    Este proyecto será diseñado y estructurado de forma que el usuario encuentre temas e información de
+                    su interés, y pueda aplicar ese conocimiento en la mejora de su calidad de vida — con la visión de
+                    enfocar sus acciones en el autocuidado de la salud y en la mejora de los entornos donde se
+                    desenvuelve.
+                </p>
+
+                <div class="stat-card">
+                    <span class="num">80%</span>
+                    <p class="label">más participación generan los formatos interactivos (encuestas, cuestionarios,
+                        vídeos) frente a los medios tradicionales, según Evenflare. Esto motiva el enfoque visual e
+                        interactivo de la plataforma.</p>
+                    <p class="src">FUENTE — EVENFLARE, CITADO EN EL ANTEPROYECTO ORIGINAL</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ OBJETIVO ============ -->
+    <section class="section vino" id="s-objetivo">
+        <div class="max-w">
+            <span class="section-num">04 — Objetivo</span>
+            <p class="objetivo-text reveal">
+                Crear una plataforma digital <em>innovadora, atractiva e interactiva</em> con información sobre salud
+                pública, epidemiología, historia de la salud de la región huasteca y actualidades — que despierte el
+                interés de la población hidalguense en la promoción, prevención, conservación, recuperación y
+                rehabilitación de la salud.
+            </p>
+        </div>
+    </section>
+
+    <!-- ============ HISTORIA DE LA SALUD ============ -->
+    <section class="section" id="s-historia">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">05 — Historia de la salud en la Huasteca</span>
+                <h2 class="section-title">Memoria que se quiere <em>preservar</em></h2>
+                <p class="section-lead">Contenidos históricos que la plataforma recopilará, ordenará y hará accesibles
+                    al público.</p>
+            </div>
+
+            <div class="hist-list reveal">
+                <div class="hist-item">
+                    <span class="n">01</span>
+                    <div>
+                        <h4>Creación del Centro de Salud Huejutla</h4>
+                        <p>Semblanza del centro de salud y de su primer director.</p>
+                    </div>
+                </div>
+                <div class="hist-item">
+                    <span class="n">02</span>
+                    <div>
+                        <h4>Líneas del tiempo</h4>
+                        <p>Enfermedades principales de la Huasteca; brotes epidémicos y epidemias a través del tiempo.
+                        </p>
+                    </div>
+                </div>
+                <div class="hist-item">
+                    <span class="n">03</span>
+                    <div>
+                        <h4>Recopilación de eventos históricos en salud</h4>
+                        <p>Por ejemplo, la primera regionalización del sector salud a nivel nacional.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ LINEA DE TIEMPO EPIDEMIOLOGICA ============ -->
+    <section class="section alt" id="s-timeline">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">05.1 — Línea del tiempo epidemiológica</span>
+                <h2 class="section-title">Hitos que marcaron la <em>región</em></h2>
+            </div>
+
+            <div class="timeline-wrap reveal">
+                <div class="timeline-track">
+                    <div class="tl-item"><span class="year">1979</span><span class="disease">Dengue</span>
+                        <p>Primeros brotes importantes documentados.</p>
+                    </div>
+                    <div class="tl-item"><span class="year">1985</span><span class="disease">VIH</span>
+                        <p>Inicio de la vigilancia epidemiológica regional.</p>
+                    </div>
+                    <div class="tl-item"><span class="year">1990</span><span class="disease">Cólera</span>
+                        <p>Impacto regional y acciones de respuesta.</p>
+                    </div>
+                    <div class="tl-item"><span class="year">1990</span><span class="disease">Chagas</span>
+                        <p>Detección y expansión del vector en la región.</p>
+                    </div>
+                    <div class="tl-item"><span class="year">2020</span><span class="disease">COVID-19</span>
+                        <p>Experiencia reciente y lecciones aprendidas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ 17 TEMAS ============ -->
+    <section class="section" id="s-temas">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">06 — Temas de la plataforma</span>
+                <h2 class="section-title">Diecisiete ejes de <em>contenido</em></h2>
+                <p class="section-lead">Catálogo de temas prioritarios que abordará la plataforma, comenzando por la
+                    historia del dengue en la Huasteca.</p>
+            </div>
+
+            <div class="temas-grid reveal">
+                <div class="tema-cell"><span class="tnum">01</span><span class="name">Dengue — historia en la
+                        Huasteca</span></div>
+                <div class="tema-cell"><span class="tnum">02</span><span class="name">Inundaciones</span></div>
+                <div class="tema-cell"><span class="tnum">03</span><span class="name">Cólera</span></div>
+                <div class="tema-cell"><span class="tnum">04</span><span class="name">Síntomas de las
+                        enfermedades</span></div>
+                <div class="tema-cell"><span class="tnum">05</span><span class="name">Conociendo nuestro cuerpo</span>
+                </div>
+                <div class="tema-cell"><span class="tnum">06</span><span class="name">Salud reproductiva</span></div>
+                <div class="tema-cell"><span class="tnum">07</span><span class="name">Enfermedades genéticas (síndrome
+                        de Down)</span></div>
+                <div class="tema-cell"><span class="tnum">08</span><span class="name">VIH y SIDA</span></div>
+                <div class="tema-cell"><span class="tnum">09</span><span class="name">Adicciones (alcohol, drogas,
+                        etc.)</span></div>
+                <div class="tema-cell"><span class="tnum">10</span><span class="name">Accidentes (auto, moto)</span>
+                </div>
+                <div class="tema-cell"><span class="tnum">11</span><span class="name">Cáncer</span></div>
+                <div class="tema-cell"><span class="tnum">12</span><span class="name">Sarampión</span></div>
+                <div class="tema-cell"><span class="tnum">13</span><span class="name">Tuberculosis</span></div>
+                <div class="tema-cell"><span class="tnum">14</span><span class="name">COVID-19</span></div>
+                <div class="tema-cell"><span class="tnum">15</span><span class="name">Rabia humana</span></div>
+                <div class="tema-cell"><span class="tnum">16</span><span class="name">Influenza H1N1</span></div>
+                <div class="tema-cell"><span class="tnum">17</span><span class="name">Salud mental y otros</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ PROMOCION DE LA SALUD ============ -->
+    <section class="section dark" id="s-promocion">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">07 — Promoción de la salud</span>
+                <h2 class="section-title">Lo que la página <em>privilegiará</em></h2>
+            </div>
+
+            <div class="ejes-list reveal">
+                <div class="eje-row"><span class="ei">01</span><span class="et">El fomento de la salud como práctica
+                        cotidiana</span></div>
+                <div class="eje-row"><span class="ei">02</span><span class="et">La información clara y verificada</span>
+                </div>
+                <div class="eje-row"><span class="ei">03</span><span class="et">La promoción activa de hábitos
+                        saludables</span></div>
+                <div class="eje-row"><span class="ei">04</span><span class="et">La orientación a la población</span>
+                </div>
+                <div class="eje-row"><span class="ei">05</span><span class="et">La educación a la salud de los
+                        usuarios</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SALUD MENTAL ============ -->
+    <section class="section alt" id="s-mental">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">08 — Salud mental</span>
+                <h2 class="section-title">Prioridad para las y los <em>jóvenes</em></h2>
+            </div>
+
+            <div class="sm-grid reveal">
+                <div>
+                    <p>
+                        Los jóvenes de la huasteca hidalguense tienen necesidades y prioridades actuales en salud
+                        mental, centradas en la prevención de la ansiedad y la depresión, así como en las adicciones. Es
+                        muy importante la gestión del agotamiento emocional, el uso responsable de las redes sociales y
+                        la erradicación del estigma social, escolar y cultural.
+                    </p>
+                    <p style="margin-top:16px;">
+                        Enfrentar estos desafíos de forma integral es de vital importancia para el buen desarrollo
+                        saludable de nuestros jóvenes.
+                    </p>
+                </div>
+
+                <div>
+                    <div class="accion-card">
+                        <h4>Manejo del estrés y agotamiento</h4>
+                        <p>La presión académica y social exige desarrollar resiliencia y establecer límites saludables
+                            para evitar trastornos graves.</p>
+                    </div>
+                    <div class="accion-card">
+                        <h4>Educación emocional</h4>
+                        <p>Programas como el "ABC de las Emociones", impulsado a nivel nacional, buscan intervenir desde
+                            el entorno familiar y escolar para prevenir la violencia y la depresión.</p>
+                    </div>
+                    <div class="accion-card">
+                        <h4>Convivencia y redes de apoyo</h4>
+                        <p>Cultivar relaciones sanas y mantener rutinas claras de sueño, alimentación y ejercicio son
+                            pilares de la prevención.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ HERRAMIENTAS Y CANALES ============ -->
+    <section class="section" id="s-herramientas">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">09 — Técnicas y herramientas</span>
+                <h2 class="section-title">Canales de <em>difusión</em></h2>
+                <p class="section-lead">Enlaces y vinculaciones para llevar las actualidades en salud, cápsulas
+                    informativas y mensajes a la población.</p>
+            </div>
+
+            <div class="canales-grid reveal">
+                <div class="canal-pill">Reels</div>
+                <div class="canal-pill">Entrevistas</div>
+                <div class="canal-pill">Podcast</div>
+                <div class="canal-pill">TikTok</div>
+                <div class="canal-pill">Instagram</div>
+                <div class="canal-pill">Facebook</div>
+                <div class="canal-pill">Influencer en salud</div>
+                <div class="canal-pill">Canales endémicos</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ POBLACION BENEFICIADA ============ -->
+    <section class="section alt" id="s-poblacion">
+        <div class="max-w">
+            <div class="section-head reveal">
+                <span class="section-num">10 — Población beneficiada</span>
+                <h2 class="section-title">A quién <em>impacta</em> el proyecto</h2>
+            </div>
+
+            <div class="benef-highlight reveal">
+                <span class="big">+300,000</span>
+                <p>habitantes de la región huasteca, personal de salud, instituciones educativas, autoridades
+                    municipales y futuras generaciones interesadas en la historia sanitaria regional.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ ANEXO — PROPUESTA VISUAL DE LA PLATAFORMA ============ -->
+    <div class="anexo-banner">Anexo · Propuesta visual del entregable digital</div>
+    <section class="anexo-frame" id="s-anexo">
+        <div class="anexo-head reveal">
+            <span class="section-num">11 — Anexo técnico</span>
+            <h2>Maqueta de la <em>Plataforma Digital de Salud de la Huasteca</em></h2>
+            <p>
+                A manera de anexo, se presenta una primera propuesta visual de cómo podría verse el portal descrito en
+                este anteproyecto: integra la línea del tiempo histórica, las infografías interactivas, el contenido
+                multimedia y la vinculación con redes sociales planteados en las secciones anteriores. Esta maqueta es
+                un punto de partida para revisión, no el diseño final.
+            </p>
+        </div>
+
+        <div class="browser-chrome reveal">
+            <div class="browser-bar">
+                <div class="browser-dots"><span></span><span></span><span></span></div>
+                <div class="browser-url">saluddelahuasteca.hidalgo.gob.mx — anteproyecto / vista previa</div>
+            </div>
+            <div class="browser-screen">
+                <iframe class="mock-iframe" id="platformFrame" title="Vista previa de la plataforma propuesta"></iframe>
+            </div>
+        </div>
+
+        <div class="anexo-foot reveal">
+            <span class="tagnote">Línea del tiempo histórica</span>
+            <span class="tagnote">Infografías interactivas</span>
+            <span class="tagnote">Contenido multimedia</span>
+            <span class="tagnote">Integración con redes sociales</span>
+            <span class="tagnote">Fases de desarrollo: 4</span>
+        </div>
+    </section>
+
+    <!-- ============ CREDITOS / GRACIAS ============ -->
+    <section class="gracias-section" id="s-gracias">
+        <h2 class="reveal">Gracias</h2>
+        <p class="gracias-sub reveal">Anteproyecto presentado para revisión y aprobación institucional.</p>
+
+        <div class="creditos-list reveal">
+            <div class="credito-item"><span class="role">Entrevista</span>Dr. Leonel Barrón López</div>
+            <div class="credito-item"><span class="role">Entrevista</span>Dra. Yesenia Martínez Ortiz</div>
+        </div>
+    </section>
+
+    <footer>
+        SECRETARÍA DE SALUD DE HIDALGO · SERVICIOS DE SALUD DE HIDALGO · JURISDICCIÓN SANITARIA NO. 4 HUEJUTLA ·
+        UNIVERSIDAD TECNOLÓGICA DE LA HUASTECA HIDALGUENSE — JUNIO 2026
+    </footer>
+
+    <script>
+        /* ---- Plataforma propuesta: contenido del anexo, cargado dentro del iframe ---- */
+        const platformHTML = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',Arial,sans-serif;line-height:1.6;color:#2b2622;}
+.hero{background:linear-gradient(135deg,#4a1428,#6e1f3a);color:#faf7f2;padding:70px 8%;}
+.hero h1{font-size:2.2rem;margin-bottom:16px;font-family:Georgia,serif;}
+.hero p{font-size:1rem;max-width:640px;opacity:.9;}
+.section{padding:50px 8%;}
+.section-title{color:#6e1f3a;margin-bottom:22px;font-size:1.5rem;font-family:Georgia,serif;}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;}
+.card{background:#faf7f2;padding:20px;border-radius:8px;border-top:3px solid #b08d3f;}
+.card h3{color:#6e1f3a;margin-bottom:10px;font-size:1.02rem;}
+.card p{font-size:.88rem;color:#555;}
+.highlight{background:#f1ece3;border-left:5px solid #b08d3f;padding:22px;margin-top:18px;border-radius:6px;font-size:.92rem;}
+.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;}
+.timeline-item{background:#fff;border-top:4px solid #6e1f3a;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.07);}
+.timeline-item h4{color:#6e1f3a;font-size:.92rem;}
+.timeline-item p{font-size:.8rem;color:#666;margin-top:4px;}
+.objective{background:#1f2329;color:#faf7f2;}
+.objective .section-title{color:#fff;}
+.objective p{font-size:.95rem;opacity:.85;max-width:680px;}
+footer{background:#6e1f3a;color:#faf7f2;text-align:center;padding:24px;font-size:.82rem;}
+ul.benefits{margin-left:18px;font-size:.9rem;}
+ul.benefits li{margin-bottom:6px;}
+</style>
+</head>
+<body>
+<section class="hero">
+  <h1>Plataforma Digital de Salud de la Huasteca</h1>
+  <p>Educación, promoción y prevención en salud pública, para fortalecer la cultura del autocuidado y preservar la memoria epidemiológica de la región.</p>
+</section>
+<section class="section">
+  <h2 class="section-title">¿Qué ofrecerá la plataforma?</h2>
+  <div class="cards">
+    <div class="card"><h3>Línea del tiempo histórica</h3><p>Evolución de enfermedades y eventos relevantes en salud pública de la Huasteca.</p></div>
+    <div class="card"><h3>Infografías interactivas</h3><p>Información clara y visual sobre prevención y autocuidado.</p></div>
+    <div class="card"><h3>Contenido multimedia</h3><p>Videos, cápsulas informativas, entrevistas y material educativo.</p></div>
+    <div class="card"><h3>Integración con redes sociales</h3><p>Difusión vía Facebook, Instagram, TikTok y otros canales.</p></div>
+  </div>
+</section>
+<section class="section" style="background:#f1ece3;">
+  <h2 class="section-title">Línea del tiempo epidemiológica</h2>
+  <div class="timeline">
+    <div class="timeline-item"><h4>1979 — Dengue</h4><p>Primeros brotes importantes documentados.</p></div>
+    <div class="timeline-item"><h4>1985 — VIH</h4><p>Inicio de la vigilancia epidemiológica regional.</p></div>
+    <div class="timeline-item"><h4>1990 — Cólera</h4><p>Impacto regional y acciones de respuesta.</p></div>
+    <div class="timeline-item"><h4>1990 — Chagas</h4><p>Detección y expansión del vector en la región.</p></div>
+    <div class="timeline-item"><h4>2020 — COVID-19</h4><p>Experiencia reciente y lecciones aprendidas.</p></div>
+  </div>
+</section>
+<section class="section">
+  <h2 class="section-title">Fases del proyecto</h2>
+  <div class="cards">
+    <div class="card"><h3>Fase 1</h3><p>Recopilación y organización de información histórica y epidemiológica.</p></div>
+    <div class="card"><h3>Fase 2</h3><p>Desarrollo del portal web y prototipo funcional.</p></div>
+    <div class="card"><h3>Fase 3</h3><p>Producción de infografías y material multimedia.</p></div>
+    <div class="card"><h3>Fase 4</h3><p>Integración con redes sociales y estrategia de difusión.</p></div>
+  </div>
+</section>
+<section class="section objective">
+  <h2 class="section-title">Beneficios estratégicos</h2>
+  <ul class="benefits">
+    <li>Preservación de la memoria histórica en salud pública.</li>
+    <li>Fortalecimiento de la educación para la salud.</li>
+    <li>Mayor alcance mediante medios digitales.</li>
+    <li>Apoyo a programas de prevención existentes.</li>
+    <li>Modelo escalable a nivel estatal.</li>
+    <li>Proyecto pionero a nivel nacional.</li>
+  </ul>
+</section>
+<footer>Secretaría de Salud · Jurisdicción Sanitaria · Universidad Tecnológica de la Huasteca Hidalguense</footer>
+</body>
+</html>`;
+
+        document.getElementById('platformFrame').srcdoc = platformHTML;
+
+        /* ---- Barra de progreso ---- */
+        const progressBar = document.getElementById('progress');
+        function updateProgress() {
+            const h = document.documentElement;
+            const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+            progressBar.style.width = scrolled + '%';
+        }
+        window.addEventListener('scroll', updateProgress);
+        updateProgress();
+
+        /* ---- Navegación lateral con puntos ---- */
+        const sections = [
+            { id: 's-portada', label: 'Portada' },
+            { id: 's-autoridades', label: 'Autoridades' },
+            { id: 's-identidad', label: 'Identidad institucional' },
+            { id: 's-presentacion', label: 'Presentación' },
+            { id: 's-introduccion', label: 'Introducción' },
+            { id: 's-objetivo', label: 'Objetivo' },
+            { id: 's-historia', label: 'Historia de la salud' },
+            { id: 's-timeline', label: 'Línea del tiempo' },
+            { id: 's-temas', label: '17 temas' },
+            { id: 's-promocion', label: 'Promoción de la salud' },
+            { id: 's-mental', label: 'Salud mental' },
+            { id: 's-herramientas', label: 'Herramientas y canales' },
+            { id: 's-poblacion', label: 'Población beneficiada' },
+            { id: 's-anexo', label: 'Anexo: plataforma' },
+            { id: 's-gracias', label: 'Créditos' },
+        ];
+
+        const navRail = document.getElementById('navRail');
+        sections.forEach(sec => {
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot';
+            dot.dataset.target = sec.id;
+            dot.innerHTML = `<span class="tip">${sec.label}</span>`;
+            dot.addEventListener('click', () => {
+                document.getElementById(sec.id).scrollIntoView({ behavior: 'smooth' });
+            });
+            navRail.appendChild(dot);
+        });
+
+        const dots = navRail.querySelectorAll('.nav-dot');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    dots.forEach(d => d.classList.remove('active'));
+                    const idx = sections.findIndex(s => s.id === entry.target.id);
+                    if (dots[idx]) dots[idx].classList.add('active');
+                }
+            });
+        }, { threshold: 0.5 });
+        sections.forEach(sec => {
+            const el = document.getElementById(sec.id);
+            if (el) observer.observe(el);
+        });
+
+        /* ---- Reveal on scroll ---- */
+        const revealEls = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        revealEls.forEach(el => revealObserver.observe(el));
+    </script>
+
+</body>
+
+</html>
