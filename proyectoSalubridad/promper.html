@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de Prompt Engineering</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5em;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 2.2rem;
+        }
+
+        h2 {
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+            margin-top: 1.5rem;
+        }
+
+        section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .intro {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .example-btn {
+            background: #27ae60;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .example-btn:hover {
+            background: #219653;
+        }
+
+        .copy-btn {
+            background: #9b59b6;
+        }
+
+        .copy-btn:hover {
+            background: #8e44ad;
+        }
+
+        .prompt-output {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .step {
+            margin-bottom: 30px;
+        }
+
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tip {
+            background: #e8f4fc;
+            border-left: 4px solid #3498db;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🛠️ Asistente de Prompt Engineering</h1>
+    <p class="intro">
+        Esta herramienta te guiará paso a paso para crear el prompt perfecto según tu necesidad,<br>
+        aplicando las mejores prácticas actuales de prompt engineering.
+    </p>
+
+    <section id="guide">
+        <h2>📚 Guía rápida de mejores prácticas</h2>
+        <ul>
+            <li><strong>Claridad:</strong> Sé específico en lo que quieres (objetivo, formato, longitud).</li>
+            <li><strong>Estructura:</strong> Instrucciones primero, contexto después. Usa delimitadores como
+                <code>###</code>.</li>
+            <li><strong>Ejemplos:</strong> Incluye ejemplos de entrada–salida para tareas complejas (few-shot).</li>
+            <li><strong>Rol:</strong> Asigna un rol al modelo (experto, profesor, desarrollador, etc.).</li>
+            <li><strong>Restricciones:</strong> Define longitud, estilo, lo que debe evitar.</li>
+            <li><strong>Razonamiento:</strong> Pide explicaciones paso a paso si es necesario (Chain-of-Thought).</li>
+        </ul>
+        <div class="tip">
+            💡 <strong>Tip:</strong> Trata los prompts como código: versiona, prueba y refina.
+        </div>
+    </section>
+
+    <section id="builder">
+        <h2>🧩 Constructor de prompts</h2>
+        <p>Completa cada paso según tu necesidad. El prompt final se generará automáticamente.</p>
+
+        <div class="step">
+            <h3>Paso 1: Rol del modelo</h3>
+            <label for="role">¿Quién debe ser el modelo?</label>
+            <input type="text" id="role" placeholder="Ej: Eres un profesor de programación con 10 años de experiencia.">
+            <div class="examples">
+                <button class="example-btn"
+                    onclick="setExample('role', 'Eres un profesor de programación con 10 años de experiencia.')">Profesor
+                    de programación</button>
+                <button class="example-btn"
+                    onclick="setExample('role', 'Eres un redactor profesional especializado en marketing digital.')">Redactor
+                    de marketing</button>
+                <button class="example-btn" onclick="setExample('role', 'Eres un analista de datos senior.')">Analista
+                    de datos</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Paso 2: Objetivo</h3>
+            <label for="objective">¿Qué quieres lograr?</label>
+            <textarea id="objective"
+                placeholder="Ej: Explicar qué es una función en Python a un principiante absoluto."></textarea>
+            <div class="examples">
+                <button class="example-btn"
+                    onclick="setExample('objective', 'Explicar qué es una función en Python a un principiante absoluto.')">Explicar
+                    concepto técnico</button>
+                <button class="example-btn"
+                    onclick="setExample('objective', 'Generar ideas para un post de blog sobre inteligencia artificial.')">Generar
+                    ideas creativas</button>
+                <button class="example-btn"
+                    onclick="setExample('objective', 'Analizar un conjunto de datos y extraer insights clave.')">Análisis
+                    de datos</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Paso 3: Contexto</h3>
+            <label for="context">Información relevante (audiencia, nivel técnico, datos clave):</label>
+            <textarea id="context"
+                placeholder="Ej: El estudiante nunca ha programado. Usa analogías de la vida real."></textarea>
+            <div class="examples">
+                <button class="example-btn"
+                    onclick="setExample('context', 'El estudiante nunca ha programado. Usa analogías de la vida real.')">Para
+                    principiantes</button>
+                <button class="example-btn"
+                    onclick="setExample('context', 'Audiencia: ejecutivos de empresa. Nivel técnico: bajo.')">Para
+                    ejecutivos</button>
+                <button class="example-btn"
+                    onclick="setExample('context', 'Datos: ventas mensuales de los últimos 12 meses.')">Con datos
+                    específicos</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Paso 4: Instrucciones</h3>
+            <label for="instructions">Pasos concretos que debe seguir el modelo:</label>
+            <textarea id="instructions"
+                placeholder="Ej: 1. Define el concepto con una analogía. 2. Explica las partes. 3. Muestra un ejemplo de código."></textarea>
+            <div class="examples">
+                <button class="example-btn"
+                    onclick="setExample('instructions', '1. Define el concepto con una analogía.\\n2. Explica las partes.\\n3. Muestra un ejemplo de código.')">Explicación
+                    paso a paso</button>
+                <button class="example-btn"
+                    onclick="setExample('instructions', '1. Identifica los problemas.\\n2. Propón soluciones.\\n3. Prioriza las más efectivas.')">Análisis
+                    y solución</button>
+                <button class="example-btn"
+                    onclick="setExample('instructions', '1. Genera 5 ideas.\\n2. Desarrolla la mejor en un párrafo.\\n3. Sugiere un título llamativo.')">Generación
+                    de ideas</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Paso 5: Formato de salida</h3>
+            <label for="format">¿Cómo quieres la respuesta?</label>
+            <select id="format">
+                <option value="">Selecciona un formato</option>
+                <option value="lista">Lista numerada</option>
+                <option value="parrafos">Párrafos</option>
+                <option value="tabla">Tabla</option>
+                <option value="json">JSON</option>
+                <option value="codigo">Código con comentarios</option>
+                <option value="personalizado">Personalizado (especifica abajo)</option>
+            </select>
+            <label for="customFormat" style="display:none;">Formato personalizado:</label>
+            <textarea id="customFormat" placeholder="Ej: Título, luego 3 puntos clave, luego un ejemplo."
+                style="display:none;"></textarea>
+            <label for="length">Longitud máxima (opcional):</label>
+            <input type="text" id="length" placeholder="Ej: máximo 300 palabras">
+        </div>
+
+        <div class="step">
+            <h3>Paso 6: Restricciones y estilo</h3>
+            <label for="style">Estilo de lenguaje:</label>
+            <select id="style">
+                <option value="">Selecciona un estilo</option>
+                <option value="formal">Formal</option>
+                <option value="informal">Informal/amigable</option>
+                <option value="tecnico">Técnico</option>
+                <option value="sencillo">Sencillo (para principiantes)</option>
+            </select>
+            <label for="avoid">Qué debe evitar (opcional):</label>
+            <textarea id="avoid" placeholder="Ej: Jerga técnica muy avanzada, lenguaje demasiado informal."></textarea>
+        </div>
+
+        <div class="step">
+            <h3>Paso 7: Ejemplos (opcional)</h3>
+            <label for="examples">Si la tarea es compleja, incluye ejemplos de entrada–salida:</label>
+            <textarea id="examples"
+                placeholder="Ej: Entrada: 'El cliente se queja de que el producto llegó roto.' Salida: 'Problema: producto dañado. Acción: enviar reemplazo.'"></textarea>
+        </div>
+
+        <div class="step">
+            <h3>Paso 8: Refinamiento iterativo</h3>
+            <label style="display: flex; align-items: center; gap: 10px; font-weight: normal; cursor: pointer;">
+                <input type="checkbox" id="askQuestions" style="width: auto;">
+                Quiero que el modelo me haga preguntas una a una para refinar los detalles antes de dar la respuesta final.
+            </label>
+        </div>
+
+        <button onclick="generatePrompt()">Generar prompt final</button>
+    </section>
+
+    <section id="result" style="display:none;">
+        <h2>📄 Prompt final generado</h2>
+        <div class="prompt-output" id="promptOutput"></div>
+        <button class="copy-btn" onclick="copyPrompt()">📋 Copiar prompt</button>
+    </section>
+
+    <footer>
+        <p>Guía basada en mejores prácticas de prompt engineering (OpenAI, IBM, Google Cloud).</p>
+    </footer>
+
+    <script>
+        // Mostrar/ocultar campo de formato personalizado
+        document.getElementById('format').addEventListener('change', function () {
+            const custom = document.getElementById('customFormat');
+            const label = custom.previousElementSibling;
+            if (this.value === 'personalizado') {
+                custom.style.display = 'block';
+                label.style.display = 'block';
+            } else {
+                custom.style.display = 'none';
+                label.style.display = 'none';
+            }
+        });
+
+        // Establecer ejemplos predefinidos
+        function setExample(fieldId, text) {
+            document.getElementById(fieldId).value = text;
+        }
+
+        // Generar el prompt final
+        function generatePrompt() {
+            const role = document.getElementById('role').value.trim();
+            const objective = document.getElementById('objective').value.trim();
+            const context = document.getElementById('context').value.trim();
+            const instructions = document.getElementById('instructions').value.trim();
+            const format = document.getElementById('format').value;
+            const customFormat = document.getElementById('customFormat').value.trim();
+            const length = document.getElementById('length').value.trim();
+            const style = document.getElementById('style').value;
+            const avoid = document.getElementById('avoid').value.trim();
+            const examples = document.getElementById('examples').value.trim();
+            const askQuestions = document.getElementById('askQuestions').checked;
+
+            if (!role || !objective || !instructions) {
+                alert('Completa al menos Rol, Objetivo e Instrucciones.');
+                return;
+            }
+
+            let prompt = '### Rol\n';
+            prompt += role + '\n\n';
+
+            prompt += '### Objetivo\n';
+            prompt += objective + '\n\n';
+
+            if (context) {
+                prompt += '### Contexto\n';
+                prompt += context + '\n\n';
+            }
+
+            prompt += '### Instrucciones\n';
+            prompt += instructions + '\n\n';
+
+            if (format || customFormat) {
+                prompt += '### Formato de salida\n';
+                if (format === 'personalizado' && customFormat) {
+                    prompt += customFormat + '\n';
+                } else {
+                    const formatMap = {
+                        lista: '- Lista numerada con puntos clave.',
+                        parrafos: '- Párrafos claros y concisos.',
+                        tabla: '- Tabla con columnas relevantes.',
+                        json: '- Respuesta en formato JSON válido.',
+                        codigo: '- Código bien comentado y estructurado.'
+                    };
+                    prompt += formatMap[format] || '- ' + format + '\n';
+                }
+                if (length) prompt += '- Longitud: ' + length + '\n';
+                prompt += '\n';
+            }
+
+            if (style || avoid) {
+                prompt += '### Restricciones y estilo\n';
+                if (style) {
+                    const styleMap = {
+                        formal: '- Lenguaje formal y profesional.',
+                        informal: '- Ton o amigable e informal.',
+                        tecnico: '- Lenguaje técnico preciso.',
+                        sencillo: '- Explicación sencilla para principiantes.'
+                    };
+                    prompt += styleMap[style] + '\n';
+                }
+                if (avoid) prompt += '- Evita: ' + avoid + '\n';
+                prompt += '\n';
+            }
+
+            if (examples) {
+                prompt += '### Ejemplos\n';
+                prompt += examples + '\n\n';
+            }
+
+            if (askQuestions) {
+                prompt += '### Refinamiento Iterativo\n';
+                prompt += 'Antes de darme la respuesta final, hazme las preguntas necesarias de una en una para refinar los detalles y asegurar que el resultado cumpla exactamente con lo que necesito. Espera a que responda cada pregunta antes de hacer la siguiente.\n\n';
+            }
+
+            document.getElementById('promptOutput').textContent = prompt;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        // Copiar prompt al portapapeles
+        function copyPrompt() {
+            const textarea = document.createElement('textarea');
+            textarea.value = document.getElementById('promptOutput').textContent;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('Prompt copiado al portapapeles.');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica Interactiva: POO y MySQL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Chosen Palette: Tech Academy (Slate background, Blue primary, Emerald success accents) -->
+
+    <!-- Application Structure Plan: 
+    The SPA uses a "Learning Management System (LMS) Dashboard" layout. 
+    - Left Sidebar: Navigation tabs for each step of the practice, along with a dynamic progress chart. This provides constant context and motivation.
+    - Main Content Area: Displays the specific instructions, code snippets, and interactive checklists for the selected step. 
+    Why this structure? A linear document can be overwhelming. Breaking the assignment into digestible, interactive "modules" (Setup, Database, Coding, Rubric) with progress tracking improves student focus, comprehension, and completion rates.
+    -->
+
+    <!-- Visualization & Content Choices: 
+    - Goal: Track Progress -> Viz: Doughnut Chart (Chart.js) -> Interaction: Updates automatically as students check off tasks -> Justification: Gamifies the experience and gives immediate visual feedback on completion. -> Library: Chart.js Canvas.
+    - Goal: Execute SQL -> Viz: Code Block -> Interaction: "Copy to Clipboard" button -> Justification: Prevents syntax errors from manual typing and speeds up the database setup process. -> Method: Vanilla JS.
+    - Goal: Understand Grading -> Viz: Interactive Rubric Table -> Interaction: Clickable checkboxes that calculate the expected grade -> Justification: Encourages self-assessment before submission. -> Method: Vanilla JS.
+    - CONFIRMING: NO SVG used. NO Mermaid JS used.
+    -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        /* Embedded CSS for Chart Container Requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 250px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 200px;
+            max-height: 250px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 220px;
+            }
+        }
+
+        /* Custom scrollbar for aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Navegación Unificada -->
+    <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../../index.html"
+                    class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0">
+                    <span
+                        class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black">M</span>
+                    <span class="truncate">Material Didáctico</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="bg-blue-800 text-white shadow-md z-10">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">POO - Práctica de Laboratorio</h1>
+                <p class="text-blue-200 text-sm">Persistencia con MySQL y Windows Forms</p>
+            </div>
+            <div class="text-right text-sm">
+                <p class="font-semibold">Prof. Luis Alberto Mendoza San Juan</p>
+                <p class="text-blue-200">TSU en Desarrollo de Software</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Application Container -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 md:grid-cols-12 gap-8">
+
+        <!-- Sidebar Navigation & Progress -->
+        <aside class="md:col-span-4 lg:col-span-3 flex flex-col gap-6">
+
+            <!-- Progress Widget -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <h2 class="text-lg font-bold text-slate-700 mb-2 text-center">Tu Progreso</h2>
+                <div class="chart-container">
+                    <canvas id="progressChart"></canvas>
+                </div>
+                <p id="progressText" class="text-center text-2xl font-black text-blue-600 mt-2">0%</p>
+                <p class="text-center text-xs text-slate-500 mt-1">Completa las tareas para avanzar</p>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                <button onclick="openTab('tab-intro')" id="btn-intro"
+                    class="tab-btn text-left px-5 py-4 border-b border-slate-100 hover:bg-slate-50 focus:outline-none font-medium transition-colors bg-blue-50 text-blue-700 border-l-4 border-l-blue-600">
+                    <span class="mr-2">&#128220;</span> 1. Introducción
+                </button>
+                <button onclick="openTab('tab-setup')" id="btn-setup"
+                    class="tab-btn text-left px-5 py-4 border-b border-slate-100 hover:bg-slate-50 focus:outline-none font-medium transition-colors border-l-4 border-l-transparent text-slate-600">
+                    <span class="mr-2">&#9881;</span> 2. Entorno y Proyecto
+                </button>
+                <button onclick="openTab('tab-db')" id="btn-db"
+                    class="tab-btn text-left px-5 py-4 border-b border-slate-100 hover:bg-slate-50 focus:outline-none font-medium transition-colors border-l-4 border-l-transparent text-slate-600">
+                    <span class="mr-2">&#128452;</span> 3. Base de Datos
+                </button>
+                <button onclick="openTab('tab-code')" id="btn-code"
+                    class="tab-btn text-left px-5 py-4 border-b border-slate-100 hover:bg-slate-50 focus:outline-none font-medium transition-colors border-l-4 border-l-transparent text-slate-600">
+                    <span class="mr-2">&#128187;</span> 4. Codificación
+                </button>
+                <button onclick="openTab('tab-rubric')" id="btn-rubric"
+                    class="tab-btn text-left px-5 py-4 hover:bg-slate-50 focus:outline-none font-medium transition-colors border-l-4 border-l-transparent text-slate-600">
+                    <span class="mr-2">&#9989;</span> 5. Rúbrica y Entrega
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <section
+            class="md:col-span-8 lg:col-span-9 bg-white rounded-xl shadow-sm border border-slate-200 min-h-[600px] flex flex-col relative overflow-hidden">
+
+            <!-- TAB: Introducción -->
+            <div id="tab-intro" class="tab-content active p-6 sm:p-8">
+                <div class="mb-6 pb-6 border-b border-slate-100">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Propósito de la Práctica</h2>
+                    <p class="text-slate-600 leading-relaxed">
+                        Bienvenido a la práctica integradora. Aquí aplicarás el paradigma de programación orientada a
+                        objetos en C# para dar continuidad a un proyecto de software de escritorio preexistente (Windows
+                        Forms).
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 rounded-lg p-5 border border-slate-100">
+                        <h3 class="font-semibold text-slate-700 mb-3 flex items-center"><span
+                                class="text-xl mr-2">&#127919;</span> Objetivos Clave</h3>
+                        <ul class="space-y-2 text-sm text-slate-600">
+                            <li class="flex items-start"><span class="text-blue-500 mr-2">&#10003;</span> Integrar
+                                persistencia de datos con MySQL.</li>
+                            <li class="flex items-start"><span class="text-blue-500 mr-2">&#10003;</span> Estructurar
+                                una arquitectura limpia (separación de responsabilidades).</li>
+                            <li class="flex items-start"><span class="text-blue-500 mr-2">&#10003;</span> Garantizar la
+                                seguridad usando consultas SQL parametrizadas.</li>
+                            <li class="flex items-start"><span class="text-blue-500 mr-2">&#10003;</span> Implementar
+                                control preventivo de excepciones.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-5 border border-blue-100">
+                        <h3 class="font-semibold text-blue-800 mb-3 flex items-center"><span
+                                class="text-xl mr-2">&#128336;</span> Detalles</h3>
+                        <ul class="space-y-2 text-sm text-blue-700">
+                            <li><strong>Unidades:</strong> U3 (Gestión de Datos) y U4 (Diseño).</li>
+                            <li><strong>Tiempo Estimado:</strong> 2 Horas de laboratorio + extra-clase.</li>
+                            <li><strong>Modalidad:</strong> Individual.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="openTab('tab-setup')"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full shadow-md transition-transform transform hover:-translate-y-0.5">
+                        Comenzar Práctica &#10142;
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB: Entorno y Setup -->
+            <div id="tab-setup" class="tab-content p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6">Paso 1 y 2: Preparación del Entorno</h2>
+
+                <div class="space-y-6">
+                    <div class="p-5 border border-slate-200 rounded-lg">
+                        <h3 class="text-lg font-bold text-slate-700 mb-3">1. Clonar el Proyecto Base</h3>
+                        <p class="text-sm text-slate-600 mb-4">Clona el repositorio oficial provisto por el docente. El
+                            proyecto contiene las ventanas de diseño (Login y Productos) pero está vacío a nivel lógico.
+                        </p>
+
+                        <div class="bg-slate-800 rounded-md p-3 flex justify-between items-center">
+                            <code class="text-green-400 font-mono text-sm"
+                                id="git-url">https://github.com/LMendoza70/Punto</code>
+                            <button onclick="copyText('git-url')"
+                                class="text-slate-300 hover:text-white bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded text-xs transition-colors">Copiar</button>
+                        </div>
+
+                        <label
+                            class="flex items-center mt-4 p-3 bg-slate-50 rounded cursor-pointer hover:bg-slate-100 transition-colors">
+                            <input type="checkbox" class="task-check form-checkbox h-5 w-5 text-blue-600 rounded"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm font-medium text-slate-700">He clonado el repositorio y abierto la
+                                solución en Visual Studio.</span>
+                        </label>
+                    </div>
+
+                    <div class="p-5 border border-slate-200 rounded-lg">
+                        <h3 class="text-lg font-bold text-slate-700 mb-3">2. Instalar el Conector MySQL</h3>
+                        <p class="text-sm text-slate-600 mb-4">Para conectar tu aplicación de C# con MySQL, debes
+                            instalar el controlador oficial mediante NuGet.</p>
+                        <ol class="list-decimal list-inside text-sm text-slate-600 space-y-2 mb-4">
+                            <li>Da clic derecho sobre tu proyecto en el <em>Explorador de Soluciones</em> y selecciona
+                                <strong>Administrar paquetes NuGet...</strong></li>
+                            <li>En la pestaña "Examinar", busca <code>MySql.Data</code> (de Oracle) o
+                                <code>MySqlConnector</code>.</li>
+                            <li>Instala la versión estable más reciente.</li>
+                        </ol>
+                        <label
+                            class="flex items-center p-3 bg-slate-50 rounded cursor-pointer hover:bg-slate-100 transition-colors">
+                            <input type="checkbox" class="task-check form-checkbox h-5 w-5 text-blue-600 rounded"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm font-medium text-slate-700">He instalado el paquete NuGet de MySQL
+                                en mi proyecto.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Base de Datos -->
+            <div id="tab-db" class="tab-content p-6 sm:p-8">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 mb-2">Paso 3: Creación de la Base de Datos</h2>
+                        <p class="text-sm text-slate-600">Ejecuta el siguiente script en tu gestor (Workbench,
+                            phpMyAdmin, etc.). El diseño coincide con los controles de tu formulario.</p>
+                    </div>
+                    <button onclick="copyText('sql-script')"
+                        class="bg-blue-100 text-blue-700 hover:bg-blue-200 font-semibold py-2 px-4 rounded shadow-sm text-sm transition-colors flex items-center">
+                        <span class="mr-2">&#128203;</span> Copiar Script
+                    </button>
+                </div>
+
+                <div class="bg-slate-900 rounded-lg overflow-hidden shadow-inner my-4 relative">
+                    <pre class="p-4 overflow-x-auto text-sm text-slate-300 font-mono" id="sql-script">
+<span class="text-slate-500">-- 1. Creación de la base de datos</span>
+<span class="text-purple-400">CREATE DATABASE IF NOT EXISTS</span> PuntoDB;
+<span class="text-purple-400">USE</span> PuntoDB;
+
+<span class="text-slate-500">-- 2. Tabla para almacenar credenciales de acceso (Login)</span>
+<span class="text-purple-400">CREATE TABLE IF NOT EXISTS</span> usuarios (
+    usuario_id <span class="text-blue-400">INT AUTO_INCREMENT PRIMARY KEY</span>,
+    username <span class="text-blue-400">VARCHAR(50) NOT NULL UNIQUE</span>,
+    password <span class="text-blue-400">VARCHAR(100) NOT NULL</span>, 
+    nombre_completo <span class="text-blue-400">VARCHAR(100) NOT NULL</span>
+) <span class="text-yellow-300">ENGINE</span>=InnoDB <span class="text-yellow-300">DEFAULT CHARSET</span>=utf8mb4 <span class="text-yellow-300">COLLATE</span>=utf8mb4_unicode_ci;
+
+<span class="text-slate-500">-- 3. Tabla para el catálogo del CRUD (Productos)</span>
+<span class="text-purple-400">CREATE TABLE IF NOT EXISTS</span> productos (
+    producto_id <span class="text-blue-400">INT AUTO_INCREMENT PRIMARY KEY</span>,
+    codigo <span class="text-blue-400">VARCHAR(50) NOT NULL UNIQUE</span>,
+    descripcion <span class="text-blue-400">VARCHAR(150) NOT NULL</span>,
+    precio <span class="text-blue-400">DECIMAL(10,2) NOT NULL</span>,
+    stock <span class="text-blue-400">INT NOT NULL</span>,
+    <span class="text-purple-400">CONSTRAINT</span> chk_precio <span class="text-purple-400">CHECK</span> (precio >= 0),
+    <span class="text-purple-400">CONSTRAINT</span> chk_stock <span class="text-purple-400">CHECK</span> (stock >= 0)
+) <span class="text-yellow-300">ENGINE</span>=InnoDB <span class="text-yellow-300">DEFAULT CHARSET</span>=utf8mb4 <span class="text-yellow-300">COLLATE</span>=utf8mb4_unicode_ci;
+
+<span class="text-slate-500">-- 4. Registro inicial para validar el acceso al Login</span>
+<span class="text-purple-400">INSERT INTO</span> usuarios (username, password, nombre_completo) 
+<span class="text-purple-400">VALUES</span> (<span class="text-green-400">'admin'</span>, <span class="text-green-400">'admin123'</span>, <span class="text-green-400">'Administrador del Sistema'</span>)
+<span class="text-purple-400">ON DUPLICATE KEY UPDATE</span> username=username;
+
+<span class="text-slate-500">-- 5. Registros semilla para poblar el DataGridView inicial</span>
+<span class="text-purple-400">INSERT INTO</span> productos (codigo, descripcion, precio, stock) 
+<span class="text-purple-400">VALUES</span> 
+(<span class="text-green-400">'75010011'</span>, <span class="text-green-400">'Refresco de Cola 600ml'</span>, 18.50, 50),
+(<span class="text-green-400">'75010022'</span>, <span class="text-green-400">'Papas Fritas Crujientes 45g'</span>, 16.00, 30)
+<span class="text-purple-400">ON DUPLICATE KEY UPDATE</span> codigo=codigo;</pre>
+                </div>
+
+                <label
+                    class="flex items-center p-3 mt-4 bg-slate-50 rounded cursor-pointer hover:bg-slate-100 transition-colors border border-slate-200">
+                    <input type="checkbox" class="task-check form-checkbox h-5 w-5 text-blue-600 rounded"
+                        onchange="updateProgress()">
+                    <span class="ml-3 text-sm font-medium text-slate-700">He ejecutado el script exitosamente y la base
+                        de datos está lista.</span>
+                </label>
+            </div>
+
+            <!-- TAB: Codificación -->
+            <div id="tab-code" class="tab-content p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Paso 4: Requerimientos de Codificación</h2>
+                <p class="text-sm text-slate-600 mb-6">Desarrolla de forma autónoma el código fuente en C#, cumpliendo
+                    estrictamente con la siguiente lista de verificación arquitectónica y lógica.</p>
+
+                <div class="space-y-4">
+                    <!-- Req A -->
+                    <div class="border-l-4 border-emerald-500 bg-emerald-50/50 p-4 rounded-r-lg">
+                        <h3 class="font-bold text-slate-800 mb-2">A. Clase de Conexión</h3>
+                        <label class="flex items-start mb-2 cursor-pointer">
+                            <input type="checkbox"
+                                class="task-check form-checkbox h-5 w-5 text-emerald-600 rounded mt-0.5"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm text-slate-700">Creé una clase dedicada (ej.
+                                <code>Conexion.cs</code>) para encapsular la cadena de conexión.</span>
+                        </label>
+                        <label class="flex items-start cursor-pointer">
+                            <input type="checkbox"
+                                class="task-check form-checkbox h-5 w-5 text-emerald-600 rounded mt-0.5"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm text-slate-700">El método instancia y devuelve un objeto
+                                <code>MySqlConnection</code> configurado correctamente (Server, DB, User, Port,
+                                SslMode=none).</span>
+                        </label>
+                    </div>
+
+                    <!-- Req B -->
+                    <div class="border-l-4 border-blue-500 bg-blue-50/50 p-4 rounded-r-lg">
+                        <h3 class="font-bold text-slate-800 mb-2">B. Formulario de Login</h3>
+                        <label class="flex items-start mb-2 cursor-pointer">
+                            <input type="checkbox" class="task-check form-checkbox h-5 w-5 text-blue-600 rounded mt-0.5"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm text-slate-700">Valido que los campos de texto no estén vacíos
+                                antes de consultar.</span>
+                        </label>
+                        <label class="flex items-start mb-2 cursor-pointer">
+                            <input type="checkbox" class="task-check form-checkbox h-5 w-5 text-blue-600 rounded mt-0.5"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm text-slate-700 font-semibold text-red-600">Utilicé Consultas
+                                Parametrizadas (AddWithValue) para mitigar Inyección SQL. (¡No concatenar!)</span>
+                        </label>
+                        <label class="flex items-start cursor-pointer">
+                            <input type="checkbox" class="task-check form-checkbox h-5 w-5 text-blue-600 rounded mt-0.5"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm text-slate-700">Implementé bloques <code>try-catch</code> para
+                                manejar caídas del servidor y manejo la apertura/cierre de formularios
+                                (Hide/Show).</span>
+                        </label>
+                    </div>
+
+                    <!-- Req C -->
+                    <div class="border-l-4 border-amber-500 bg-amber-50/50 p-4 rounded-r-lg">
+                        <h3 class="font-bold text-slate-800 mb-2">C. Operaciones CRUD (Productos)</h3>
+                        <label class="flex items-start mb-2 cursor-pointer">
+                            <input type="checkbox"
+                                class="task-check form-checkbox h-5 w-5 text-amber-600 rounded mt-0.5"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm text-slate-700"><strong>Read:</strong> El
+                                <code>DataGridView</code> se llena automáticamente al cargar el formulario.</span>
+                        </label>
+                        <label class="flex items-start mb-2 cursor-pointer">
+                            <input type="checkbox"
+                                class="task-check form-checkbox h-5 w-5 text-amber-600 rounded mt-0.5"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm text-slate-700"><strong>Create:</strong> El botón Guardar valida
+                                tipos (<code>TryParse</code>) e inserta usando parámetros.</span>
+                        </label>
+                        <label class="flex items-start mb-2 cursor-pointer">
+                            <input type="checkbox"
+                                class="task-check form-checkbox h-5 w-5 text-amber-600 rounded mt-0.5"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm text-slate-700"><strong>Select:</strong> Al dar clic en el Grid,
+                                los datos se pasan a las cajas de texto automáticamente.</span>
+                        </label>
+                        <label class="flex items-start mb-2 cursor-pointer">
+                            <input type="checkbox"
+                                class="task-check form-checkbox h-5 w-5 text-amber-600 rounded mt-0.5"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm text-slate-700"><strong>Update:</strong> El botón Editar modifica
+                                el registro exacto usando <code>WHERE</code> con el ID.</span>
+                        </label>
+                        <label class="flex items-start cursor-pointer">
+                            <input type="checkbox"
+                                class="task-check form-checkbox h-5 w-5 text-amber-600 rounded mt-0.5"
+                                onchange="updateProgress()">
+                            <span class="ml-3 text-sm text-slate-700"><strong>Delete:</strong> El botón Eliminar pide
+                                confirmación (MessageBox) antes de borrar definitivamente.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: Rúbrica y Entregables -->
+            <div id="tab-rubric" class="tab-content p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-4">Entregables y Evaluación</h2>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
+                    <h3 class="font-bold text-blue-800 mb-2">Forma de Envío a Classroom</h3>
+                    <ul class="list-disc list-inside text-sm text-blue-700 space-y-1">
+                        <li><strong>Repositorio GitHub:</strong> Enlace a tu Fork (se evaluarán commits).</li>
+                        <li><strong>PDF Evidencias:</strong> Capturas de la BD, pruebas de Login y transacciones CRUD.
+                        </li>
+                        <li><strong>Código:</strong> Texto de <code>Conexion.cs</code> y formularios `.cs` para revisión
+                            rápida.</li>
+                    </ul>
+                </div>
+
+                <h3 class="text-lg font-bold text-slate-700 mb-3">Autoevaluación (Calculadora de Calificación)</h3>
+                <p class="text-sm text-slate-500 mb-4">Selecciona los criterios que has cumplido para simular tu
+                    calificación final.</p>
+
+                <div class="overflow-x-auto rounded-lg border border-slate-200">
+                    <table class="w-full text-sm text-left text-slate-600">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                            <tr>
+                                <th class="px-4 py-3 w-12 text-center">Check</th>
+                                <th class="px-4 py-3">Aspecto a Evaluar</th>
+                                <th class="px-4 py-3 w-24 text-center">Peso</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rubric-table" class="divide-y divide-slate-200">
+                            <!-- Populated by JS -->
+                        </tbody>
+                        <tfoot class="bg-slate-50 font-bold">
+                            <tr>
+                                <td colspan="2" class="px-4 py-4 text-right text-slate-800">Calificación Estimada:</td>
+                                <td class="px-4 py-4 text-center text-xl text-blue-600" id="total-score">0.0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Final requirement check -->
+                <label
+                    class="flex items-center p-3 mt-6 bg-green-50 border border-green-200 rounded cursor-pointer hover:bg-green-100 transition-colors hidden"
+                    id="ready-submit">
+                    <input type="checkbox" class="task-check form-checkbox h-5 w-5 text-green-600 rounded"
+                        onchange="updateProgress()">
+                    <span class="ml-3 text-sm font-bold text-green-800">¡He revisado mi código y enviado mis entregables
+                        a Classroom!</span>
+                </label>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Interactive Logic -->
+    <script>
+        // Tab Navigation Logic
+        function openTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Reset all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-50', 'text-blue-700', 'border-l-blue-600');
+                btn.classList.add('text-slate-600', 'border-l-transparent');
+            });
+
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            // Highlight selected button
+            const activeBtn = document.getElementById('btn-' + tabId.replace('tab-', ''));
+            activeBtn.classList.remove('text-slate-600', 'border-l-transparent');
+            activeBtn.classList.add('bg-blue-50', 'text-blue-700', 'border-l-blue-600');
+        }
+
+        // Copy to Clipboard Utility
+        function copyText(elementId) {
+            const el = document.getElementById(elementId);
+            const textToCopy = el.innerText;
+
+            // Modern Clipboard API fallback handling
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast("¡Texto copiado al portapapeles!");
+            }).catch(err => {
+                // Fallback for older browsers or iframe restrictions
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast("¡Texto copiado al portapapeles!");
+                } catch (ex) {
+                    alert("No se pudo copiar el texto.");
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-5 right-5 bg-slate-800 text-white px-4 py-2 rounded shadow-lg z-50 text-sm animate-bounce';
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+
+        // Progress Tracking & Chart.js Configuration
+        let progressChart;
+
+        function initChart() {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            progressChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completado', 'Pendiente'],
+                    datasets: [{
+                        data: [0, 100],
+                        backgroundColor: ['#2563eb', '#e2e8f0'], // blue-600 and slate-200
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    animation: { animateScale: true }
+                }
+            });
+        }
+
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.task-check');
+            const total = checkboxes.length;
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+            const percentage = Math.round((checked / total) * 100);
+
+            // Update Text
+            document.getElementById('progressText').innerText = `${percentage}%`;
+
+            // Update Chart
+            if (progressChart) {
+                progressChart.data.datasets[0].data = [percentage, 100 - percentage];
+                // Change color to green if 100%
+                progressChart.data.datasets[0].backgroundColor[0] = percentage === 100 ? '#10b981' : '#2563eb';
+                progressChart.update();
+            }
+
+            // Show final submission check if nearing completion
+            const submitCheck = document.getElementById('ready-submit');
+            if (checked >= total - 1 && percentage >= 90) {
+                submitCheck.classList.remove('hidden');
+            }
+        }
+
+        // Interactive Rubric Data & Rendering
+        const rubricData = [
+            { id: 1, text: "<b>Clonación y Uso de Git:</b> Utiliza Git con éxito para clonar el repositorio, configurar el entorno local en Visual Studio y realizar commits frecuentes.", weight: 1.0 },
+            { id: 2, text: "<b>Creación de Base de Datos:</b> Crea el esquema y las tablas en MySQL siguiendo la sintaxis e ingresando datos iniciales.", weight: 2.0 },
+            { id: 3, text: "<b>Clase Conexión:</b> Desarrolla de forma aislada una clase Conexion.cs que instancie la conexión a MySQL usando encapsulamiento.", weight: 2.0 },
+            { id: 4, text: "<b>Formulario de Login:</b> Lógica con consultas parametrizadas. Valida, otorga acceso y rechaza intentos inválidos.", weight: 2.0 },
+            { id: 5, text: "<b>Operación CRUD Completa:</b> Puede Crear, Leer, Editar y Eliminar registros vinculados con MySQL actualizando el DataGridView.", weight: 2.0 },
+            { id: 6, text: "<b>Buenas Prácticas:</b> Control de errores (try-catch), variables legibles y libre de inyección SQL (sin concatenación directa).", weight: 1.0 }
+        ];
+
+        function renderRubric() {
+            const tbody = document.getElementById('rubric-table');
+            rubricData.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-4 py-3 text-center">
+                        <input type="checkbox" class="rubric-check form-checkbox h-5 w-5 text-blue-600 rounded cursor-pointer" data-weight="${item.weight}" onchange="calculateScore()">
+                    </td>
+                    <td class="px-4 py-3">${item.text}</td>
+                    <td class="px-4 py-3 text-center font-semibold text-slate-700">${item.weight.toFixed(1)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function calculateScore() {
+            const checks = document.querySelectorAll('.rubric-check');
+            let score = 0;
+            checks.forEach(cb => {
+                if (cb.checked) {
+                    score += parseFloat(cb.getAttribute('data-weight'));
+                }
+            });
+            const scoreDisplay = document.getElementById('total-score');
+            scoreDisplay.innerText = score.toFixed(1);
+
+            // Color feedback based on score
+            if (score >= 8.0) scoreDisplay.className = "px-4 py-4 text-center text-xl font-bold text-green-600";
+            else if (score >= 6.0) scoreDisplay.className = "px-4 py-4 text-center text-xl font-bold text-amber-500";
+            else scoreDisplay.className = "px-4 py-4 text-center text-xl font-bold text-red-500";
+        }
+
+        // Initialization on Load
+        window.onload = () => {
+            initChart();
+            renderRubric();
+            updateProgress(); // initialize progress to 0
+        };
+    </script>
+</body>
+
+</html>
