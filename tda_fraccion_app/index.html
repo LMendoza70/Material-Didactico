@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Aplicación didáctica interactiva sobre Tipos de Datos Abstractos en Java." />
+  <title>TDA en Java · Fracción</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../framework/uthu-docs.css">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Programación Orientada a Objetos</p>
+      <h1>Tipos de Datos Abstractos en Java</h1>
+    </div>
+    <div class="top-actions">
+      <div class="progress-wrap" aria-label="Progreso de la sesión">
+        <span id="progressText">0% completado</span>
+        <div class="progress"><div id="progressBar"></div></div>
+      </div>
+      <button id="themeBtn" class="icon-btn" title="Cambiar tema">◐</button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="session-card">
+        <span>Sesión</span>
+        <strong>120 minutos</strong>
+        <button id="timerBtn" class="primary small">Iniciar cronómetro</button>
+        <div id="timer" class="timer">120:00</div>
+      </div>
+
+      <nav id="nav">
+        <button data-section="inicio" class="nav-item active">1. Inicio</button>
+        <button data-section="concepto" class="nav-item">2. Concepto de TDA</button>
+        <button data-section="especificacion" class="nav-item">3. Especificación</button>
+        <button data-section="implementacion" class="nav-item">4. Implementación</button>
+        <button data-section="laboratorio" class="nav-item">5. Laboratorio</button>
+        <button data-section="depuracion" class="nav-item">6. Depuración</button>
+        <button data-section="transferencia" class="nav-item">7. Transferencia</button>
+        <button data-section="evaluacion" class="nav-item">8. Evaluación</button>
+        <button data-section="docente" class="nav-item">9. Guía docente</button>
+      </nav>
+
+      <button id="resetBtn" class="ghost danger">Reiniciar progreso</button>
+    </aside>
+
+    <main>
+      <section id="inicio" class="page active">
+        <div class="hero">
+          <div>
+            <span class="badge">Clase interactiva</span>
+            <h2>Diseña un TDA, no solo una clase</h2>
+            <p>Comprende cómo valores, operaciones, invariantes, interfaz pública y representación interna se articulan en una implementación Java.</p>
+            <div class="hero-actions">
+              <button class="primary go-next" data-next="concepto">Comenzar</button>
+              <button class="secondary" id="showOutcome">Ver resultado de aprendizaje</button>
+            </div>
+          </div>
+          <div class="fraction-visual">
+            <div class="fraction big"><span>1</span><span>2</span></div>
+            <span class="equals">≡</span>
+            <div class="fraction big"><span>2</span><span>4</span></div>
+          </div>
+        </div>
+
+        <div id="outcomeCard" class="panel hidden">
+          <h3>Resultado de aprendizaje</h3>
+          <p>Al finalizar, implementarás un TDA <code>Fraccion</code> inmutable, con representación oculta, invariantes protegidos y operaciones aritméticas exactas.</p>
+        </div>
+
+        <div class="grid three">
+          <article class="panel">
+            <span class="number">01</span>
+            <h3>Valores y operaciones</h3>
+            <p>Define qué representa el tipo y qué acciones admite.</p>
+          </article>
+          <article class="panel">
+            <span class="number">02</span>
+            <h3>Invariantes</h3>
+            <p>Garantiza que cada objeto sea válido antes y después de operar.</p>
+          </article>
+          <article class="panel">
+            <span class="number">03</span>
+            <h3>Ocultamiento</h3>
+            <p>Separa el contrato público de los detalles internos.</p>
+          </article>
+        </div>
+
+        <article class="panel">
+          <div class="section-head">
+            <div>
+              <span class="badge muted">Active Recall</span>
+              <h3>Activación de conocimientos previos</h3>
+            </div>
+            <span class="counter" id="initialCounter">0/5</span>
+          </div>
+          <div id="initialQuestions" class="question-list"></div>
+        </article>
+      </section>
+
+      <section id="concepto" class="page">
+        <div class="section-title">
+          <span class="badge">Técnica Feynman</span>
+          <h2>¿Qué es un TDA?</h2>
+          <p>Un TDA describe valores, operaciones y reglas, sin obligar al usuario a conocer cómo funciona internamente.</p>
+        </div>
+
+        <div class="analogy">
+          <div class="machine">🥤</div>
+          <div>
+            <h3>Analogía: máquina expendedora</h3>
+            <p>Seleccionas, pagas y recibes un producto. No necesitas conocer sensores, motores o inventario interno. La interfaz visible es suficiente para usarla correctamente.</p>
+          </div>
+        </div>
+
+        <div class="concept-map panel">
+          <button class="concept-node root" data-concept="tda">Tipo de Dato Abstracto</button>
+          <div class="arrows">↓</div>
+          <div class="node-grid">
+            <button class="concept-node" data-concept="valores">Valores</button>
+            <button class="concept-node" data-concept="operaciones">Operaciones</button>
+            <button class="concept-node" data-concept="invariantes">Invariantes</button>
+            <button class="concept-node" data-concept="interfaz">Interfaz pública</button>
+            <button class="concept-node" data-concept="representacion">Representación interna</button>
+            <button class="concept-node" data-concept="implementacion">Implementación Java</button>
+          </div>
+          <div id="conceptDetail" class="concept-detail">Selecciona un concepto para ver su función.</div>
+        </div>
+
+        <article class="panel">
+          <h3>Explícalo con tus palabras</h3>
+          <p>No uses las expresiones <strong>“es una clase”</strong> ni <strong>“es un objeto”</strong>.</p>
+          <textarea id="feynmanText" rows="5" placeholder="Un TDA es..."></textarea>
+          <div class="row">
+            <button id="checkFeynman" class="primary">Revisar explicación</button>
+            <span id="feynmanFeedback" class="feedback"></span>
+          </div>
+        </article>
+      </section>
+
+      <section id="especificacion" class="page">
+        <div class="section-title">
+          <span class="badge">Diseño antes del código</span>
+          <h2>Especificación del TDA Fraccion</h2>
+        </div>
+
+        <div class="spec-grid">
+          <article class="panel">
+            <h3>Valores</h3>
+            <p>Números racionales de la forma <strong>a/b</strong>, donde <strong>a</strong> y <strong>b</strong> son enteros y <strong>b ≠ 0</strong>.</p>
+          </article>
+          <article class="panel">
+            <h3>Representación posible</h3>
+            <pre><code>private final int numerador;
+private final int denominador;</code></pre>
+          </article>
+        </div>
+
+        <article class="panel">
+          <h3>Invariantes</h3>
+          <div id="invariants" class="invariant-list"></div>
+        </article>
+
+        <article class="panel">
+          <h3>Clasifica cada decisión</h3>
+          <p>Selecciona si pertenece a la especificación o a la implementación.</p>
+          <div id="classificationQuiz" class="classification-list"></div>
+          <button id="gradeClassification" class="primary">Comprobar</button>
+          <span id="classificationResult" class="feedback"></span>
+        </article>
+      </section>
+
+      <section id="implementacion" class="page">
+        <div class="section-title">
+          <span class="badge">Construcción progresiva</span>
+          <h2>Implementación modelada</h2>
+          <p>Avanza por los incrementos. El código completo no aparece desde el inicio.</p>
+        </div>
+
+        <div class="stepper" id="stepper"></div>
+        <article class="panel code-panel">
+          <div class="section-head">
+            <div>
+              <span id="stepLabel" class="badge muted"></span>
+              <h3 id="stepTitle"></h3>
+            </div>
+            <div>
+              <button id="prevStep" class="secondary small">Anterior</button>
+              <button id="nextStep" class="primary small">Siguiente</button>
+            </div>
+          </div>
+          <p id="stepObjective"></p>
+          <pre><code id="stepCode"></code></pre>
+          <div class="prediction">
+            <strong>Predicción:</strong>
+            <p id="stepQuestion"></p>
+            <input id="stepAnswer" type="text" placeholder="Escribe tu respuesta..." />
+            <button id="savePrediction" class="secondary small">Guardar predicción</button>
+            <span id="predictionFeedback" class="feedback"></span>
+          </div>
+          <div class="callout warning">
+            <strong>Error frecuente:</strong>
+            <span id="stepError"></span>
+          </div>
+        </article>
+      </section>
+
+      <section id="laboratorio" class="page">
+        <div class="section-title">
+          <span class="badge">Práctica guiada</span>
+          <h2>Laboratorio de fracciones</h2>
+          <p>Experimenta con la especificación antes de revisar la solución completa.</p>
+        </div>
+
+        <div class="lab-grid">
+          <article class="panel">
+            <h3>Calculadora exacta</h3>
+            <div class="fraction-inputs">
+              <div>
+                <label>Fracción A</label>
+                <div class="inline-inputs">
+                  <input id="aNum" type="number" value="1" />
+                  <span>/</span>
+                  <input id="aDen" type="number" value="2" />
+                </div>
+              </div>
+              <div>
+                <label>Operación</label>
+                <select id="operation">
+                  <option value="sum">+</option>
+                  <option value="sub">−</option>
+                  <option value="mul">×</option>
+                  <option value="div">÷</option>
+                </select>
+              </div>
+              <div>
+                <label>Fracción B</label>
+                <div class="inline-inputs">
+                  <input id="bNum" type="number" value="1" />
+                  <span>/</span>
+                  <input id="bDen" type="number" value="3" />
+                </div>
+              </div>
+            </div>
+            <button id="calculateBtn" class="primary">Calcular</button>
+            <div id="calcResult" class="result-box">Resultado: —</div>
+          </article>
+
+          <article class="panel">
+            <h3>Completa el método <code>sumar</code></h3>
+            <pre><code>public Fraccion sumar(Fraccion otra) {
+  int nuevoNumerador =
+    <input id="sumNumCode" class="code-input" placeholder="expresión" />;
+
+  int nuevoDenominador =
+    <input id="sumDenCode" class="code-input" placeholder="expresión" />;
+
+  return <input id="sumReturnCode" class="code-input wide" placeholder="expresión" />;
+}</code></pre>
+            <button id="checkSumCode" class="primary">Validar solución</button>
+            <span id="sumCodeFeedback" class="feedback"></span>
+          </article>
+        </div>
+
+        <article class="panel">
+          <h3>Casos de prueba</h3>
+          <div id="testCases" class="test-grid"></div>
+        </article>
+      </section>
+
+      <section id="depuracion" class="page">
+        <div class="section-title">
+          <span class="badge">Práctica colaborativa</span>
+          <h2>Detecta y explica los errores</h2>
+        </div>
+
+        <article class="panel code-panel">
+<pre><code>public class FraccionDefectuosa {
+    public int numerador;
+    public int denominador;
+
+    public FraccionDefectuosa(int numerador, int denominador) {
+        this.numerador = numerador;
+        this.denominador = denominador;
+    }
+
+    public void sumar(FraccionDefectuosa otra) {
+        numerador = numerador + otra.numerador;
+        denominador = denominador + otra.denominador;
+    }
+
+    public double convertirADouble() {
+        return numerador / denominador;
+    }
+
+    public boolean esIgual(FraccionDefectuosa otra) {
+        return this == otra;
+    }
+}</code></pre>
+        </article>
+
+        <article class="panel">
+          <h3>Selecciona todos los errores presentes</h3>
+          <div id="debugOptions" class="check-grid"></div>
+          <button id="gradeDebug" class="primary">Evaluar diagnóstico</button>
+          <span id="debugResult" class="feedback"></span>
+        </article>
+
+        <article class="panel">
+          <h3>Diseña una prueba que demuestre un error</h3>
+          <textarea id="debugTest" rows="5" placeholder="Ejemplo: crear 1/2 y convertirla a double..."></textarea>
+          <button id="saveDebugTest" class="secondary">Guardar evidencia</button>
+        </article>
+      </section>
+
+      <section id="transferencia" class="page">
+        <div class="section-title">
+          <span class="badge">Reto de transferencia</span>
+          <h2>Diseña otro TDA</h2>
+          <p>Demuestra que comprendiste el concepto más allá de <code>Fraccion</code>.</p>
+        </div>
+
+        <article class="panel">
+          <label for="tdaChoice">Selecciona un tipo</label>
+          <select id="tdaChoice">
+            <option>Fecha</option>
+            <option>Contador</option>
+            <option>Pila</option>
+            <option>Dinero</option>
+            <option>NumeroComplejo</option>
+            <option>Intervalo</option>
+          </select>
+
+          <div class="form-grid">
+            <label>Valores<textarea id="tdaValues" rows="3"></textarea></label>
+            <label>Operaciones<textarea id="tdaOperations" rows="3"></textarea></label>
+            <label>Invariantes<textarea id="tdaInvariants" rows="3"></textarea></label>
+            <label>Interfaz pública<textarea id="tdaInterface" rows="3"></textarea></label>
+            <label class="full">Representación interna posible<textarea id="tdaRepresentation" rows="3"></textarea></label>
+          </div>
+          <button id="saveTransfer" class="primary">Guardar diseño</button>
+          <span id="transferFeedback" class="feedback"></span>
+        </article>
+      </section>
+
+      <section id="evaluacion" class="page">
+        <div class="section-title">
+          <span class="badge">Evaluación formativa</span>
+          <h2>Lista de cotejo y ticket de salida</h2>
+        </div>
+
+        <article class="panel">
+          <h3>Autoevaluación</h3>
+          <div id="checklist" class="rubric"></div>
+        </article>
+
+        <article class="panel">
+          <h3>Ticket de salida</h3>
+          <div class="form-grid">
+            <label class="full">1. Explica qué es un TDA sin usar “clase”.<textarea id="exit1" rows="3"></textarea></label>
+            <label>2. Escribe dos invariantes de <code>Fraccion</code>.<textarea id="exit2" rows="3"></textarea></label>
+            <label>3. Menciona otro TDA y dos operaciones.<textarea id="exit3" rows="3"></textarea></label>
+          </div>
+          <button id="submitExit" class="primary">Entregar ticket</button>
+          <span id="exitFeedback" class="feedback"></span>
+        </article>
+      </section>
+
+      <section id="docente" class="page">
+        <div class="section-title">
+          <span class="badge">Uso exclusivo del docente</span>
+          <h2>Guía de respuestas</h2>
+        </div>
+
+        <article class="panel">
+          <label for="teacherCode">Código de acceso</label>
+          <div class="row">
+            <input id="teacherCode" type="password" placeholder="Ingrese el código" />
+            <button id="unlockTeacher" class="primary">Desbloquear</button>
+          </div>
+          <p class="muted-text">Código predeterminado para esta versión: <code>TDA2026</code>.</p>
+        </article>
+
+        <div id="teacherContent" class="hidden">
+          <article class="panel">
+            <h3>Respuestas esenciales</h3>
+            <ul>
+              <li>Un TDA define valores, operaciones, reglas e interfaz observable.</li>
+              <li>La clase Java es una implementación concreta, no el TDA completo.</li>
+              <li>Invariantes: denominador positivo y distinto de cero; forma irreducible; cero como 0/1; inmutabilidad.</li>
+              <li><code>1/2 == 2/4</code> es una igualdad de valor, no de identidad.</li>
+            </ul>
+          </article>
+          <article class="panel code-panel">
+            <h3>Implementación de referencia</h3>
+<pre><code>public final class Fraccion {
+    private final int numerador;
+    private final int denominador;
+
+    public Fraccion(int numerador, int denominador) {
+        if (denominador == 0) {
+            throw new IllegalArgumentException(
+                "El denominador no puede ser cero"
+            );
+        }
+
+        if (denominador &lt; 0) {
+            numerador = -numerador;
+            denominador = -denominador;
+        }
+
+        int divisor = mcd(Math.abs(numerador), denominador);
+        this.numerador = numerador / divisor;
+        this.denominador = denominador / divisor;
+    }
+
+    private static int mcd(int a, int b) {
+        while (b != 0) {
+            int r = a % b;
+            a = b;
+            b = r;
+        }
+        return a;
+    }
+
+    public Fraccion sumar(Fraccion otra) {
+        return new Fraccion(
+            numerador * otra.denominador
+                + otra.numerador * denominador,
+            denominador * otra.denominador
+        );
+    }
+
+    public Fraccion restar(Fraccion otra) {
+        return new Fraccion(
+            numerador * otra.denominador
+                - otra.numerador * denominador,
+            denominador * otra.denominador
+        );
+    }
+
+    public Fraccion multiplicar(Fraccion otra) {
+        return new Fraccion(
+            numerador * otra.numerador,
+            denominador * otra.denominador
+        );
+    }
+
+    public Fraccion dividir(Fraccion otra) {
+        if (otra.numerador == 0) {
+            throw new ArithmeticException(
+                "No se puede dividir entre cero"
+            );
+        }
+        return new Fraccion(
+            numerador * otra.denominador,
+            denominador * otra.numerador
+        );
+    }
+
+    public Fraccion opuesto() {
+        return new Fraccion(-numerador, denominador);
+    }
+
+    public double convertirADouble() {
+        return (double) numerador / denominador;
+    }
+
+    @Override
+    public String toString() {
+        return denominador == 1
+            ? String.valueOf(numerador)
+            : numerador + "/" + denominador;
+    }
+
+    @Override
+    public boolean equals(Object objeto) {
+        if (this == objeto) return true;
+        if (!(objeto instanceof Fraccion)) return false;
+        Fraccion otra = (Fraccion) objeto;
+        return numerador == otra.numerador
+            && denominador == otra.denominador;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * numerador + denominador;
+    }
+}</code></pre>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

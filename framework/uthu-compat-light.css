@@ -1,0 +1,80 @@
+/* ==========================================================================
+   UTHU-COMPAT-LIGHT · Capa de identidad para páginas construidas con Tailwind
+   (tema claro). Se carga DESPUÉS de uthu-docs.css y ANTES/INDEPENDIENTE del
+   CDN de Tailwind. Alinea la identidad del framework (fuentes serif en
+   encabezados, superficies, CTAs ámbar, acento teal, código oscuro) sin
+   tocar la mecánica de las clases utilitarias de Tailwind ni el JS.
+
+   Cómo usar: añade <body class="light"> y estas dos hojas:
+     <link rel="stylesheet" href="framework/uthu-docs.css">
+     <link rel="stylesheet" href="framework/uthu-compat-light.css">
+   ========================================================================== */
+
+body{
+  background:var(--ink) !important;
+  color:var(--text) !important;
+}
+
+/* Encabezados con la serif de identidad */
+h1,h2,h3,h4{
+  font-family:var(--font-serif) !important;
+  letter-spacing:-0.01em !important;
+  line-height:1.2 !important;
+  color:var(--text-bright) !important;
+}
+
+/* --- Barra de navegación unificada: fondo oscuro de identidad ------------
+   Las navs del proyecto usan text-white, por eso su fondo debe quedar OSCURO
+   siempre (incluso en tema claro) para que el encabezado sea visible. */
+nav[class*="bg-indigo"], nav.bg-indigo-700, nav.bg-slate-900,
+.navbar, header.bg-indigo-700{ background:#1B1F2B !important; }
+nav a, nav .nav-link, nav[class*="bg-indigo"] a{ color:#F2F4F8 !important; }
+nav a:hover{ color:var(--amber) !important; }
+nav[class*="bg-indigo"] .text-indigo-700{ color:#E8A33D !important; }
+
+/* --- Superficies --- */
+.bg-slate-50{ background:var(--ink) !important; }
+.bg-slate-100{ background:var(--ink-2) !important; }
+.bg-white{ background:var(--ink-2) !important; }
+.bg-slate-900, .bg-slate-800{ background:var(--ink-3) !important; }
+
+/* --- CTA / elementos interactivos primarios (indigo → ámbar identidad) --- */
+.bg-indigo-600, .bg-indigo-700, .bg-indigo-500{
+  background:var(--amber) !important;
+  color:var(--ink) !important;
+}
+button.bg-indigo-600, a.bg-indigo-600, .bg-indigo-600{ background:var(--amber) !important; }
+button.bg-indigo-600:disabled, .bg-indigo-600:disabled{ background:var(--line-soft) !important; color:var(--text-dim) !important; }
+
+/* --- Acentos de texto (indigo → teal identidad) --- */
+.text-indigo-600, .text-indigo-700, .text-indigo-500{ color:var(--teal) !important; }
+.hover\:text-indigo-200:hover{ color:var(--amber) !important; }
+
+/* --- Fondos suaves de acento (indigo-100/50 → teal tenue) --- */
+.bg-indigo-100{ background:rgba(79,176,174,.12) !important; }
+.bg-indigo-50{ background:rgba(79,176,174,.07) !important; }
+
+/* --- Bordes de acento --- */
+.border-indigo-200{ border-color:var(--line) !important; }
+.border-indigo-300, .border-indigo-400{ border-color:var(--line-soft) !important; }
+
+/* --- Bloques de código: fondo oscuro identidad --- */
+pre, pre[class*="language-"], .code-block, .code-scroll{
+  background:var(--ink-3) !important;
+  color:#E4E7ED !important;
+  border:1px solid var(--line) !important;
+  border-radius:8px !important;
+  font-family:var(--font-mono) !important;
+}
+
+/* --- Código en línea (fondo claro → panel) --- */
+code{ font-family:var(--font-mono) !important; }
+.bg-slate-200, .bg-slate-100.px-1{ background:var(--ink-2) !important; color:var(--amber) !important; border:1px solid var(--line); }
+
+/* --- Footer oscuro --- */
+footer.bg-slate-900{ background:var(--ink-3) !important; }
+
+/* --- Scrollbar unificada --- */
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:var(--ink-2); }
+::-webkit-scrollbar-thumb{ background:var(--line-soft); border-radius:999px; }

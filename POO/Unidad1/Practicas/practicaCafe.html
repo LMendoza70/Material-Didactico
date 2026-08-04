@@ -5,243 +5,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Práctica POO - Simulador de Cafetería</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #1e1e2f, #2d3436);
-            color: white;
-            min-height: 100vh;
-        }
-
-        .content-wrapper {
-            padding: 20px;
-        }
-
-        @media (min-width: 640px) {
-            .content-wrapper {
-                padding: 40px;
-            }
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        .hero {
-            background: linear-gradient(135deg, #6f4e37, #3e2723);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
-            margin-bottom: 30px;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            line-height: 1.7;
-        }
-
-        .section {
-            background: #ffffff10;
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, .1);
-        }
-
-        .section h2 {
-            color: #ffcc80;
-            margin-bottom: 20px;
-            font-size: 2rem;
-        }
-
-        .section p,
-        .section li {
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
-        ul {
-            margin-left: 25px;
-        }
-
-        .code {
-            background: #111827;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            overflow-x: auto;
-            border-left: 5px solid #ff9800;
-        }
-
-        code {
-            color: #90caf9;
-            font-size: 1rem;
-        }
-
-        .highlight {
-            color: #ffd54f;
-            font-weight: bold;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            opacity: .7;
-        }
-
-        .badge {
-            display: inline-block;
-            background: #ff9800;
-            color: black;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../framework/uthu-docs.css">
 </head>
 
 <body>
 
     <!-- Navegación Unificada -->
-    <nav class="bg-[#1b1b2a] text-white border-b border-slate-700/50 sticky top-0 z-50 py-4 shadow-md">
-        <div class="max-w-[1200px] mx-auto px-6 flex justify-between items-center">
-            <a href="../../../index.html" class="flex items-center gap-2 font-bold text-lg sm:text-xl tracking-tight transition-transform hover:scale-105 min-w-0" style="text-decoration: none; color: white;">
-                <span class="bg-white text-indigo-700 rounded-lg w-8 h-8 flex shrink-0 items-center justify-center font-black" style="display: flex; align-items: center; justify-content: center;">M</span>
-                <span class="truncate">Material Didáctico</span>
-            </a>
-            <a href="../../../index.html" style="text-decoration: none; color: #ff9800; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
-                <span>←</span> <span>Inicio</span>
-            </a>
+    <nav class="topbar">
+        <a href="../../../index.html" class="brand">
+            <span class="mark">M</span>
+            <span class="truncate">Material Didáctico</span>
+        </a>
+        <div class="nav">
+            <a href="../../../index.html" class="nav-link">← Inicio</a>
         </div>
     </nav>
 
-    <div class="content-wrapper">
-        <div class="container">
+    <div class="wrap">
 
-        <div class="hero">
-            <div class="badge">Práctica de Laboratorio</div>
-
+        <div class="hero center">
+            <span class="badge amber" style="margin-bottom:14px;">Práctica de Laboratorio</span>
             <h1>☕ El Simulador de la Cafetería</h1>
-
             <p>
                 Desarrolla una aplicación en consola utilizando
-                <span class="highlight">Programación Orientada a Objetos en C#</span>.
+                <strong style="color:var(--amber);">Programación Orientada a Objetos en C#</strong>.
                 En esta práctica trabajarás con clases, objetos, atributos,
                 constructores y métodos para modelar bebidas de una cafetería.
             </p>
         </div>
 
-        <div class="section">
+        <section>
+            <div class="eyebrow-sm">01 · Objetivo</div>
             <h2>🎯 Objetivo</h2>
-
             <p>
                 Crear un sistema básico que permita registrar bebidas,
                 aplicar descuentos y simular su preparación utilizando
                 conceptos fundamentales de POO.
             </p>
-        </div>
+        </section>
 
-        <div class="section">
+        <section>
+            <div class="eyebrow-sm">02 · Contexto</div>
             <h2>📌 Contexto</h2>
-
             <p>
                 Una cafetería necesita un sistema sencillo para registrar
                 bebidas y mostrar información sobre cada una.
                 Cada bebida tendrá:
             </p>
-
-            <ul>
+            <ul class="checklist">
                 <li>Nombre</li>
                 <li>Tamaño</li>
                 <li>Precio</li>
             </ul>
-        </div>
+        </section>
 
-        <div class="section">
+        <section>
+            <div class="eyebrow-sm">03 · Requerimientos</div>
             <h2>🧩 Requerimientos</h2>
-
             <ul>
-                <li>
-                    Crear una clase llamada
-                    <span class="highlight">Bebida</span>.
-                </li>
-
-                <li>
-                    La clase debe contener atributos privados:
-                    nombre, tamaño y precio.
-                </li>
-
-                <li>
-                    Crear un constructor que permita inicializar
-                    todos los atributos.
-                </li>
-
-                <li>
-                    Crear un método
-                    <span class="highlight">Preparar()</span>
-                    que muestre un mensaje en consola.
-                </li>
-
-                <li>
-                    Crear un método
-                    <span class="highlight">
-                        AplicarDescuento(double porcentaje)
-                    </span>
-                    para modificar el precio de la bebida.
-                </li>
-
-                <li>
-                    Crear un método
-                    <span class="highlight">MostrarDescripcion()</span>
-                    que muestre:
-                </li>
+                <li>Crear una clase llamada <strong style="color:var(--amber);">Bebida</strong>.</li>
+                <li>La clase debe contener atributos privados: nombre, tamaño y precio.</li>
+                <li>Crear un constructor que permita inicializar todos los atributos.</li>
+                <li>Crear un método <strong style="color:var(--amber);">Preparar()</strong> que muestre un mensaje en consola.</li>
+                <li>Crear un método <strong style="color:var(--amber);">AplicarDescuento(double porcentaje)</strong> para modificar el precio de la bebida.</li>
+                <li>Crear un método <strong style="color:var(--amber);">MostrarDescripcion()</strong> que muestre:</li>
             </ul>
+            <pre class="code"><span class="str">"Esto es un [nombre] de tamaño [tamaño]
+con un costo de [precio]"</span></pre>
+        </section>
 
-            <div class="code">
-                <code>
-"Esto es un [nombre] de tamaño [tamaño]
-con un costo de [precio]"
-</code>
-            </div>
-        </div>
-
-        <div class="section">
+        <section>
+            <div class="eyebrow-sm">04 · Desarrollo</div>
             <h2>💻 Desarrollo en Main</h2>
-
-            <ul>
+            <ul class="checklist">
                 <li>Solicitar al usuario los datos de 3 bebidas.</li>
-
                 <li>Crear 3 objetos diferentes.</li>
-
                 <li>Aplicar descuento a una bebida.</li>
-
                 <li>Llamar al método Preparar() de todas.</li>
-
                 <li>Mostrar la descripción de cada bebida.</li>
             </ul>
-        </div>
-
-        <div class="section">
-            <h2>🖥️ Ejemplo Esperado</h2>
-
-            <div class="code">
-                <code>
-Preparando un Latte tamaño Grande...
+            <h2 style="font-size:1.2rem; margin-top:30px;">🖥️ Ejemplo Esperado</h2>
+            <pre class="code">Preparando un Latte tamaño Grande...
 
 Esto es un Latte de tamaño Grande
 con un costo de $85
@@ -249,28 +95,32 @@ con un costo de $85
 Preparando un Capuccino tamaño Mediano...
 
 Esto es un Capuccino de tamaño Mediano
-con un costo de $70
-</code>
-            </div>
-        </div>
+con un costo de $70</pre>
+        </section>
 
-        <div class="section">
+        <section class="no-border">
+            <div class="eyebrow-sm">05 · Restricciones</div>
             <h2>🚫 Restricciones</h2>
+            <div class="callout danger">
+                <div class="ico">⛔</div>
+                <div class="c-body">
+                    <div style="margin-top:6px;"><strong>No utilizar:</strong></div>
+                    <ul style="margin:8px 0 0 18px;">
+                        <li>Herencia</li>
+                        <li>Listas</li>
+                        <li>Interfaces</li>
+                        <li>Bases de datos</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
-            <ul>
-                <li>No utilizar herencia.</li>
-                <li>No utilizar listas.</li>
-                <li>No utilizar interfaces.</li>
-                <li>No utilizar bases de datos.</li>
-            </ul>
-        </div>
-
-        <div class="footer">
-            <p>Programación Orientada a Objetos • C# • Consola</p>
-            <p style="font-size: 0.8rem; margin-top: 10px; opacity: 0.6;">Material de apoyo docente - MTI. Luis Alberto Mendoza San Juan</p>
-        </div>
-
-    </div>
+        <p class="footer-note">
+            Programación Orientada a Objetos • C# • Consola
+        </p>
+        <p class="footer-note" style="padding-top:0; opacity:.6;">
+            Material de apoyo docente - MTI. Luis Alberto Mendoza San Juan
+        </p>
     </div>
 
 </body>

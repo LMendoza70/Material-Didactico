@@ -5,152 +5,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guía: Trabajo Colaborativo con GitHub - FigurasFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="framework/uthu-docs.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #0d6efd;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        h2 {
-            color: #0d6efd;
-            border-bottom: 2px solid #0d6efd;
-            padding-bottom: 8px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        th,
-        td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background-color: #0d6efd;
-            color: white;
-        }
-
-        .highlight {
-            background-color: #e7f3ff;
-            padding: 15px;
-            border-left: 5px solid #0d6efd;
-            border-radius: 5px;
-        }
-
-        ul {
-            padding-left: 20px;
-        }
-
-        li {
-            margin-bottom: 8px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #666;
-            font-size: 0.9em;
-        }
+        body.light{ padding:20px 0; }
     </style>
 </head>
 
-<body>
-    <div class="container">
-        <h1>🚀 Guía de Trabajo Colaborativo con GitHub</h1>
-        <h2>Proyecto: FigurasFlow</h2>
-
-        <div class="highlight">
-            <strong>✅ Sí, es una excelente idea seguir el checklist.</strong><br>
-            El repositorio y el checklist están perfectamente alineados para enseñar GitHub Flow a tus estudiantes.
+<body class="light">
+    <div class="wrap">
+        <div class="hero center">
+            <div class="eyebrow">POO · Git · Colaboración</div>
+            <h1>Guía de Trabajo Colaborativo con GitHub</h1>
+            <p>Proyecto: FigurasFlow</p>
         </div>
 
-        <h2>Ventajas de usar el checklist</h2>
-        <ul>
-            <li>Refuerza la regla principal: <strong>nunca tocar la rama principal directamente</strong>.</li>
-            <li>Es interactivo y permite filtrar por roles (Propietario / Colaborador).</li>
-            <li>Proyecto sencillo pero real (C# Windows Forms) → ideal para principiantes.</li>
-            <li>Material didáctico coherente creado por ti.</li>
-        </ul>
+        <section>
+            <div class="callout success">
+                <div class="ico">✅</div>
+                <div class="c-body">
+                    <strong>Sí, es una excelente idea seguir el checklist.</strong>
+                    El repositorio y el checklist están perfectamente alineados para enseñar GitHub Flow a tus estudiantes.
+                </div>
+            </div>
+        </section>
 
-        <h2>Cómo proteger la rama principal (main)</h2>
-        <ol>
-            <li>Ve a tu repositorio → <strong>Settings</strong></li>
-            <li>En el menú izquierdo selecciona <strong>Branches</strong></li>
-            <li>Haz clic en <strong>Add branch protection rule</strong></li>
-            <li>Configura la siguiente regla:</li>
-        </ol>
+        <section>
+            <div class="eyebrow-sm">01 · Beneficios</div>
+            <h2>Ventajas de usar el checklist</h2>
+            <ul class="checklist">
+                <li>Refuerza la regla principal: <strong>nunca tocar la rama principal directamente</strong>.</li>
+                <li>Es interactivo y permite filtrar por roles (Propietario / Colaborador).</li>
+                <li>Proyecto sencillo pero real (C# Windows Forms) → ideal para principiantes.</li>
+                <li>Material didáctico coherente creado por ti.</li>
+            </ul>
+        </section>
 
-        <table>
-            <tr>
-                <th>Opción</th>
-                <th>Recomendado</th>
-                <th>Por qué</th>
-            </tr>
-            <tr>
-                <td><strong>Branch name pattern</strong></td>
-                <td><code>main</code></td>
-                <td>Protege la rama principal</td>
-            </tr>
-            <tr>
-                <td><strong>Require a pull request before merging</strong></td>
-                <td>✅ Sí</td>
-                <td>Impide pushes directos</td>
-            </tr>
-            <tr>
-                <td><strong>Require approvals</strong></td>
-                <td>✅ Sí (1 aprobación)</td>
-                <td>Se necesita revisión</td>
-            </tr>
-            <tr>
-                <td><strong>Dismiss stale pull request approvals</strong></td>
-                <td>✅ Recomendado</td>
-                <td>Revisa nuevamente si hay cambios</td>
-            </tr>
-            <tr>
-                <td><strong>Include administrators</strong></td>
-                <td>✅ Sí</td>
-                <td>Tú tampoco puedas hacer push directo</td>
-            </tr>
-        </table>
+        <section>
+            <div class="eyebrow-sm">02 · Configuración</div>
+            <h2>Cómo proteger la rama principal (main)</h2>
+            <div class="steps">
+                <div class="step"><div class="n">1</div><div class="s-body">Ve a tu repositorio → <strong>Settings</strong></div></div>
+                <div class="step"><div class="n">2</div><div class="s-body">En el menú izquierdo selecciona <strong>Branches</strong></div></div>
+                <div class="step"><div class="n">3</div><div class="s-body">Haz clic en <strong>Add branch protection rule</strong></div></div>
+                <div class="step"><div class="n">4</div><div class="s-body">Configura la siguiente regla:</div></div>
+            </div>
 
-        <h2>Flujo recomendado para estudiantes</h2>
-        <ol>
-            <li>Tú (propietario) proteges la rama e invitas colaboradores.</li>
-            <li>Estudiante hace <strong>fork</strong> o clona el repo.</li>
-            <li>Crea su rama: <code>git checkout -b feature/nombre-cambio</code></li>
-            <li>Trabaja, hace commit y <code>git push origin feature/nombre-cambio</code></li>
-            <li>Abre un <strong>Pull Request</strong> hacia <code>main</code></li>
-            <li>Tú revisas, apruebas y haces merge.</li>
-        </ol>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Opción</th>
+                            <th>Recomendado</th>
+                            <th>Por qué</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Branch name pattern</strong></td>
+                            <td><code>main</code></td>
+                            <td>Protege la rama principal</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Require a pull request before merging</strong></td>
+                            <td>✅ Sí</td>
+                            <td>Impide pushes directos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Require approvals</strong></td>
+                            <td>✅ Sí (1 aprobación)</td>
+                            <td>Se necesita revisión</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dismiss stale pull request approvals</strong></td>
+                            <td>✅ Recomendado</td>
+                            <td>Revisa nuevamente si hay cambios</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Include administrators</strong></td>
+                            <td>✅ Sí</td>
+                            <td>Tú tampoco puedas hacer push directo</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-        <footer>
-            <p>Material preparado para la clase de Programación Orientada a Objetos</p>
-            <p>Repositorio: <a href="https://github.com/LMendoza70/FigurasFlow" target="_blank">FigurasFlow</a></p>
-        </footer>
+        <section>
+            <div class="eyebrow-sm">03 · Flujo de trabajo</div>
+            <h2>Flujo recomendado para estudiantes</h2>
+            <ol>
+                <li>Tú (propietario) proteges la rama e invitas colaboradores.</li>
+                <li>Estudiante hace <strong>fork</strong> o clona el repo.</li>
+                <li>Crea su rama: <code>git checkout -b feature/nombre-cambio</code></li>
+                <li>Trabaja, hace commit y <code>git push origin feature/nombre-cambio</code></li>
+                <li>Abre un <strong>Pull Request</strong> hacia <code>main</code></li>
+                <li>Tú revisas, apruebas y haces merge.</li>
+            </ol>
+        </section>
+
+        <p class="footer-note">
+            Material preparado para la clase de Programación Orientada a Objetos ·
+            Repositorio: <a href="https://github.com/LMendoza70/FigurasFlow" target="_blank">FigurasFlow</a>
+        </p>
     </div>
 </body>
 
